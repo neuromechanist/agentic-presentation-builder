@@ -32,18 +32,52 @@ agent-presentation/
 └── docs/            # Documentation
 ```
 
+## Features
+
+✅ **JSON-based presentation definition** - Simple, LLM-friendly format
+✅ **Multiple element types** - Text, bullets, images, Mermaid diagrams
+✅ **Flexible layouts** - Single-column, two-column, title, blank
+✅ **Markdown support** - Rich text formatting in text and bullets
+✅ **Theme system** - Customizable colors, fonts, and styles
+✅ **Position control** - Header, content, footer, left, right, center areas
+✅ **Interactive diagrams** - Mermaid.js integration for flowcharts and diagrams
+
+## Usage
+
+1. Create a JSON presentation file:
+
+```json
+{
+  "presentation": {
+    "metadata": {
+      "title": "My Presentation",
+      "theme": "default",
+      "aspectRatio": "16:9"
+    },
+    "slides": [...]
+  }
+}
+```
+
+2. Place it in the `examples/` directory
+
+3. View at: `http://localhost:3000/?presentation=./examples/your-file.json`
+
+See `SCHEMA_GUIDE.md` for complete documentation.
+
 ## Development Phases
 
-### Phase 1: Foundation (Current)
-- [ ] JSON schema for basic elements (text, bullets, images, Mermaid)
-- [ ] Basic renderer
-- [ ] Simple positioning system
-- [ ] Example presentations
+### Phase 1: Foundation ✅ COMPLETE
+- [x] JSON schema for basic elements (text, bullets, images, Mermaid)
+- [x] Basic renderer with Reveal.js integration
+- [x] Position system with multiple areas
+- [x] Example presentations (hello-world, comprehensive-demo, github-course-demo, image-demo)
 
-### Phase 2: Styling & Themes
-- [ ] Theme system (colors, fonts, backgrounds)
+### Phase 2: Styling & Themes (In Progress)
+- [ ] Enhanced theme system
 - [ ] Typography controls
 - [ ] Layout templates
+- [ ] Custom CSS variables
 
 ### Phase 3: Animation System
 - [ ] Element animations
@@ -89,4 +123,6 @@ This project follows atomic commit practices. Each commit should be a single log
 
 ## License
 
-MIT
+Copyright (c) 2025 Casual-Vibers. All Rights Reserved.
+
+This is proprietary software. See LICENSE file for details.

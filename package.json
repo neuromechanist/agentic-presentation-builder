@@ -19,8 +19,13 @@
     "llm",
     "agentic"
   ],
-  "author": "",
-  "license": "MIT",
+  "author": "Casual-Vibers",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/casual-vibers/agentic-presentation-builder.git"
+  },
+  "private": true,
   "dependencies": {
     "reveal.js": "^5.0.4",
     "mermaid": "^10.6.1",
