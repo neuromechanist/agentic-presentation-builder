@@ -1,0 +1,376 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://agentic-presentation-builder.dev/presentation.schema.json",
+  "title": "Agentic Presentation Schema",
+  "description": "JSON Schema for LLM-friendly presentation definitions. Version 1.0",
+  "type": "object",
+  "required": ["presentation"],
+  "properties": {
+    "presentation": {
+      "type": "object",
+      "required": ["metadata", "slides"],
+      "properties": {
+        "metadata": {
+          "type": "object",
+          "description": "Presentation metadata and configuration",
+          "required": ["title"],
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Presentation title",
+              "minLength": 1,
+              "examples": ["Introduction to Quantum Computing"]
+            },
+            "author": {
+              "type": "string",
+              "description": "Author name (optional)",
+              "examples": ["Dr. Jane Smith"]
+            },
+            "description": {
+              "type": "string",
+              "description": "Brief description of the presentation",
+              "examples": ["A comprehensive overview of quantum computing principles for beginners"]
+            },
+            "theme": {
+              "type": "string",
+              "description": "Presentation theme",
+              "enum": ["default", "light", "dark", "academic", "minimal"],
+              "default": "default"
+            },
+            "aspectRatio": {
+              "type": "string",
+              "description": "Presentation aspect ratio",
+              "enum": ["16:9", "4:3"],
+              "default": "16:9",
+              "examples": ["16:9"]
+            },
+            "customTheme": {
+              "type": "object",
+              "description": "Custom theme colors and fonts (optional)",
+              "properties": {
+                "colors": {
+                  "type": "object",
+                  "properties": {
+                    "primary": {
+                      "type": "string",
+                      "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+                      "examples": ["#2563EB"]
+                    },
+                    "background": {
+                      "type": "string",
+                      "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+                      "examples": ["#FFFFFF"]
+                    },
+                    "text": {
+                      "type": "string",
+                      "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+                      "examples": ["#1E293B"]
+                    },
+                    "accent": {
+                      "type": "string",
+                      "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+                      "examples": ["#10B981"]
+                    }
+                  }
+                },
+                "fonts": {
+                  "type": "object",
+                  "properties": {
+                    "heading": {
+                      "type": "string",
+                      "examples": ["Inter, sans-serif"]
+                    },
+                    "body": {
+                      "type": "string",
+                      "examples": ["Inter, sans-serif"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "slides": {
+          "type": "array",
+          "description": "Array of slide definitions",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/slide"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "slide": {
+      "type": "object",
+      "description": "Individual slide definition",
+      "required": ["elements"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Optional unique identifier for the slide",
+          "examples": ["intro-slide", "slide-1"]
+        },
+        "layout": {
+          "type": "string",
+          "description": "Slide layout type",
+          "enum": ["single-column", "two-column", "title", "blank"],
+          "default": "single-column"
+        },
+        "background": {
+          "type": "string",
+          "description": "Slide background color (hex) or image path",
+          "examples": ["#F8FAFC", "./images/background.jpg"]
+        },
+        "transition": {
+          "type": "string",
+          "description": "Slide transition effect (Phase 3 feature)",
+          "enum": ["slide", "fade", "convex", "concave", "zoom"],
+          "default": "slide"
+        },
+        "elements": {
+          "type": "array",
+          "description": "Array of content elements on this slide",
+          "minItems": 0,
+          "items": {
+            "oneOf": [
+              { "$ref": "#/definitions/textElement" },
+              { "$ref": "#/definitions/bulletsElement" },
+              { "$ref": "#/definitions/imageElement" },
+              { "$ref": "#/definitions/mermaidElement" }
+            ]
+          }
+        }
+      }
+    },
+    "textElement": {
+      "type": "object",
+      "description": "Text element with markdown support",
+      "required": ["type", "content"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "text"
+        },
+        "content": {
+          "type": "string",
+          "description": "Text content (supports markdown syntax)",
+          "minLength": 1,
+          "examples": ["# Hello World", "This is **bold** and *italic* text"]
+        },
+        "style": {
+          "$ref": "#/definitions/textStyle"
+        },
+        "position": {
+          "$ref": "#/definitions/position"
+        },
+        "animation": {
+          "$ref": "#/definitions/animation"
+        }
+      }
+    },
+    "bulletsElement": {
+      "type": "object",
+      "description": "Bullet point list element",
+      "required": ["type", "items"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "bullets"
+        },
+        "items": {
+          "type": "array",
+          "description": "Array of bullet point items (strings or nested objects)",
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "Simple bullet point (supports markdown)"
+              },
+              {
+                "type": "object",
+                "description": "Nested bullet point",
+                "required": ["text"],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "description": "Bullet point text (supports markdown)"
+                  },
+                  "children": {
+                    "type": "array",
+                    "description": "Nested sub-items",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "bulletStyle": {
+          "type": "string",
+          "description": "Bullet point style",
+          "enum": ["disc", "circle", "square", "number", "none"],
+          "default": "disc"
+        },
+        "style": {
+          "$ref": "#/definitions/textStyle"
+        },
+        "position": {
+          "$ref": "#/definitions/position"
+        },
+        "animation": {
+          "$ref": "#/definitions/animation"
+        }
+      }
+    },
+    "imageElement": {
+      "type": "object",
+      "description": "Image element",
+      "required": ["type", "src"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "image"
+        },
+        "src": {
+          "type": "string",
+          "description": "Path to image file (relative or absolute URL)",
+          "minLength": 1,
+          "examples": ["./images/diagram.png", "https://example.com/image.jpg"]
+        },
+        "alt": {
+          "type": "string",
+          "description": "Alternative text for accessibility",
+          "examples": ["System architecture diagram"]
+        },
+        "width": {
+          "type": "string",
+          "description": "Image width (percentage, pixels, or auto)",
+          "examples": ["50%", "400px", "auto"],
+          "default": "auto"
+        },
+        "height": {
+          "type": "string",
+          "description": "Image height (percentage, pixels, or auto)",
+          "examples": ["50%", "300px", "auto"],
+          "default": "auto"
+        },
+        "caption": {
+          "type": "string",
+          "description": "Image caption (supports markdown)",
+          "examples": ["Figure 1: System Architecture"]
+        },
+        "position": {
+          "$ref": "#/definitions/position"
+        },
+        "animation": {
+          "$ref": "#/definitions/animation"
+        }
+      }
+    },
+    "mermaidElement": {
+      "type": "object",
+      "description": "Mermaid diagram element",
+      "required": ["type", "diagram"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "mermaid"
+        },
+        "diagram": {
+          "type": "string",
+          "description": "Mermaid diagram definition",
+          "minLength": 1,
+          "examples": ["graph LR\n  A-->B\n  B-->C"]
+        },
+        "theme": {
+          "type": "string",
+          "description": "Mermaid theme",
+          "enum": ["default", "dark", "forest", "neutral"],
+          "default": "default"
+        },
+        "position": {
+          "$ref": "#/definitions/position"
+        },
+        "animation": {
+          "$ref": "#/definitions/animation"
+        }
+      }
+    },
+    "textStyle": {
+      "type": "object",
+      "description": "Text styling options",
+      "properties": {
+        "fontSize": {
+          "type": "string",
+          "description": "Font size",
+          "enum": ["small", "medium", "large", "xl", "xxl"],
+          "default": "medium"
+        },
+        "alignment": {
+          "type": "string",
+          "description": "Text alignment",
+          "enum": ["left", "center", "right", "justify"],
+          "default": "left"
+        },
+        "color": {
+          "type": "string",
+          "description": "Text color (hex code)",
+          "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+          "examples": ["#1E293B"]
+        },
+        "fontWeight": {
+          "type": "string",
+          "description": "Font weight",
+          "enum": ["normal", "bold", "light"],
+          "default": "normal"
+        }
+      }
+    },
+    "position": {
+      "type": "object",
+      "description": "Element positioning",
+      "properties": {
+        "area": {
+          "type": "string",
+          "description": "Named area on slide",
+          "enum": ["header", "content", "footer", "left", "right", "center"],
+          "default": "content"
+        },
+        "order": {
+          "type": "integer",
+          "description": "Order within area (0-based)",
+          "minimum": 0,
+          "default": 0
+        }
+      }
+    },
+    "animation": {
+      "type": "object",
+      "description": "Element animation settings (Phase 3 feature)",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Animation effect type",
+          "enum": ["fade", "slide-up", "slide-down", "zoom", "none"],
+          "default": "fade"
+        },
+        "delay": {
+          "type": "integer",
+          "description": "Animation delay in milliseconds",
+          "minimum": 0,
+          "default": 0
+        },
+        "fragment": {
+          "type": "boolean",
+          "description": "Whether element should appear as a fragment (on click)",
+          "default": false
+        }
+      }
+    }
+  }
+}
