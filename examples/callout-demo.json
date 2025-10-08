@@ -1,0 +1,294 @@
+{
+  "presentation": {
+    "metadata": {
+      "title": "Callout Boxes Demo",
+      "author": "Agentic Presentation Builder",
+      "description": "Demonstrating callout box elements for highlighting important information",
+      "theme": "default",
+      "aspectRatio": "16:9"
+    },
+    "slides": [
+      {
+        "id": "title",
+        "layout": "title",
+        "elements": [
+          {
+            "type": "text",
+            "content": "# Callout Boxes",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "center"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Highlight important information with visual emphasis",
+            "style": {
+              "fontSize": "large",
+              "alignment": "center",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "center",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "all-types",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## All Callout Types",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "tip",
+            "title": "💡 Pro Tip",
+            "content": "Use callout boxes to draw attention to **key insights** and helpful suggestions. They make important information stand out!",
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "warning",
+            "title": "⚠️ Warning",
+            "content": "Be careful when modifying production configurations. Always test changes in a **development environment** first.",
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "important",
+            "title": "❗ Important",
+            "content": "This feature requires **Node.js 18+** and is not backward compatible with earlier versions.",
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "more-types",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Additional Callout Types",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "note",
+            "title": "📝 Note",
+            "content": "Callout boxes support full **markdown formatting** including *italics*, **bold**, and `inline code`.",
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "info",
+            "title": "ℹ️ Information",
+            "content": "You can also use callouts without titles. Simply omit the `title` property in your JSON definition.",
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "without-titles",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Callouts Without Titles",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Titles are optional - you can create cleaner callouts by omitting them:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "tip",
+            "content": "This tip callout has no title, creating a cleaner, more minimal appearance.",
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "warning",
+            "content": "Critical warnings can be displayed without titles when the message itself is self-explanatory.",
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "mixed-content",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Mixing Callouts with Other Elements",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Callout boxes work seamlessly with other elements:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "**Text elements** - Regular content",
+              "**Bullet lists** - Like this one",
+              "**Images** - Visual content",
+              "**Diagrams** - Mermaid diagrams"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "info",
+            "content": "Use callouts strategically to emphasize the most important points in your presentation without overwhelming the audience.",
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "best-practices",
+        "layout": "two-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Best Practices",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Do ✅",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "left"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "tip",
+            "content": "Use callouts sparingly - 1-2 per slide maximum",
+            "position": {
+              "area": "left",
+              "order": 1
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "note",
+            "content": "Choose the right type for your message context",
+            "position": {
+              "area": "left",
+              "order": 2
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Don't ❌",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "right"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "warning",
+            "content": "Don't use too many callouts on one slide - it reduces their impact",
+            "position": {
+              "area": "right",
+              "order": 1
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "important",
+            "content": "Avoid using 'important' for everything - save it for truly critical information",
+            "position": {
+              "area": "right",
+              "order": 2
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
