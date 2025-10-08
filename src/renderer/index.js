@@ -3,7 +3,7 @@
  * Converts parsed presentation object to Reveal.js HTML
  */
 
-import { markdownToHtml } from '../utils/markdown.js';
+import { markdownToHtml } from '../utils/markdown-browser.js';
 
 /**
  * Render presentation to HTML

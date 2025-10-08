@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentic Presentation Builder</title>
+
+  <!-- Reveal.js CSS -->
+  <link rel="stylesheet" href="/node_modules/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="/node_modules/reveal.js/dist/theme/white.css" id="theme">
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="/src/styles.css">
+
+  <style>
+    /* Inline critical styles */
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading indicator -->
+  <div id="loading">
+    <div>Loading presentation...</div>
+  </div>
+
+  <!-- Reveal.js container -->
+  <div class="reveal">
+    <div class="slides">
+      <!-- Slides will be injected here by app.js -->
+    </div>
+  </div>
+
+  <!-- App script (type="module" for ES6 imports) -->
+  <script type="module" src="/src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+/**
+ * Agentic Presentation Builder Styles
+ * Custom styles for presentation elements
+ */
+
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  color: var(--theme-text, #1E293B);
+  background: var(--theme-background, #FFFFFF);
+}
+
+/* Loading indicator */
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  font-size: 1.5rem;
+  color: var(--theme-primary, #2563EB);
+}
+
+/* Reveal.js overrides */
+.reveal {
+  font-family: var(--font-body, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  font-family: var(--font-heading, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-weight: 700;
+  color: var(--theme-text, #1E293B);
+}
+
+.reveal section {
+  height: 100%;
+  padding: 40px;
+  text-align: left;
+}
+
+/* Layout components */
+.slide-header {
+  margin-bottom: 2rem;
+}
+
+.slide-content {
+  margin-bottom: 2rem;
+}
+
+.slide-footer {
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
+/* Two-column layout */
+.two-column-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin: 2rem 0;
+}
+
+.column-left,
+.column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Title slide layout */
+.title-slide-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+/* Text element styles */
+.text-element {
+  margin-bottom: 1rem;
+}
+
+.text-element p {
+  margin: 0.5em 0;
+}
+
+.text-element h1,
+.text-element h2,
+.text-element h3 {
+  margin: 0.5em 0;
+}
+
+/* Font size classes */
+.size-small {
+  font-size: 0.8rem;
+}
+
+.size-medium {
+  font-size: 1.2rem;
+}
+
+.size-large {
+  font-size: 1.5rem;
+}
+
+.size-xl {
+  font-size: 2rem;
+}
+
+.size-xxl {
+  font-size: 2.5rem;
+}
+
+/* Bullet list styles */
+.bullet-list {
+  margin: 1rem 0;
+  padding-left: 2rem;
+  line-height: 1.6;
+}
+
+.bullet-list li {
+  margin: 0.5rem 0;
+}
+
+.bullet-list li ul,
+.bullet-list li ol {
+  margin-top: 0.5rem;
+  padding-left: 1.5rem;
+}
+
+.style-disc {
+  list-style-type: disc;
+}
+
+.style-circle {
+  list-style-type: circle;
+}
+
+.style-square {
+  list-style-type: square;
+}
+
+.style-number {
+  list-style-type: decimal;
+}
+
+.style-none {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+/* Image element styles */
+.image-element {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.image-element img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.image-caption {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--theme-text, #64748B);
+  font-style: italic;
+}
+
+/* Mermaid diagram styles */
+.mermaid-element {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.mermaid {
+  background: transparent;
+}
+
+/* Inline code */
+code {
+  background: #F1F5F9;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Courier New', monospace;
+}
+
+/* Links */
+a {
+  color: var(--theme-primary, #2563EB);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Blockquotes */
+blockquote {
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  border-left: 4px solid var(--theme-primary, #2563EB);
+  background: #F8FAFC;
+  font-style: italic;
+}
+
+/* Strong and emphasis */
+strong {
+  font-weight: 700;
+  color: var(--theme-text, #1E293B);
+}
+
+em {
+  font-style: italic;
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 2px solid #E2E8F0;
+  margin: 2rem 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .two-column-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .reveal section {
+    padding: 20px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .reveal section {
+    page-break-inside: avoid;
+  }
+
+  #loading {
+    display: none !important;
+  }
+}
