@@ -249,7 +249,8 @@ function renderImageElement(element) {
  * Render mermaid element
  */
 function renderMermaidElement(element) {
-  const diagram = escapeHtml(element.diagram);
+  // Don't escape - Mermaid.js needs raw diagram syntax
+  const diagram = element.diagram;
 
   return `<div class="mermaid-element">
   <div class="mermaid">
