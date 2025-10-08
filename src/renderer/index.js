@@ -186,6 +186,8 @@ function renderElement(element) {
       return renderImageElement(element);
     case 'mermaid':
       return renderMermaidElement(element);
+    case 'callout':
+      return renderCalloutElement(element);
     default:
       return '';
   }
@@ -257,6 +259,25 @@ function renderMermaidElement(element) {
 ${diagram}
   </div>
 </div>`;
+}
+
+/**
+ * Render callout element
+ */
+function renderCalloutElement(element) {
+  const calloutType = element.calloutType || 'info';
+  const content = markdownToHtml(element.content);
+
+  let html = `<div class="callout callout-${calloutType}">`;
+
+  if (element.title) {
+    html += `<div class="callout-title">${escapeHtml(element.title)}</div>`;
+  }
+
+  html += `<div class="callout-content">${content}</div>`;
+  html += `</div>`;
+
+  return html;
 }
 
 /**
