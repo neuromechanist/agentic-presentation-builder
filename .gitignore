@@ -1,0 +1,51 @@
+# Claude-specific files (project-level)
+CLAUDE.md
+.rules/
+.context/
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build outputs
+dist/
+build/
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Python (if used for tooling)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Examples and demos (keep in git, but ignore generated outputs)
+examples/output/
