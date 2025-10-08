@@ -59,7 +59,9 @@ async function loadAndRenderPresentation() {
       },
       flowchart: {
         htmlLabels: true,
-        curve: 'basis'
+        curve: 'basis',
+        useMaxWidth: true,
+        padding: 20
       }
     });
 
