@@ -86,6 +86,12 @@ function renderSingleColumnLayout(elementsByArea) {
     parts.push('</div>');
   }
 
+  if (elementsByArea.center) {
+    parts.push('<div class="title-slide-content">');
+    parts.push(elementsByArea.center.map(renderElement).join('\n'));
+    parts.push('</div>');
+  }
+
   if (elementsByArea.content) {
     parts.push('<div class="slide-content">');
     parts.push(elementsByArea.content.map(renderElement).join('\n'));
