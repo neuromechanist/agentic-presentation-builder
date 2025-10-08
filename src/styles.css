@@ -192,10 +192,18 @@ body {
   margin: 2rem 0;
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .mermaid {
   background: transparent;
+  min-width: 400px;
+  max-width: 100%;
+}
+
+.mermaid svg {
+  max-width: 100% !important;
+  height: auto !important;
 }
 
 /* Inline code */
