@@ -326,7 +326,7 @@
           },
           {
             "type": "mermaid",
-            "diagram": "graph LR\n    A[Work Dir] -->|git add| B[Stage Area]\n    B -->|git commit| C[Local Repo]\n    C -->|git push| D[Remote Repo]\n    A -.->|Edit| A\n    D -.->|git pull| A\n    style A fill:#F8FAFC,stroke:#64748B\n    style B fill:#FEF3C7,stroke:#F59E0B\n    style C fill:#DCFDF7,stroke:#059669\n    style D fill:#DBEAFE,stroke:#2563EB",
+            "diagram": "graph LR\n    A[Work Dir] --> B[Stage Area]\n    B --> C[Local Repo]\n    C --> D[Remote Repo]\n    style A fill:#F8FAFC\n    style B fill:#FEF3C7\n    style C fill:#DCFDF7\n    style D fill:#DBEAFE",
             "theme": "default",
             "position": {
               "area": "content"
