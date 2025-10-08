@@ -50,22 +50,22 @@ body {
 
 .reveal section {
   height: 100%;
-  padding: 40px;
+  padding: var(--spacing-slidePadding, 40px);
   text-align: left;
 }
 
 /* Layout components */
 .slide-header {
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-sectionGap, 2rem);
 }
 
 .slide-content {
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-sectionGap, 2rem);
 }
 
 .slide-footer {
   margin-top: auto;
-  padding-top: 2rem;
+  padding-top: var(--spacing-sectionGap, 2rem);
 }
 
 /* Two-column layout */
@@ -177,7 +177,8 @@ body {
 .image-element img {
   max-width: 100%;
   height: auto;
-  border-radius: 4px;
+  border-radius: var(--border-radius, 4px);
+  box-shadow: var(--shadow-small, none);
 }
 
 .image-caption {

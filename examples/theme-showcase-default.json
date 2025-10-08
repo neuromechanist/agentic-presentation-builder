@@ -1,0 +1,208 @@
+{
+  "presentation": {
+    "metadata": {
+      "title": "Theme Showcase: Default",
+      "author": "Agentic Presentation Builder",
+      "description": "Demonstrating the default theme",
+      "theme": "default",
+      "aspectRatio": "16:9"
+    },
+    "slides": [
+      {
+        "id": "title",
+        "layout": "title",
+        "elements": [
+          {
+            "type": "text",
+            "content": "# Default Theme",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "center"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Professional blue color scheme with modern sans-serif fonts",
+            "style": {
+              "fontSize": "large",
+              "alignment": "center",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "center",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "colors",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Color Palette",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "**Primary:** Blue (#2563EB) - Main brand color",
+              "**Secondary:** Green (#10B981) - Supporting actions",
+              "**Background:** White (#FFFFFF) - Clean canvas",
+              "**Text:** Slate (#1E293B) - High readability",
+              "**Accent:** Amber (#F59E0B) - Highlights"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "large"
+            },
+            "position": {
+              "area": "content"
+            }
+          }
+        ]
+      },
+      {
+        "id": "typography",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Typography",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Heading Font",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "text",
+            "content": "System fonts: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Body Font",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          },
+          {
+            "type": "text",
+            "content": "Same as headings for consistency and readability",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content",
+              "order": 3
+            }
+          }
+        ]
+      },
+      {
+        "id": "spacing",
+        "layout": "two-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Spacing & Layout",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Slide Padding",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "left"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "40px comfortable margins",
+              "Balanced whitespace",
+              "Focus on content"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "left",
+              "order": 1
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Element Gaps",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "right"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "1rem between elements",
+              "2rem between sections",
+              "Clear visual hierarchy"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "right",
+              "order": 1
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

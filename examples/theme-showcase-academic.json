@@ -1,0 +1,160 @@
+{
+  "presentation": {
+    "metadata": {
+      "title": "Theme Showcase: Academic",
+      "author": "Agentic Presentation Builder",
+      "description": "Demonstrating the academic theme",
+      "theme": "academic",
+      "aspectRatio": "16:9"
+    },
+    "slides": [
+      {
+        "id": "title",
+        "layout": "title",
+        "elements": [
+          {
+            "type": "text",
+            "content": "# Academic Theme",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "center"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Traditional serif typography for scholarly and research presentations",
+            "style": {
+              "fontSize": "large",
+              "alignment": "center",
+              "color": "#6B7280"
+            },
+            "position": {
+              "area": "center",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "typography",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Scholarly Typography",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "The academic theme uses **Georgia** and **Times New Roman** serif fonts, evoking the traditional look of academic publications and research papers.",
+            "style": {
+              "fontSize": "large"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Serif fonts improve readability for long-form content",
+              "Traditional appearance builds credibility",
+              "Familiar to academic audiences",
+              "Clear hierarchy with proper spacing"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "design",
+        "layout": "two-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Design Philosophy",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Conservative & Professional",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "left"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Subtle shadows for depth",
+              "Generous spacing (50px padding)",
+              "Minimal border radius (2px)",
+              "Conservative color palette"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "left",
+              "order": 1
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Best For",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "right"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Research presentations",
+              "Academic conferences",
+              "Thesis defenses",
+              "Educational lectures",
+              "Grant proposals"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "right",
+              "order": 1
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
