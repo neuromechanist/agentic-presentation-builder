@@ -1,0 +1,90 @@
+{
+  "presentation": {
+    "metadata": {
+      "title": "Hello World",
+      "author": "Agentic Presentation Builder",
+      "description": "A simple introduction to the presentation engine",
+      "theme": "default",
+      "aspectRatio": "16:9"
+    },
+    "slides": [
+      {
+        "layout": "title",
+        "elements": [
+          {
+            "type": "text",
+            "content": "# Hello World",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center"
+            },
+            "position": {
+              "area": "center"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Welcome to Agentic Presentation Builder",
+            "style": {
+              "fontSize": "large",
+              "alignment": "center",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "center",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## What is This?",
+            "style": {
+              "fontSize": "xl",
+              "alignment": "left"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "A **JSON-based** presentation engine",
+              "Designed for LLMs to create presentations easily",
+              "Renders using Reveal.js",
+              "Supports markdown, images, diagrams, and more"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "large"
+            },
+            "position": {
+              "area": "content"
+            }
+          }
+        ]
+      },
+      {
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Thank You!",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center"
+            },
+            "position": {
+              "area": "center"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,341 @@
+{
+  "presentation": {
+    "metadata": {
+      "title": "Comprehensive Feature Demo",
+      "author": "Agentic Presentation Builder",
+      "description": "Demonstration of all element types and features",
+      "theme": "default",
+      "aspectRatio": "16:9",
+      "customTheme": {
+        "colors": {
+          "primary": "#2563EB",
+          "background": "#FFFFFF",
+          "text": "#1E293B",
+          "accent": "#10B981"
+        },
+        "fonts": {
+          "heading": "Inter, sans-serif",
+          "body": "Inter, sans-serif"
+        }
+      }
+    },
+    "slides": [
+      {
+        "id": "title-slide",
+        "layout": "title",
+        "background": "#F8FAFC",
+        "elements": [
+          {
+            "type": "text",
+            "content": "# Comprehensive Feature Demo",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "center"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Exploring all element types and capabilities",
+            "style": {
+              "fontSize": "large",
+              "alignment": "center",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "center",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "markdown-demo",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Markdown Support",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Text elements support **bold**, *italic*, and ***bold italic*** markdown syntax.\n\nYou can also include `inline code` and create structured content easily.",
+            "style": {
+              "fontSize": "large"
+            },
+            "position": {
+              "area": "content"
+            }
+          }
+        ]
+      },
+      {
+        "id": "bullets-demo",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Bullet Points",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Simple bullet points",
+              "**Markdown** support in bullets",
+              {
+                "text": "Nested bullets",
+                "children": [
+                  "Sub-item one",
+                  "Sub-item two",
+                  "Sub-item three"
+                ]
+              },
+              "Mix simple and nested items"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "large"
+            },
+            "position": {
+              "area": "content"
+            }
+          }
+        ]
+      },
+      {
+        "id": "two-column-layout",
+        "layout": "two-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Two-Column Layout",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Column layouts",
+              "Side-by-side content",
+              "Perfect for comparisons",
+              "Flexible positioning"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "left"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Visual organization",
+              "Better space utilization",
+              "Professional appearance",
+              "Easy to read"
+            ],
+            "bulletStyle": "circle",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "right"
+            }
+          }
+        ]
+      },
+      {
+        "id": "mermaid-demo",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Mermaid Diagrams",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "mermaid",
+            "diagram": "graph LR\n    A[JSON Input] --> B[Parser]\n    B --> C[Validator]\n    C --> D[Renderer]\n    D --> E[HTML Output]\n    style A fill:#DBEAFE\n    style E fill:#DCFDF7",
+            "theme": "default",
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Mermaid diagrams render beautifully inline",
+            "style": {
+              "fontSize": "medium",
+              "alignment": "center",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "image-demo",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Images",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "image",
+            "src": "./assets/example-image.png",
+            "alt": "Example diagram",
+            "width": "60%",
+            "caption": "**Figure 1:** Example image with caption support",
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "text",
+            "content": "*Images support captions, sizing, and positioning*",
+            "style": {
+              "fontSize": "medium",
+              "alignment": "center",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "footer"
+            }
+          }
+        ]
+      },
+      {
+        "id": "styling-demo",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Text Styling Options",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Extra large text",
+            "style": {
+              "fontSize": "xl",
+              "fontWeight": "bold",
+              "color": "#2563EB"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Large text with custom color",
+            "style": {
+              "fontSize": "large",
+              "color": "#10B981"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "text",
+            "content": "Medium text (default size)",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          },
+          {
+            "type": "text",
+            "content": "Small text for subtle content",
+            "style": {
+              "fontSize": "small",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "content",
+              "order": 3
+            }
+          }
+        ]
+      },
+      {
+        "id": "end-slide",
+        "layout": "title",
+        "background": "#F8FAFC",
+        "elements": [
+          {
+            "type": "text",
+            "content": "# Thank You!",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center",
+              "fontWeight": "bold",
+              "color": "#2563EB"
+            },
+            "position": {
+              "area": "center"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Questions?",
+            "style": {
+              "fontSize": "large",
+              "alignment": "center",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "center",
+              "order": 1
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
