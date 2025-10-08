@@ -1,0 +1,455 @@
+{
+  "presentation": {
+    "metadata": {
+      "title": "Git & GitHub for Scientists",
+      "author": "Casual-Vibers",
+      "description": "Version Control That Actually Makes Sense for Research",
+      "theme": "default",
+      "aspectRatio": "16:9"
+    },
+    "slides": [
+      {
+        "id": "title-slide",
+        "layout": "title",
+        "elements": [
+          {
+            "type": "text",
+            "content": "# Git & GitHub for Scientists",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "center"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Version Control That Actually Makes Sense for Research",
+            "style": {
+              "fontSize": "large",
+              "alignment": "center",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "center",
+              "order": 1
+            }
+          },
+          {
+            "type": "text",
+            "content": "**Casual-Vibers**\n\n*AI Tools & VS Code Best Practices for Scientists*",
+            "style": {
+              "fontSize": "medium",
+              "alignment": "center",
+              "color": "#475569"
+            },
+            "position": {
+              "area": "center",
+              "order": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "learning-objectives",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## What We'll Accomplish Today",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Understand why version control is critical for research",
+              "Set up your GitHub account and first repository",
+              "Master essential Git operations for daily use",
+              "Collaborate effectively using forks, issues, and pull requests",
+              "Integrate Git with VS Code and command line tools",
+              "Avoid common pitfalls that break academic workflows"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "large"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "text",
+            "content": "**Hands-on approach:** We'll create real repositories and practice every concept together",
+            "style": {
+              "fontSize": "medium",
+              "color": "#059669",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "footer"
+            }
+          }
+        ]
+      },
+      {
+        "id": "agenda",
+        "layout": "two-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Our 50-Minute Journey",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Foundation (20 min)",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "left"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Why Git matters for science",
+              "Git fundamentals",
+              "GitHub account setup"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "left",
+              "order": 1
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Practice (25 min)",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "left",
+              "order": 2
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Essential Git operations",
+              "Collaboration features",
+              "Advanced tools"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "left",
+              "order": 3
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Integration (5 min)",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "right"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Best practices",
+              "Common pitfalls",
+              "Next steps"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "right",
+              "order": 1
+            }
+          },
+          {
+            "type": "text",
+            "content": "**Follow along:** Have a computer ready for hands-on practice",
+            "style": {
+              "fontSize": "medium",
+              "color": "#059669",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "right",
+              "order": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-intro",
+        "layout": "title",
+        "background": "#EFF6FF",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Why Version Control Matters",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center",
+              "fontWeight": "bold",
+              "color": "#2563EB"
+            },
+            "position": {
+              "area": "center"
+            }
+          },
+          {
+            "type": "text",
+            "content": "The academic nightmare scenario... and how to prevent it",
+            "style": {
+              "fontSize": "large",
+              "alignment": "center",
+              "color": "#475569"
+            },
+            "position": {
+              "area": "center",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "academic-nightmare",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## The Academic Nightmare",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Sound Familiar?\n\n*\"I had my analysis working perfectly last week, but now it's broken and I can't remember what I changed...\"*",
+            "style": {
+              "fontSize": "large",
+              "color": "#DC2626"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Common \"Solutions\" That Don't Work:",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "`final_analysis_v3_john_comments_FINAL_REAL.py`",
+              "\"Dropbox is my version control\"",
+              "Emailing files back and forth",
+              "\"I'll just remember what I changed\""
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          },
+          {
+            "type": "text",
+            "content": "**The real problem:** No systematic way to track what changed, when, and why",
+            "style": {
+              "fontSize": "large",
+              "color": "#DC2626",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "footer"
+            }
+          }
+        ]
+      },
+      {
+        "id": "git-workflow",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Key Concepts: The Git Workflow",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "mermaid",
+            "diagram": "graph LR\n    A[Work Dir] -->|git add| B[Stage Area]\n    B -->|git commit| C[Local Repo]\n    C -->|git push| D[Remote Repo]\n    A -.->|Edit| A\n    D -.->|git pull| A\n    style A fill:#F8FAFC,stroke:#64748B\n    style B fill:#FEF3C7,stroke:#F59E0B\n    style C fill:#DCFDF7,stroke:#059669\n    style D fill:#DBEAFE,stroke:#2563EB",
+            "theme": "default",
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "text",
+            "content": "### The Four Stages:",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "**Working Directory:** Your current files (what you see)",
+              "**Staging Area:** Changes ready to be committed",
+              "**Repository:** Permanent history of changes",
+              "**Remote Repository:** Shared version on GitHub"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "save-vs-commit",
+        "layout": "two-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Mindset Shift: Save vs Commit",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Traditional \"Save\"",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "left"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Overwrites previous version",
+              "Only current state exists",
+              "Can't undo major changes",
+              "No explanation of changes",
+              "Individual file focus"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "left",
+              "order": 1
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Git \"Commit\"",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold",
+              "color": "#059669"
+            },
+            "position": {
+              "area": "right"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Keeps all previous versions",
+              "Complete project snapshots",
+              "Can return to any point",
+              "Explains what and why",
+              "Entire project focus"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "right",
+              "order": 1
+            }
+          },
+          {
+            "type": "text",
+            "content": "**New habit:** Instead of Ctrl+S, think \"What story does this change tell?\" and commit with a message",
+            "style": {
+              "fontSize": "medium",
+              "color": "#059669",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "footer"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
