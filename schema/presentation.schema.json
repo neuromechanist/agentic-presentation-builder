@@ -138,7 +138,8 @@
               { "$ref": "#/definitions/textElement" },
               { "$ref": "#/definitions/bulletsElement" },
               { "$ref": "#/definitions/imageElement" },
-              { "$ref": "#/definitions/mermaidElement" }
+              { "$ref": "#/definitions/mermaidElement" },
+              { "$ref": "#/definitions/calloutElement" }
             ]
           }
         }
@@ -292,6 +293,40 @@
           "description": "Mermaid theme",
           "enum": ["default", "dark", "forest", "neutral"],
           "default": "default"
+        },
+        "position": {
+          "$ref": "#/definitions/position"
+        },
+        "animation": {
+          "$ref": "#/definitions/animation"
+        }
+      }
+    },
+    "calloutElement": {
+      "type": "object",
+      "description": "Callout box element for highlighting important information",
+      "required": ["type", "content"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "callout"
+        },
+        "calloutType": {
+          "type": "string",
+          "description": "Type of callout box",
+          "enum": ["tip", "warning", "important", "note", "info"],
+          "default": "info"
+        },
+        "content": {
+          "type": "string",
+          "description": "Callout content (supports markdown)",
+          "minLength": 1,
+          "examples": ["**Pro Tip:** Always commit your changes before switching branches"]
+        },
+        "title": {
+          "type": "string",
+          "description": "Optional callout title",
+          "examples": ["Important Note", "Warning"]
         },
         "position": {
           "$ref": "#/definitions/position"
