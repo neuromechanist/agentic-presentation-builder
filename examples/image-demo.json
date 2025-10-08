@@ -1,0 +1,238 @@
+{
+  "presentation": {
+    "metadata": {
+      "title": "Image Positioning Demo",
+      "author": "Agentic Presentation Builder",
+      "description": "Demonstration of image positioning and sizing capabilities",
+      "theme": "default",
+      "aspectRatio": "16:9"
+    },
+    "slides": [
+      {
+        "id": "title",
+        "layout": "title",
+        "elements": [
+          {
+            "type": "text",
+            "content": "# Image Positioning Demo",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "center"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Demonstrating image layouts, sizing, and captions",
+            "style": {
+              "fontSize": "large",
+              "alignment": "center",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "center",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "single-centered-image",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Single Centered Image",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "image",
+            "src": "./assets/sample-1.jpg",
+            "alt": "Sample landscape image",
+            "width": "800px",
+            "height": "auto",
+            "caption": "A beautiful landscape photo demonstrating centered image positioning",
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Images can be centered with custom width and height values",
+            "style": {
+              "fontSize": "medium",
+              "alignment": "center",
+              "color": "#475569"
+            },
+            "position": {
+              "area": "footer"
+            }
+          }
+        ]
+      },
+      {
+        "id": "two-column-image-text",
+        "layout": "two-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Image with Text",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "image",
+            "src": "./assets/sample-2.jpg",
+            "alt": "Sample portrait image",
+            "width": "auto",
+            "height": "500px",
+            "caption": "Portrait orientation",
+            "position": {
+              "area": "left"
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Side-by-Side Layout",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "right"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Images work perfectly in two-column layouts",
+              "Great for combining visuals with explanatory text",
+              "Height and width are fully customizable",
+              "Captions help provide context"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "right",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "multiple-sizes",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Multiple Images",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Small Image (400px wide)",
+            "style": {
+              "fontSize": "medium",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "image",
+            "src": "./assets/sample-1.jpg",
+            "alt": "Small version",
+            "width": "400px",
+            "height": "auto",
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Large Image (1000px wide)",
+            "style": {
+              "fontSize": "medium",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          },
+          {
+            "type": "image",
+            "src": "./assets/sample-3.jpg",
+            "alt": "Large version",
+            "width": "1000px",
+            "height": "auto",
+            "caption": "Same slide can contain multiple images at different sizes",
+            "position": {
+              "area": "content",
+              "order": 3
+            }
+          }
+        ]
+      },
+      {
+        "id": "auto-sizing",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Auto-Sized Images",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "When both width and height are set to `\"auto\"`, images display at their natural size (constrained by max-width: 100%)",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "image",
+            "src": "./assets/sample-2.jpg",
+            "alt": "Auto-sized image",
+            "width": "auto",
+            "height": "auto",
+            "caption": "This image is displayed at its natural size",
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
