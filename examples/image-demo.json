@@ -55,7 +55,7 @@
           },
           {
             "type": "image",
-            "src": "./assets/sample-1.jpg",
+            "src": "/examples/assets/sample-1.jpg",
             "alt": "Sample landscape image",
             "width": "800px",
             "height": "auto",
@@ -94,7 +94,7 @@
           },
           {
             "type": "image",
-            "src": "./assets/sample-2.jpg",
+            "src": "/examples/assets/sample-2.jpg",
             "alt": "Sample portrait image",
             "width": "auto",
             "height": "500px",
@@ -160,7 +160,7 @@
           },
           {
             "type": "image",
-            "src": "./assets/sample-1.jpg",
+            "src": "/examples/assets/sample-1.jpg",
             "alt": "Small version",
             "width": "400px",
             "height": "auto",
@@ -183,7 +183,7 @@
           },
           {
             "type": "image",
-            "src": "./assets/sample-3.jpg",
+            "src": "/examples/assets/sample-3.jpg",
             "alt": "Large version",
             "width": "1000px",
             "height": "auto",
@@ -221,7 +221,7 @@
           },
           {
             "type": "image",
-            "src": "./assets/sample-2.jpg",
+            "src": "/examples/assets/sample-2.jpg",
             "alt": "Auto-sized image",
             "width": "auto",
             "height": "auto",
