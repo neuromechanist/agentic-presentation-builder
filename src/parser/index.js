@@ -97,6 +97,14 @@ function parseElement(element, index) {
         theme: element.theme || 'default'
       };
 
+    case 'callout':
+      return {
+        ...baseElement,
+        calloutType: element.calloutType || 'info',
+        content: element.content,
+        title: element.title || null
+      };
+
     default:
       throw new Error(`Unknown element type: ${element.type}`);
   }
