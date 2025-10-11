@@ -386,7 +386,7 @@
     },
     "animation": {
       "type": "object",
-      "description": "Element animation settings (Phase 3 feature)",
+      "description": "Element animation settings for progressive reveal and effects",
       "properties": {
         "type": {
           "type": "string",
@@ -394,16 +394,16 @@
           "enum": ["fade", "slide-up", "slide-down", "zoom", "none"],
           "default": "fade"
         },
-        "delay": {
-          "type": "integer",
-          "description": "Animation delay in milliseconds",
-          "minimum": 0,
-          "default": 0
-        },
         "fragment": {
           "type": "boolean",
-          "description": "Whether element should appear as a fragment (on click)",
+          "description": "Whether element should appear as a fragment (progressive reveal on click/space)",
           "default": false
+        },
+        "index": {
+          "type": "integer",
+          "description": "Fragment order index (controls sequence of appearance, 0-based)",
+          "minimum": 0,
+          "examples": [0, 1, 2]
         }
       }
     }
