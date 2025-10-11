@@ -11,8 +11,9 @@ import { markdownToHtml } from '../utils/markdown-browser.js';
  * @returns {string} HTML string
  */
 export function renderPresentation(presentation) {
+  const total = presentation.slides.length;
   const slides = presentation.slides
-    .map(slide => renderSlide(slide))
+    .map((slide, index) => renderSlide(slide, index, total))
     .join('\n');
 
   return slides;
@@ -21,11 +22,18 @@ export function renderPresentation(presentation) {
 /**
  * Render a single slide
  * @param {object} slide - Slide object
+ * @param {number} index - Slide index for numbering
+ * @param {number} total - Total number of slides
  * @returns {string} HTML string
  */
-function renderSlide(slide) {
+function renderSlide(slide, index, total) {
   const bgAttr = slide.background ? ` data-background="${escapeHtml(slide.background)}"` : '';
   const transitionAttr = slide.transition !== 'slide' ? ` data-transition="${slide.transition}"` : '';
+
+  // Add slide number and title data attributes for overview mode
+  const slideNumber = index + 1;
+  const slideNumberAttr = ` data-slide-number="${slideNumber}"`;
+  const slideTitleAttr = slide.title ? ` data-slide-title="${escapeHtml(slide.title)}"` : '';
 
   // Group elements by position area and sort by order
   const elementsByArea = groupElementsByArea(slide.elements);
@@ -52,7 +60,7 @@ function renderSlide(slide) {
     slideContent += `\n<aside class="notes">${escapeHtml(slide.speakerNotes)}</aside>`;
   }
 
-  return `<section id="${slide.id}"${bgAttr}${transitionAttr}>\n${slideContent}\n</section>`;
+  return `<section id="${slide.id}"${bgAttr}${transitionAttr}${slideNumberAttr}${slideTitleAttr}>\n${slideContent}\n</section>`;
 }
 
 /**
