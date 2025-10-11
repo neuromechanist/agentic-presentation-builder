@@ -28,6 +28,11 @@ function parseMetadata(metadata) {
     description: metadata.description || '',
     theme: metadata.theme || 'default',
     aspectRatio: metadata.aspectRatio || '16:9',
+    controls: metadata.controls || {
+      slideNumbers: false,
+      progress: true,
+      showNotes: false
+    },
     customTheme: metadata.customTheme || null
   };
 }
@@ -44,6 +49,7 @@ function parseSlide(slide, index) {
     layout: slide.layout || 'single-column',
     background: slide.background || null,
     transition: slide.transition || 'slide',
+    speakerNotes: slide.speakerNotes || null,
     elements: slide.elements.map((element, elemIndex) =>
       parseElement(element, elemIndex)
     )
@@ -103,6 +109,23 @@ function parseElement(element, index) {
         calloutType: element.calloutType || 'info',
         content: element.content,
         title: element.title || null
+      };
+
+    case 'code':
+      return {
+        ...baseElement,
+        code: element.code,
+        language: element.language || 'javascript',
+        caption: element.caption || null,
+        lineNumbers: element.lineNumbers !== false
+      };
+
+    case 'table':
+      return {
+        ...baseElement,
+        headers: element.headers,
+        rows: element.rows,
+        caption: element.caption || null
       };
 
     default:
