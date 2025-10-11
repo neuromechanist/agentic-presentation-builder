@@ -408,7 +408,7 @@ hr {
   content: attr(data-slide-number);
   display: block !important;
   position: absolute;
-  bottom: -250px;
+  bottom: -1000px;
   left: 50%;
   transform: translateX(-50%) scale(5);
   transform-origin: center top;
