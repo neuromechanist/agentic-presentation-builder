@@ -97,7 +97,12 @@ async function loadAndRenderPresentation() {
       height: built.dimensions.height,
       margin: 0.04,
       minScale: 0.3,
-      maxScale: 1.5
+      maxScale: 1.5,
+      // Overview mode configuration
+      overview: true,
+      overviewSeparator: 1.5,
+      overviewScale: 0.2,
+      overviewTransition: 'slide'
     });
 
     // Render Mermaid diagrams
