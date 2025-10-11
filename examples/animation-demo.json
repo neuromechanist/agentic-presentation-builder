@@ -1,0 +1,628 @@
+{
+  "presentation": {
+    "metadata": {
+      "title": "Animation System Demo",
+      "author": "Agentic Presentation Builder",
+      "description": "Comprehensive demonstration of element animations and slide transitions",
+      "theme": "default",
+      "aspectRatio": "16:9"
+    },
+    "slides": [
+      {
+        "id": "title",
+        "layout": "title",
+        "elements": [
+          {
+            "type": "text",
+            "content": "# Animation System",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "center"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Progressive reveal and transitions",
+            "style": {
+              "fontSize": "large",
+              "alignment": "center",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "center",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "fragment-basics",
+        "layout": "single-column",
+        "transition": "fade",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Fragment Reveal Basics",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Elements can appear progressively as you advance through the slide. Press **space** or **→** to reveal each fragment.",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "tip",
+            "content": "This appears first when you advance",
+            "animation": {
+              "fragment": true,
+              "type": "fade"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "info",
+            "content": "Then this one appears",
+            "animation": {
+              "fragment": true,
+              "type": "fade"
+            },
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "note",
+            "content": "And finally this one!",
+            "animation": {
+              "fragment": true,
+              "type": "fade"
+            },
+            "position": {
+              "area": "content",
+              "order": 3
+            }
+          }
+        ]
+      },
+      {
+        "id": "animation-types",
+        "layout": "single-column",
+        "transition": "slide",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Animation Types",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Four animation types are supported for fragments:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "**fade** - Simple fade in effect",
+              "**slide-up** - Slides up from below",
+              "**slide-down** - Slides down from above",
+              "**zoom** - Zooms in from center"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "fade-demo",
+        "layout": "single-column",
+        "transition": "convex",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Fade Animation",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "The default fade effect:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "info",
+            "title": "Fade Effect",
+            "content": "This element fades in smoothly",
+            "animation": {
+              "fragment": true,
+              "type": "fade"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "slide-up-demo",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Slide Up Animation",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Elements slide up from below:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "tip",
+            "title": "Slide Up",
+            "content": "This slides up from the bottom",
+            "animation": {
+              "fragment": true,
+              "type": "slide-up"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "slide-down-demo",
+        "layout": "single-column",
+        "transition": "zoom",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Slide Down Animation",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Elements slide down from above:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "warning",
+            "title": "Slide Down",
+            "content": "This slides down from the top",
+            "animation": {
+              "fragment": true,
+              "type": "slide-down"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "zoom-demo",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Zoom Animation",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Elements zoom in from center:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "important",
+            "title": "Zoom",
+            "content": "This zooms in dramatically",
+            "animation": {
+              "fragment": true,
+              "type": "zoom"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "custom-order",
+        "layout": "single-column",
+        "transition": "concave",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Custom Fragment Order",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Use the `index` property to control reveal order:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "note",
+            "content": "I appear **third** (index: 2)",
+            "animation": {
+              "fragment": true,
+              "type": "slide-up",
+              "index": 2
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "info",
+            "content": "I appear **first** (index: 0)",
+            "animation": {
+              "fragment": true,
+              "type": "slide-up",
+              "index": 0
+            },
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "tip",
+            "content": "I appear **second** (index: 1)",
+            "animation": {
+              "fragment": true,
+              "type": "slide-up",
+              "index": 1
+            },
+            "position": {
+              "area": "content",
+              "order": 3
+            }
+          }
+        ]
+      },
+      {
+        "id": "bullet-fragments",
+        "layout": "single-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Animated Bullet Lists",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Entire bullet lists can be animated:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "First bullet point",
+              "Second bullet point",
+              "Third bullet point",
+              "Fourth bullet point"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "animation": {
+              "fragment": true,
+              "type": "fade"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "mixed-content",
+        "layout": "two-column",
+        "transition": "fade",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Mixed Animated Content",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Static Content",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "left"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Always visible",
+              "No animation",
+              "Shows immediately"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "left",
+              "order": 1
+            }
+          },
+          {
+            "type": "text",
+            "content": "### Animated Content",
+            "style": {
+              "fontSize": "large",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "right"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "tip",
+            "content": "Appears on first click",
+            "animation": {
+              "fragment": true,
+              "type": "slide-up"
+            },
+            "position": {
+              "area": "right",
+              "order": 1
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "info",
+            "content": "Appears on second click",
+            "animation": {
+              "fragment": true,
+              "type": "slide-up"
+            },
+            "position": {
+              "area": "right",
+              "order": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "slide-transitions",
+        "layout": "single-column",
+        "transition": "zoom",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Slide Transitions",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Each slide can have a different transition effect:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "**slide** - Horizontal slide (default)",
+              "**fade** - Crossfade between slides",
+              "**convex** - Convex flip",
+              "**concave** - Concave flip",
+              "**zoom** - Zoom in/out effect"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "note",
+            "content": "Navigate through this presentation to see different transition effects in action!",
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "best-practices",
+        "layout": "single-column",
+        "transition": "slide",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Animation Best Practices",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "tip",
+            "title": "Use Fragments Sparingly",
+            "content": "Too many fragments can make presentations feel slow. Aim for 3-5 fragments per slide maximum.",
+            "animation": {
+              "fragment": true,
+              "type": "fade",
+              "index": 0
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "info",
+            "title": "Match Animation to Content",
+            "content": "Use **slide-up** for lists building up, **fade** for subtle reveals, **zoom** for emphasis.",
+            "animation": {
+              "fragment": true,
+              "type": "fade",
+              "index": 1
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "warning",
+            "title": "Consistent Transitions",
+            "content": "Stick to 1-2 transition types throughout your presentation for a professional feel.",
+            "animation": {
+              "fragment": true,
+              "type": "fade",
+              "index": 2
+            },
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
