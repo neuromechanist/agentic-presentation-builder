@@ -47,6 +47,11 @@ function renderSlide(slide) {
       slideContent = renderSingleColumnLayout(elementsByArea);
   }
 
+  // Add speaker notes if present
+  if (slide.speakerNotes) {
+    slideContent += `\n<aside class="notes">${escapeHtml(slide.speakerNotes)}</aside>`;
+  }
+
   return `<section id="${slide.id}"${bgAttr}${transitionAttr}>\n${slideContent}\n</section>`;
 }
 
@@ -188,6 +193,10 @@ function renderElement(element) {
       return renderMermaidElement(element);
     case 'callout':
       return renderCalloutElement(element);
+    case 'code':
+      return renderCodeElement(element);
+    case 'table':
+      return renderTableElement(element);
     default:
       return '';
   }
@@ -296,6 +305,64 @@ function renderCalloutElement(element) {
   html += `<div class="callout-content">${content}</div>`;
   html += `</div>`;
 
+  return html;
+}
+
+/**
+ * Render code element
+ */
+function renderCodeElement(element) {
+  const code = escapeHtml(element.code);
+  const language = element.language || 'javascript';
+  const animation = buildAnimationAttributes(element.animation);
+
+  const classes = ['code-element', ...animation.classes].join(' ');
+  const attrs = animation.attributes ? ` ${animation.attributes}` : '';
+
+  let html = `<div class="${classes}"${attrs}>`;
+
+  if (element.caption) {
+    html += `<div class="code-caption">${escapeHtml(element.caption)}</div>`;
+  }
+
+  // Use pre/code with language class for syntax highlighting
+  html += `<pre${element.lineNumbers ? ' class="line-numbers"' : ''}><code class="language-${language}">${code}</code></pre>`;
+
+  html += `</div>`;
+  return html;
+}
+
+/**
+ * Render table element
+ */
+function renderTableElement(element) {
+  const animation = buildAnimationAttributes(element.animation);
+
+  const classes = ['table-element', ...animation.classes].join(' ');
+  const attrs = animation.attributes ? ` ${animation.attributes}` : '';
+
+  let html = `<div class="${classes}"${attrs}>`;
+
+  if (element.caption) {
+    html += `<div class="table-caption">${escapeHtml(element.caption)}</div>`;
+  }
+
+  html += '<table><thead><tr>';
+  element.headers.forEach(header => {
+    html += `<th>${escapeHtml(header)}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  element.rows.forEach(row => {
+    html += '<tr>';
+    row.forEach(cell => {
+      html += `<td>${escapeHtml(cell)}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  html += `</div>`;
   return html;
 }
 
