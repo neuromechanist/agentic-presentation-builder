@@ -199,8 +199,12 @@ function renderElement(element) {
 function renderTextElement(element) {
   const html = markdownToHtml(element.content);
   const styleAttr = buildStyleAttribute(element.style);
+  const animation = buildAnimationAttributes(element.animation);
 
-  return `<div class="text-element ${getSizeClass(element.style.fontSize)}" ${styleAttr}>${html}</div>`;
+  const classes = ['text-element', getSizeClass(element.style.fontSize), ...animation.classes].join(' ');
+  const attrs = [styleAttr, animation.attributes].filter(a => a).join(' ');
+
+  return `<div class="${classes}" ${attrs}>${html}</div>`;
 }
 
 /**
@@ -208,8 +212,8 @@ function renderTextElement(element) {
  */
 function renderBulletsElement(element) {
   const listType = element.bulletStyle === 'number' ? 'ol' : 'ul';
-  const listClass = `bullet-list style-${element.bulletStyle}`;
   const styleAttr = buildStyleAttribute(element.style);
+  const animation = buildAnimationAttributes(element.animation);
 
   const items = element.items.map(item => {
     if (typeof item === 'string') {
@@ -223,7 +227,10 @@ function renderBulletsElement(element) {
     }
   }).join('\n');
 
-  return `<${listType} class="${listClass} ${getSizeClass(element.style.fontSize)}" ${styleAttr}>\n${items}\n</${listType}>`;
+  const classes = ['bullet-list', `style-${element.bulletStyle}`, getSizeClass(element.style.fontSize), ...animation.classes].join(' ');
+  const attrs = [styleAttr, animation.attributes].filter(a => a).join(' ');
+
+  return `<${listType} class="${classes}" ${attrs}>\n${items}\n</${listType}>`;
 }
 
 /**
@@ -235,8 +242,12 @@ function renderImageElement(element) {
   const widthStyle = element.width !== 'auto' ? `width: ${element.width};` : '';
   const heightStyle = element.height !== 'auto' ? `height: ${element.height};` : '';
   const style = widthStyle || heightStyle ? ` style="${widthStyle}${heightStyle}"` : '';
+  const animation = buildAnimationAttributes(element.animation);
 
-  let html = `<div class="image-element">`;
+  const classes = ['image-element', ...animation.classes].join(' ');
+  const attrs = animation.attributes ? ` ${animation.attributes}` : '';
+
+  let html = `<div class="${classes}"${attrs}>`;
   html += `<img src="${src}" alt="${alt}"${style}>`;
 
   if (element.caption) {
@@ -253,8 +264,12 @@ function renderImageElement(element) {
 function renderMermaidElement(element) {
   // Don't escape - Mermaid.js needs raw diagram syntax
   const diagram = element.diagram;
+  const animation = buildAnimationAttributes(element.animation);
 
-  return `<div class="mermaid-element">
+  const classes = ['mermaid-element', ...animation.classes].join(' ');
+  const attrs = animation.attributes ? ` ${animation.attributes}` : '';
+
+  return `<div class="${classes}"${attrs}>
   <div class="mermaid">
 ${diagram}
   </div>
@@ -267,8 +282,12 @@ ${diagram}
 function renderCalloutElement(element) {
   const calloutType = element.calloutType || 'info';
   const content = markdownToHtml(element.content);
+  const animation = buildAnimationAttributes(element.animation);
 
-  let html = `<div class="callout callout-${calloutType}">`;
+  const classes = ['callout', `callout-${calloutType}`, ...animation.classes].join(' ');
+  const attrs = animation.attributes ? ` ${animation.attributes}` : '';
+
+  let html = `<div class="${classes}"${attrs}>`;
 
   if (element.title) {
     html += `<div class="callout-title">${escapeHtml(element.title)}</div>`;
@@ -278,6 +297,46 @@ function renderCalloutElement(element) {
   html += `</div>`;
 
   return html;
+}
+
+/**
+ * Build animation classes and attributes for an element
+ * @param {object} animation - Animation object
+ * @returns {object} Object with classes and attributes
+ */
+function buildAnimationAttributes(animation) {
+  if (!animation || animation.type === 'none') {
+    return { classes: [], attributes: '' };
+  }
+
+  const classes = [];
+  const attributes = [];
+
+  // Add fragment class if enabled
+  if (animation.fragment) {
+    classes.push('fragment');
+
+    // Map animation type to Reveal.js fragment animation classes
+    const animationTypeMap = {
+      'fade': 'fade-in',
+      'slide-up': 'fade-up',
+      'slide-down': 'fade-down',
+      'zoom': 'zoom-in'
+    };
+
+    const revealClass = animationTypeMap[animation.type] || 'fade-in';
+    classes.push(revealClass);
+
+    // Add fragment index if specified
+    if (animation.index !== undefined) {
+      attributes.push(`data-fragment-index="${animation.index}"`);
+    }
+  }
+
+  return {
+    classes,
+    attributes: attributes.join(' ')
+  };
 }
 
 /**
