@@ -387,19 +387,12 @@ hr {
 }
 
 /* Overview mode styles */
+.reveal.overview {
+  overflow-y: auto !important;
+}
+
 .reveal.overview .slides section {
   cursor: pointer;
-  position: relative;
-  padding-bottom: 40px !important;
-}
-
-/* Enable scrolling in overview mode */
-.reveal.overview {
-  overflow: auto !important;
-}
-
-.reveal.overview .slides {
-  overflow: visible !important;
 }
 
 /* Show slide number and title in overview mode using ::after pseudo-element */
@@ -407,16 +400,16 @@ hr {
   content: attr(data-slide-number);
   display: block !important;
   position: absolute;
-  bottom: 5px;
+  bottom: -25px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--theme-text, #1E293B);
   background: rgba(255, 255, 255, 0.95);
-  padding: 4px 12px;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  padding: 3px 8px;
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
   white-space: nowrap;
   pointer-events: none;
   z-index: 100;
