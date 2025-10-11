@@ -133,6 +133,11 @@
           "description": "Optional unique identifier for the slide",
           "examples": ["intro-slide", "slide-1"]
         },
+        "title": {
+          "type": "string",
+          "description": "Optional slide title shown in overview mode",
+          "examples": ["Introduction", "Key Concepts", "Summary"]
+        },
         "layout": {
           "type": "string",
           "description": "Slide layout type",
