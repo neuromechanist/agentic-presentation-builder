@@ -99,10 +99,7 @@ async function loadAndRenderPresentation() {
       minScale: 0.3,
       maxScale: 1.5,
       // Overview mode configuration
-      overview: true,
-      overviewSeparator: 1.5,
-      overviewScale: 0.2,
-      overviewTransition: 'slide'
+      overview: true
     });
 
     // Render Mermaid diagrams

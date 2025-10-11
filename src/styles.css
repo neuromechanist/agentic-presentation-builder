@@ -390,7 +390,6 @@ hr {
 .reveal.overview .slides section {
   cursor: pointer;
   position: relative;
-  overflow: visible !important;
   padding-bottom: 40px !important;
 }
 
