@@ -49,3 +49,6 @@ temp/
 
 # Examples and demos (keep in git, but ignore generated outputs)
 examples/output/
+
+# Public directory for testing with presentation assets
+public/
