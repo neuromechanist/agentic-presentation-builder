@@ -1,0 +1,464 @@
+{
+  "presentation": {
+    "metadata": {
+      "title": "Advanced Features Demo",
+      "author": "Agentic Presentation Builder",
+      "description": "Demonstrating code blocks, tables, and presentation controls",
+      "theme": "default",
+      "aspectRatio": "16:9",
+      "controls": {
+        "slideNumbers": true,
+        "progress": true,
+        "showNotes": false
+      }
+    },
+    "slides": [
+      {
+        "id": "title",
+        "layout": "title",
+        "speakerNotes": "Welcome everyone! This presentation demonstrates Phase 4 advanced features including code blocks and tables.",
+        "elements": [
+          {
+            "type": "text",
+            "content": "# Advanced Features",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "center"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Code blocks, tables, and presentation controls",
+            "style": {
+              "fontSize": "large",
+              "alignment": "center",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "center",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "code-basics",
+        "layout": "single-column",
+        "speakerNotes": "Code blocks support syntax highlighting for multiple languages. Notice the line numbers and caption.",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Code Blocks with Syntax Highlighting",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Display code with automatic syntax highlighting for multiple programming languages:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "code",
+            "code": "function greet(name) {\n  console.log(`Hello, ${name}!`);\n  return `Welcome to the presentation`;\n}\n\ngreet('Developer');",
+            "language": "javascript",
+            "caption": "example.js - Basic JavaScript function",
+            "lineNumbers": true,
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "python-code",
+        "layout": "single-column",
+        "speakerNotes": "Python is another popular language with great syntax highlighting support.",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Python Example",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "code",
+            "code": "def calculate_fibonacci(n):\n    if n <= 1:\n        return n\n    return calculate_fibonacci(n-1) + calculate_fibonacci(n-2)\n\n# Calculate first 10 Fibonacci numbers\nfor i in range(10):\n    print(f\"F({i}) = {calculate_fibonacci(i)}\")",
+            "language": "python",
+            "caption": "fibonacci.py - Recursive Fibonacci implementation",
+            "lineNumbers": true,
+            "position": {
+              "area": "content"
+            }
+          }
+        ]
+      },
+      {
+        "id": "tables",
+        "layout": "single-column",
+        "speakerNotes": "Tables are perfect for displaying structured data. Notice the hover effect on rows.",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Data Tables",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Present structured data with clean, responsive tables:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "table",
+            "headers": ["Feature", "Status", "Phase"],
+            "rows": [
+              ["Code Blocks", "Complete", "Phase 4"],
+              ["Tables", "Complete", "Phase 4"],
+              ["Speaker Notes", "Complete", "Phase 4"],
+              ["Animations", "Complete", "Phase 3"],
+              ["Callout Boxes", "Complete", "Phase 3"],
+              ["Themes", "Complete", "Phase 2"]
+            ],
+            "caption": "Table 1: Feature Development Status",
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "comparison-table",
+        "layout": "single-column",
+        "speakerNotes": "This comparison table shows different programming languages and their key characteristics.",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Language Comparison",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "table",
+            "headers": ["Language", "Typing", "Paradigm", "Use Case"],
+            "rows": [
+              ["JavaScript", "Dynamic", "Multi-paradigm", "Web Development"],
+              ["Python", "Dynamic", "Multi-paradigm", "Data Science, AI"],
+              ["Java", "Static", "Object-Oriented", "Enterprise Apps"],
+              ["Go", "Static", "Concurrent", "Cloud Services"],
+              ["Rust", "Static", "Systems", "Performance Critical"]
+            ],
+            "caption": "Table 2: Programming Language Characteristics",
+            "position": {
+              "area": "content"
+            }
+          }
+        ]
+      },
+      {
+        "id": "code-and-table",
+        "layout": "two-column",
+        "speakerNotes": "Combining code and tables in a two-column layout provides a comprehensive view.",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Code & Data Together",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "code",
+            "code": "const users = [\n  { name: 'Alice', age: 30 },\n  { name: 'Bob', age: 25 },\n  { name: 'Carol', age: 35 }\n];\n\nusers.forEach(user => {\n  console.log(\n    `${user.name} is ${user.age}`\n  );\n});",
+            "language": "javascript",
+            "caption": "data.js",
+            "lineNumbers": true,
+            "position": {
+              "area": "left"
+            }
+          },
+          {
+            "type": "table",
+            "headers": ["Name", "Age", "Role"],
+            "rows": [
+              ["Alice", "30", "Developer"],
+              ["Bob", "25", "Designer"],
+              ["Carol", "35", "Manager"]
+            ],
+            "caption": "User Data",
+            "position": {
+              "area": "right"
+            }
+          }
+        ]
+      },
+      {
+        "id": "mixed-content",
+        "layout": "single-column",
+        "speakerNotes": "This slide combines multiple element types: callouts, code, and text. Press 's' to see these speaker notes.",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Combining Element Types",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "tip",
+            "title": "Pro Tip",
+            "content": "Mix code blocks, tables, and other elements to create rich, informative slides.",
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "code",
+            "code": "// TypeScript example\ninterface User {\n  id: number;\n  name: string;\n  email: string;\n}\n\nconst user: User = {\n  id: 1,\n  name: 'John Doe',\n  email: 'john@example.com'\n};",
+            "language": "typescript",
+            "caption": "types.ts - TypeScript interface",
+            "lineNumbers": true,
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "json-example",
+        "layout": "single-column",
+        "speakerNotes": "JSON syntax highlighting is crucial for configuration examples.",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## JSON Configuration",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "JSON syntax highlighting for configuration examples:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "code",
+            "code": "{\n  \"presentation\": {\n    \"metadata\": {\n      \"title\": \"My Presentation\",\n      \"theme\": \"default\",\n      \"controls\": {\n        \"slideNumbers\": true,\n        \"progress\": true\n      }\n    },\n    \"slides\": [\n      {\n        \"id\": \"intro\",\n        \"layout\": \"title\",\n        \"elements\": []\n      }\n    ]\n  }\n}",
+            "language": "json",
+            "caption": "presentation.json - Schema example",
+            "lineNumbers": true,
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "speaker-notes",
+        "layout": "single-column",
+        "speakerNotes": "Speaker notes are visible when you press 's' during the presentation. They're perfect for reminders, talking points, or additional context that you don't want on the slide itself. Try it now - press 's' to see this note!",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Speaker Notes",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Every slide can include speaker notes for presentation mode.",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "info",
+            "title": "How to View Speaker Notes",
+            "content": "Press **'s'** during the presentation to open speaker notes view. This slide has detailed notes to try!",
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "Speaker notes support plain text",
+              "Perfect for talking points and reminders",
+              "Only visible in presenter mode",
+              "Accessible via keyboard shortcut"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "presentation-controls",
+        "layout": "single-column",
+        "speakerNotes": "Presentation controls can be configured in the metadata. Notice the slide numbers and progress bar in this presentation.",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Presentation Controls",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Configure presentation UI elements in metadata:",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "code",
+            "code": "\"controls\": {\n  \"slideNumbers\": true,\n  \"progress\": true,\n  \"showNotes\": false\n}",
+            "language": "json",
+            "caption": "Controls configuration",
+            "lineNumbers": false,
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "table",
+            "headers": ["Control", "Description", "This Presentation"],
+            "rows": [
+              ["slideNumbers", "Show slide numbers (format: current/total)", "Enabled"],
+              ["progress", "Show progress bar at bottom", "Enabled"],
+              ["showNotes", "Enable speaker notes by default", "Disabled"]
+            ],
+            "caption": "Available presentation controls",
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "summary",
+        "layout": "single-column",
+        "speakerNotes": "Wrap up by emphasizing how these features make technical presentations more effective.",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Phase 4 Summary",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "tip",
+            "title": "New Capabilities",
+            "content": "Phase 4 adds professional features for technical presentations.",
+            "position": {
+              "area": "content"
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              "**Code blocks** - Syntax highlighting for 9+ languages",
+              "**Tables** - Clean, responsive data presentation",
+              "**Speaker notes** - Hidden presenter guidance",
+              "**Presentation controls** - Customizable UI elements"
+            ],
+            "bulletStyle": "disc",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "content",
+              "order": 1
+            }
+          },
+          {
+            "type": "callout",
+            "calloutType": "info",
+            "content": "All features work seamlessly with existing elements, themes, and animations!",
+            "position": {
+              "area": "content",
+              "order": 2
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
