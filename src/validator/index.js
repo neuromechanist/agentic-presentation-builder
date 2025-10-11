@@ -4,16 +4,7 @@
  */
 
 import Ajv from 'ajv';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Load schema from file
-const schemaPath = join(__dirname, '../../schema/presentation.schema.json');
-const presentationSchema = JSON.parse(readFileSync(schemaPath, 'utf-8'));
+import presentationSchema from '../../schema/presentation.schema.json';
 
 /**
  * Initialize Ajv validator with the presentation schema
