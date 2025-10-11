@@ -44,6 +44,27 @@
               "default": "16:9",
               "examples": ["16:9"]
             },
+            "controls": {
+              "type": "object",
+              "description": "Presentation controls and UI options",
+              "properties": {
+                "slideNumbers": {
+                  "type": "boolean",
+                  "description": "Show slide numbers",
+                  "default": false
+                },
+                "progress": {
+                  "type": "boolean",
+                  "description": "Show progress bar",
+                  "default": true
+                },
+                "showNotes": {
+                  "type": "boolean",
+                  "description": "Enable speaker notes view (press 's' during presentation)",
+                  "default": false
+                }
+              }
+            },
             "customTheme": {
               "type": "object",
               "description": "Custom theme colors and fonts (optional)",
@@ -125,9 +146,14 @@
         },
         "transition": {
           "type": "string",
-          "description": "Slide transition effect (Phase 3 feature)",
+          "description": "Slide transition effect",
           "enum": ["slide", "fade", "convex", "concave", "zoom"],
           "default": "slide"
+        },
+        "speakerNotes": {
+          "type": "string",
+          "description": "Speaker notes for this slide (visible in presenter mode)",
+          "examples": ["Remember to emphasize the key points", "Pause here for questions"]
         },
         "elements": {
           "type": "array",
@@ -139,7 +165,9 @@
               { "$ref": "#/definitions/bulletsElement" },
               { "$ref": "#/definitions/imageElement" },
               { "$ref": "#/definitions/mermaidElement" },
-              { "$ref": "#/definitions/calloutElement" }
+              { "$ref": "#/definitions/calloutElement" },
+              { "$ref": "#/definitions/codeElement" },
+              { "$ref": "#/definitions/tableElement" }
             ]
           }
         }
@@ -327,6 +355,88 @@
           "type": "string",
           "description": "Optional callout title",
           "examples": ["Important Note", "Warning"]
+        },
+        "position": {
+          "$ref": "#/definitions/position"
+        },
+        "animation": {
+          "$ref": "#/definitions/animation"
+        }
+      }
+    },
+    "codeElement": {
+      "type": "object",
+      "description": "Code block element with syntax highlighting",
+      "required": ["type", "code"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "code"
+        },
+        "code": {
+          "type": "string",
+          "description": "Code content",
+          "minLength": 1,
+          "examples": ["function hello() {\n  console.log('Hello');\n}"]
+        },
+        "language": {
+          "type": "string",
+          "description": "Programming language for syntax highlighting",
+          "examples": ["javascript", "python", "java", "go", "rust", "typescript", "html", "css", "json"],
+          "default": "javascript"
+        },
+        "caption": {
+          "type": "string",
+          "description": "Optional caption for the code block",
+          "examples": ["Example 1: Basic function", "src/components/Header.js"]
+        },
+        "lineNumbers": {
+          "type": "boolean",
+          "description": "Show line numbers",
+          "default": true
+        },
+        "position": {
+          "$ref": "#/definitions/position"
+        },
+        "animation": {
+          "$ref": "#/definitions/animation"
+        }
+      }
+    },
+    "tableElement": {
+      "type": "object",
+      "description": "Table element for structured data",
+      "required": ["type", "headers", "rows"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "table"
+        },
+        "headers": {
+          "type": "array",
+          "description": "Table header cells",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "examples": [["Name", "Age", "City"]]
+        },
+        "rows": {
+          "type": "array",
+          "description": "Table data rows",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "examples": [[["Alice", "30", "NYC"], ["Bob", "25", "LA"]]]
+        },
+        "caption": {
+          "type": "string",
+          "description": "Optional table caption",
+          "examples": ["Table 1: User Data"]
         },
         "position": {
           "$ref": "#/definitions/position"

@@ -5,7 +5,19 @@
 
 import Reveal from 'reveal.js';
 import mermaid from 'mermaid';
+import Prism from 'prismjs';
 import { buildPresentation } from './index-browser.js';
+
+// Import Prism languages
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-go';
+import 'prismjs/components/prism-rust';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-markup';
 
 // Get presentation path from URL parameter or default to hello-world
 const params = new URLSearchParams(window.location.search);
@@ -65,14 +77,22 @@ async function loadAndRenderPresentation() {
       }
     });
 
+    // Get controls from metadata
+    const controls = built.metadata.controls || {
+      slideNumbers: false,
+      progress: true,
+      showNotes: false
+    };
+
     // Initialize Reveal.js
     await Reveal.initialize({
       hash: true,
       controls: true,
-      progress: true,
+      progress: controls.progress,
       center: false,
       transition: 'slide',
-      slideNumber: 'c/t',
+      slideNumber: controls.slideNumbers ? 'c/t' : false,
+      showNotes: controls.showNotes,
       width: built.dimensions.width,
       height: built.dimensions.height,
       margin: 0.04,
@@ -84,6 +104,9 @@ async function loadAndRenderPresentation() {
     await mermaid.run({
       querySelector: '.mermaid'
     });
+
+    // Highlight code blocks
+    Prism.highlightAll();
 
     console.log('Presentation loaded successfully:', built.metadata.title);
 
