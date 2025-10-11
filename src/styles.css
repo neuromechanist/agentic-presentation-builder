@@ -389,10 +389,18 @@ hr {
 /* Overview mode styles */
 .reveal.overview {
   overflow-y: auto !important;
+  height: 100vh !important;
+}
+
+.reveal.overview .slides {
+  height: auto !important;
+  padding-bottom: 50px;
 }
 
 .reveal.overview .slides section {
   cursor: pointer;
+  overflow: visible !important;
+  margin-bottom: 45px !important;
 }
 
 /* Show slide number and title in overview mode using ::after pseudo-element */
@@ -400,20 +408,21 @@ hr {
   content: attr(data-slide-number);
   display: block !important;
   position: absolute;
-  bottom: -25px;
+  bottom: -250px;
   left: 50%;
-  transform: translateX(-50%);
-  font-size: 10px;
-  font-weight: 600;
+  transform: translateX(-50%) scale(5);
+  transform-origin: center top;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--theme-text, #1E293B);
   background: rgba(255, 255, 255, 0.95);
-  padding: 3px 8px;
-  border-radius: 3px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  padding: 6px 12px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   white-space: nowrap;
   pointer-events: none;
   z-index: 100;
-  max-width: 90%;
+  max-width: 1000px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
