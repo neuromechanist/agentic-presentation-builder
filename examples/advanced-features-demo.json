@@ -15,6 +15,7 @@
     "slides": [
       {
         "id": "title",
+        "title": "Advanced Features",
         "layout": "title",
         "speakerNotes": "Welcome everyone! This presentation demonstrates Phase 4 advanced features including code blocks and tables.",
         "elements": [
@@ -47,6 +48,7 @@
       },
       {
         "id": "code-basics",
+        "title": "Code Blocks",
         "layout": "single-column",
         "speakerNotes": "Code blocks support syntax highlighting for multiple languages. Notice the line numbers and caption.",
         "elements": [
@@ -85,6 +87,7 @@
       },
       {
         "id": "python-code",
+        "title": "Python Example",
         "layout": "single-column",
         "speakerNotes": "Python is another popular language with great syntax highlighting support.",
         "elements": [
@@ -112,6 +115,7 @@
       },
       {
         "id": "tables",
+        "title": "Data Tables",
         "layout": "single-column",
         "speakerNotes": "Tables are perfect for displaying structured data. Notice the hover effect on rows.",
         "elements": [
@@ -303,6 +307,7 @@
       },
       {
         "id": "speaker-notes",
+        "title": "Speaker Notes",
         "layout": "single-column",
         "speakerNotes": "Speaker notes are visible when you press 's' during the presentation. They're perfect for reminders, talking points, or additional context that you don't want on the slide itself. Try it now - press 's' to see this note!",
         "elements": [
@@ -409,6 +414,7 @@
       },
       {
         "id": "summary",
+        "title": "Summary",
         "layout": "single-column",
         "speakerNotes": "Wrap up by emphasizing how these features make technical presentations more effective.",
         "elements": [
