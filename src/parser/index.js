@@ -46,6 +46,7 @@ function parseMetadata(metadata) {
 function parseSlide(slide, index) {
   return {
     id: slide.id || `slide-${index}`,
+    title: slide.title || null,
     layout: slide.layout || 'single-column',
     background: slide.background || null,
     transition: slide.transition || 'slide',
