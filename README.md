@@ -235,11 +235,334 @@ The `examples/` directory contains several demonstration presentations:
 
 ## Schema Documentation
 
-For complete JSON schema documentation, see:
-- **Schema file**: `schema/presentation.schema.json`
-- Detailed validation rules
-- All available element types and properties
-- Theme customization options
+### Complete Element Type Reference
+
+#### Text Element
+```json
+{
+  "type": "text",
+  "content": "# Heading\nThis is **bold** and *italic* text",
+  "style": {
+    "fontSize": "large",
+    "alignment": "center",
+    "color": "#1E293B",
+    "fontWeight": "bold"
+  },
+  "position": {
+    "area": "header",
+    "order": 0
+  },
+  "animation": {
+    "fragment": true,
+    "type": "fade",
+    "index": 0
+  }
+}
+```
+
+#### Bullets Element
+```json
+{
+  "type": "bullets",
+  "items": [
+    "Simple bullet point",
+    {
+      "text": "Parent item",
+      "children": ["Nested item 1", "Nested item 2"]
+    }
+  ],
+  "bulletStyle": "disc",
+  "style": {
+    "fontSize": "medium"
+  },
+  "animation": {
+    "fragment": true,
+    "type": "slide-up",
+    "index": 1
+  }
+}
+```
+
+#### Image Element
+```json
+{
+  "type": "image",
+  "src": "./images/diagram.png",
+  "alt": "System architecture diagram",
+  "width": "50%",
+  "height": "auto",
+  "caption": "**Figure 1:** System Architecture",
+  "position": {
+    "area": "content"
+  },
+  "animation": {
+    "fragment": true,
+    "type": "zoom"
+  }
+}
+```
+
+#### Mermaid Diagram Element
+```json
+{
+  "type": "mermaid",
+  "diagram": "graph TD\n  A[Start] --> B[Process]\n  B --> C[End]",
+  "theme": "default",
+  "position": {
+    "area": "content"
+  }
+}
+```
+
+#### Callout Element
+```json
+{
+  "type": "callout",
+  "calloutType": "tip",
+  "title": "Pro Tip",
+  "content": "Use **keyboard shortcuts** for faster navigation",
+  "position": {
+    "area": "content"
+  },
+  "animation": {
+    "fragment": true,
+    "type": "fade"
+  }
+}
+```
+**Callout Types:** `tip` (green), `warning` (yellow), `important` (red), `note` (blue), `info` (gray)
+
+#### Code Element
+```json
+{
+  "type": "code",
+  "code": "function hello() {\n  console.log('Hello, World!');\n}",
+  "language": "javascript",
+  "caption": "example.js",
+  "lineNumbers": true,
+  "position": {
+    "area": "content"
+  }
+}
+```
+**Supported Languages:** javascript, typescript, python, java, go, rust, html, css, json
+
+#### Table Element
+```json
+{
+  "type": "table",
+  "headers": ["Name", "Age", "City"],
+  "rows": [
+    ["Alice", "30", "NYC"],
+    ["Bob", "25", "LA"]
+  ],
+  "caption": "**Table 1:** User Data",
+  "position": {
+    "area": "content"
+  }
+}
+```
+
+### Slide Configuration
+
+#### Slide Properties
+```json
+{
+  "id": "unique-slide-id",
+  "title": "Slide Title (shown in overview)",
+  "layout": "single-column",
+  "background": "#F8FAFC",
+  "transition": "fade",
+  "speakerNotes": "Remember to emphasize key points",
+  "elements": [...]
+}
+```
+
+**Layout Types:**
+- `single-column`: Standard vertical layout
+- `two-column`: Side-by-side with left/right areas
+- `title`: Centered content for title slides
+- `blank`: Custom positioning
+
+**Transitions:** `slide`, `fade`, `convex`, `concave`, `zoom`
+
+### Presentation Metadata
+
+```json
+{
+  "presentation": {
+    "metadata": {
+      "title": "Presentation Title",
+      "author": "Author Name",
+      "description": "Brief description",
+      "theme": "default",
+      "aspectRatio": "16:9",
+      "controls": {
+        "slideNumbers": true,
+        "progress": true,
+        "showNotes": false
+      },
+      "customTheme": {
+        "colors": {
+          "primary": "#2563EB",
+          "background": "#FFFFFF",
+          "text": "#1E293B",
+          "accent": "#10B981"
+        },
+        "fonts": {
+          "heading": "Inter, sans-serif",
+          "body": "Inter, sans-serif"
+        }
+      }
+    },
+    "slides": [...]
+  }
+}
+```
+
+**Built-in Themes:** `default`, `light`, `dark`, `academic`, `minimal`
+
+### Animation System
+
+**Progressive Reveal with Fragments:**
+```json
+{
+  "elements": [
+    {
+      "type": "text",
+      "content": "First (appears immediately)",
+      "animation": { "fragment": false }
+    },
+    {
+      "type": "bullets",
+      "items": ["Second (appears on click)"],
+      "animation": {
+        "fragment": true,
+        "type": "fade",
+        "index": 0
+      }
+    },
+    {
+      "type": "text",
+      "content": "Third (appears after bullets)",
+      "animation": {
+        "fragment": true,
+        "type": "slide-up",
+        "index": 1
+      }
+    }
+  ]
+}
+```
+
+**Animation Types:**
+- `fade`: Fade in
+- `slide-up`: Slide up from bottom
+- `slide-down`: Slide down from top
+- `zoom`: Zoom in
+- `none`: No animation
+
+**Fragment Order:**
+- Elements with `fragment: false` appear immediately
+- Elements with `fragment: true` appear on click/space
+- `index` controls the order (0, 1, 2, ...)
+- Multiple elements can share the same index (appear together)
+
+## Validation Guide
+
+### Using the Built-in Validator
+
+The project includes an Ajv-based validator that checks your JSON against the schema:
+
+```javascript
+import { validatePresentation, getValidationReport } from './src/validator/index.js';
+
+const presentation = { /* your JSON */ };
+
+// Get validation result
+const result = validatePresentation(presentation);
+if (result.valid) {
+  console.log('Valid presentation!');
+} else {
+  console.error('Validation errors:', result.errors);
+}
+
+// Get human-readable report
+const report = getValidationReport(presentation);
+console.log(report);
+```
+
+### Common Validation Errors
+
+**Missing Required Fields:**
+```
+Error: Missing required field: title
+Fix: Add "title" to metadata
+```
+
+**Invalid Enum Value:**
+```
+Error: Invalid value. Must be one of: fade, slide, convex, concave, zoom
+Fix: Use one of the allowed transition types
+```
+
+**Type Mismatch:**
+```
+Error: Expected boolean but got string
+Fix: Change "slideNumbers": "true" to "slideNumbers": true
+```
+
+**Invalid Color Format:**
+```
+Error: Value does not match required format (e.g., hex color: #FFFFFF)
+Fix: Use proper hex format: "#1E293B" not "blue"
+```
+
+### Validation Checklist
+
+Before using a presentation JSON:
+
+1. **Required Fields:**
+   - ✅ `presentation.metadata.title` exists
+   - ✅ `presentation.slides` array has at least 1 slide
+   - ✅ Each slide has `elements` array (can be empty)
+   - ✅ Each element has `type` and required fields for that type
+
+2. **Valid Values:**
+   - ✅ Theme is one of: default, light, dark, academic, minimal
+   - ✅ Layout is one of: single-column, two-column, title, blank
+   - ✅ Transition is one of: slide, fade, convex, concave, zoom
+   - ✅ Colors use hex format: #RRGGBB or #RGB
+   - ✅ Font sizes use: small, medium, large, xl, xxl
+
+3. **Element-Specific:**
+   - ✅ Text/Bullets: `content`/`items` not empty
+   - ✅ Image: `src` is valid path/URL
+   - ✅ Code: `code` not empty, `language` is supported
+   - ✅ Table: `headers` and `rows` arrays not empty
+   - ✅ Mermaid: `diagram` contains valid Mermaid syntax
+
+4. **Animation:**
+   - ✅ Fragment indices are integers ≥ 0
+   - ✅ Animation type is: fade, slide-up, slide-down, zoom, or none
+   - ✅ Elements in same slide don't have duplicate fragment indices (unless intentional)
+
+### Command-Line Validation
+
+```bash
+# Validate a presentation file
+npm run validate-schema
+
+# Or validate specific file (if custom script added)
+node scripts/validate.js examples/your-presentation.json
+```
+
+### Online Schema Reference
+
+Complete schema with all validation rules:
+- **File**: `schema/presentation.schema.json`
+- **$schema**: JSON Schema Draft-07
+- **Validation**: Ajv with all errors enabled
 
 ## Project Structure
 
