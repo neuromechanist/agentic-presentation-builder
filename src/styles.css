@@ -386,6 +386,62 @@ hr {
   }
 }
 
+/* Overview mode styles */
+.reveal.overview .slides section {
+  cursor: pointer;
+  position: relative;
+  overflow: visible !important;
+  padding-bottom: 40px !important;
+}
+
+/* Enable scrolling in overview mode */
+.reveal.overview {
+  overflow: auto !important;
+}
+
+.reveal.overview .slides {
+  overflow: visible !important;
+}
+
+/* Show slide number and title in overview mode using ::after pseudo-element */
+.reveal.overview .slides section::after {
+  content: attr(data-slide-number);
+  display: block !important;
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-text, #1E293B);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 4px 12px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 100;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Show slide title if available */
+.reveal.overview .slides section[data-slide-title]::after {
+  content: attr(data-slide-number) ": " attr(data-slide-title);
+}
+
+/* Hover effect for slides in overview */
+.reveal.overview .slides section:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+.reveal.overview .slides section:hover::after {
+  background: var(--theme-primary, #2563EB);
+  color: white;
+}
+
 /* Print styles */
 @media print {
   .reveal section {
