@@ -12,6 +12,10 @@ Enable AI agents and LLMs to create professional presentations by generating sim
 npm install
 npm run dev
 # Open http://localhost:3000/?presentation=./examples/hello-world.json
+
+# For your own files use the public directory or a local server
+# e.g. http://localhost:3000/?presentation=./public/my-presentation.json
+
 ```
 
 ## Features Overview
