@@ -9,200 +9,46 @@ Enable AI agents and LLMs to create professional presentations by generating sim
 ## Quick Start
 
 ```bash
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
-
-# Open browser to http://localhost:3000
+# Open http://localhost:3000/?presentation=./examples/hello-world.json
 ```
 
-View example presentations:
-- `http://localhost:3000/?presentation=./examples/hello-world.json`
-- `http://localhost:3000/?presentation=./examples/advanced-features-demo.json`
+## Features Overview
 
-## Features
+**7 Element Types:** [Text](#text-element) • [Bullets](#bullets-element) • [Images](#image-element) • [Mermaid Diagrams](#mermaid-diagram-element) • [Callouts](#callout-element) • [Code Blocks](#code-element) • [Tables](#table-element)
 
-### Content Elements
+**Layouts:** [4 layout types](#slide-configuration) (single-column, two-column, title, blank) with flexible positioning
 
-**Text & Formatting**
-- ✅ Markdown support for rich text formatting
-- ✅ Multiple font sizes (small, medium, large, xl, xxl)
-- ✅ Text alignment (left, center, right, justify)
-- ✅ Custom colors and font weights
-- ✅ Headings, bold, italic, links, blockquotes
+**Animations:** [Progressive reveal system](#animation-system) with 5 animation types + fragment ordering
 
-**Lists**
-- ✅ Bullet points (disc, circle, square, none)
-- ✅ Numbered lists
-- ✅ Nested lists with multiple levels
-- ✅ Markdown formatting within list items
+**Transitions:** [5 slide transitions](#slide-configuration) (slide, fade, convex, concave, zoom)
 
-**Images**
-- ✅ Local and remote images
-- ✅ Custom width and height
-- ✅ Image captions with markdown support
-- ✅ Alt text for accessibility
+**Themes:** [5 built-in + custom](#presentation-metadata) themes with colors and fonts
 
-**Diagrams**
-- ✅ Mermaid.js integration
-- ✅ Flowcharts, sequence diagrams, Gantt charts
-- ✅ Git graphs and state diagrams
-- ✅ Customizable themes
+**Navigation:** Keyboard, touch, [overview mode](#navigation) (Escape), speaker notes (S)
 
-**Callout Boxes**
-- ✅ Five types: tip, warning, important, note, info
-- ✅ Optional titles
-- ✅ Markdown content support
-- ✅ Distinct color schemes
+## Minimal Example
 
-**Code Blocks**
-- ✅ Syntax highlighting for 9+ languages
-  - JavaScript, TypeScript, Python
-  - Java, Go, Rust
-  - HTML, CSS, JSON
-- ✅ Optional line numbers
-- ✅ Code captions
-- ✅ Prism.js powered highlighting
-
-**Tables**
-- ✅ Headers and data rows
-- ✅ Optional captions
-- ✅ Zebra striping
-- ✅ Hover effects
-- ✅ Responsive overflow handling
-
-### Layout System
-
-**Layout Types**
-- ✅ **Single-column**: Standard vertical layout
-- ✅ **Two-column**: Side-by-side content
-- ✅ **Title**: Centered content for title slides
-- ✅ **Blank**: Custom positioning
-
-**Positioning Areas**
-- ✅ Header, Content, Footer
-- ✅ Left, Right (for two-column)
-- ✅ Center (for title slides)
-- ✅ Element ordering within areas
-
-### Animations
-
-**Element Animations**
-- ✅ Fragment-based progressive reveal
-- ✅ Animation types: fade, slide-up, slide-down, zoom
-- ✅ Custom animation order with indices
-- ✅ Per-element animation control
-
-**Slide Transitions**
-- ✅ Five transition styles: slide, fade, convex, concave, zoom
-- ✅ Per-slide transition overrides
-- ✅ Smooth, hardware-accelerated animations
-
-### Presentation Controls
-
-**Navigation**
-- ✅ Keyboard navigation (arrows, space)
-- ✅ Touch/swipe support
-- ✅ Overview mode (press Escape)
-- ✅ Slide numbers (current/total format)
-- ✅ Progress bar
-
-**Overview Mode**
-- ✅ Grid view of all slides
-- ✅ Vertical scrolling support
-- ✅ Slide titles displayed underneath
-- ✅ Click to navigate to any slide
-- ✅ Hover effects with scaling
-
-**Presenter Features**
-- ✅ Speaker notes (press 's' to view)
-- ✅ Notes hidden from audience
-- ✅ Per-slide notes support
-- ✅ Configurable notes display
-
-### Theming
-
-**Built-in Themes**
-- ✅ Default, Light, Dark, Academic, Minimal
-
-**Custom Themes**
-- ✅ Custom color palettes (primary, background, text, accent)
-- ✅ Custom fonts (heading and body)
-- ✅ CSS variable system
-- ✅ Per-presentation theme overrides
-
-**Styling**
-- ✅ Responsive design (16:9 and 4:3 aspect ratios)
-- ✅ Print-friendly styles
-- ✅ High-DPI display support
-
-## Usage
-
-### 1. Create a JSON Presentation
+Single slide presentation:
 
 ```json
 {
   "presentation": {
     "metadata": {
-      "title": "My Presentation",
-      "author": "Your Name",
-      "description": "A brief description",
-      "theme": "default",
-      "aspectRatio": "16:9",
-      "controls": {
-        "slideNumbers": true,
-        "progress": true,
-        "showNotes": false
-      }
+      "title": "Hello World",
+      "theme": "default"
     },
     "slides": [
       {
-        "id": "intro",
-        "title": "Introduction",
+        "title": "Welcome",
         "layout": "title",
         "elements": [
           {
             "type": "text",
-            "content": "# Welcome",
-            "style": {
-              "fontSize": "xxl",
-              "alignment": "center"
-            },
-            "position": {
-              "area": "center"
-            }
-          }
-        ]
-      },
-      {
-        "id": "content",
-        "title": "Main Content",
-        "layout": "single-column",
-        "speakerNotes": "Remember to pause here for questions",
-        "elements": [
-          {
-            "type": "text",
-            "content": "## Key Points",
-            "position": {
-              "area": "header"
-            }
-          },
-          {
-            "type": "bullets",
-            "items": [
-              "First point",
-              "Second point",
-              "Third point"
-            ],
-            "position": {
-              "area": "content"
-            },
-            "animation": {
-              "fragment": true,
-              "type": "fade"
-            }
+            "content": "# Hello World\nWelcome to Agentic Presentation Builder",
+            "style": { "fontSize": "xxl", "alignment": "center" },
+            "position": { "area": "center" }
           }
         ]
       }
@@ -211,33 +57,27 @@ View example presentations:
 }
 ```
 
-### 2. View Your Presentation
+View: `http://localhost:3000/?presentation=./examples/your-file.json`
 
-Place your JSON file in `examples/` and open:
-```
-http://localhost:3000/?presentation=./examples/your-file.json
-```
+## Navigation
 
-### 3. Navigate
-
-- **Arrow keys**: Navigate between slides
-- **Space**: Next slide
-- **Escape**: Toggle overview mode
+- **Arrow keys** / **Space**: Navigate slides
+- **Escape**: Toggle overview mode (grid view with slide titles)
 - **S**: Show speaker notes
-- **F**: Fullscreen mode
+- **F**: Fullscreen
 
 ## Examples
 
-The `examples/` directory contains several demonstration presentations:
+- `examples/hello-world.json` - Minimal structure
+- `examples/advanced-features-demo.json` - All features showcase
 
-- **hello-world.json**: Minimal example showing basic structure
-- **advanced-features-demo.json**: Comprehensive showcase of all features including code blocks, tables, animations, and speaker notes
+---
 
-## Schema Documentation
+# Complete Schema Documentation
 
-### Complete Element Type Reference
+## Element Types Reference
 
-#### Text Element
+### Text Element
 ```json
 {
   "type": "text",
@@ -259,8 +99,11 @@ The `examples/` directory contains several demonstration presentations:
   }
 }
 ```
+**Font Sizes:** `small`, `medium`, `large`, `xl`, `xxl`
+**Alignment:** `left`, `center`, `right`, `justify`
+**Font Weight:** `normal`, `bold`, `light`
 
-#### Bullets Element
+### Bullets Element
 ```json
 {
   "type": "bullets",
@@ -272,9 +115,7 @@ The `examples/` directory contains several demonstration presentations:
     }
   ],
   "bulletStyle": "disc",
-  "style": {
-    "fontSize": "medium"
-  },
+  "style": { "fontSize": "medium" },
   "animation": {
     "fragment": true,
     "type": "slide-up",
@@ -282,8 +123,9 @@ The `examples/` directory contains several demonstration presentations:
   }
 }
 ```
+**Bullet Styles:** `disc`, `circle`, `square`, `number`, `none`
 
-#### Image Element
+### Image Element
 ```json
 {
   "type": "image",
@@ -292,47 +134,38 @@ The `examples/` directory contains several demonstration presentations:
   "width": "50%",
   "height": "auto",
   "caption": "**Figure 1:** System Architecture",
-  "position": {
-    "area": "content"
-  },
-  "animation": {
-    "fragment": true,
-    "type": "zoom"
-  }
+  "position": { "area": "content" },
+  "animation": { "fragment": true, "type": "zoom" }
 }
 ```
+**Width/Height:** Percentage (`50%`), pixels (`400px`), or `auto`
 
-#### Mermaid Diagram Element
+### Mermaid Diagram Element
 ```json
 {
   "type": "mermaid",
   "diagram": "graph TD\n  A[Start] --> B[Process]\n  B --> C[End]",
   "theme": "default",
-  "position": {
-    "area": "content"
-  }
+  "position": { "area": "content" }
 }
 ```
+**Themes:** `default`, `dark`, `forest`, `neutral`
+**Diagram Types:** flowcharts, sequence, Gantt, git graphs, state diagrams
 
-#### Callout Element
+### Callout Element
 ```json
 {
   "type": "callout",
   "calloutType": "tip",
   "title": "Pro Tip",
   "content": "Use **keyboard shortcuts** for faster navigation",
-  "position": {
-    "area": "content"
-  },
-  "animation": {
-    "fragment": true,
-    "type": "fade"
-  }
+  "position": { "area": "content" },
+  "animation": { "fragment": true, "type": "fade" }
 }
 ```
-**Callout Types:** `tip` (green), `warning` (yellow), `important` (red), `note` (blue), `info` (gray)
+**Types:** `tip` (green), `warning` (yellow), `important` (red), `note` (blue), `info` (gray)
 
-#### Code Element
+### Code Element
 ```json
 {
   "type": "code",
@@ -340,14 +173,12 @@ The `examples/` directory contains several demonstration presentations:
   "language": "javascript",
   "caption": "example.js",
   "lineNumbers": true,
-  "position": {
-    "area": "content"
-  }
+  "position": { "area": "content" }
 }
 ```
-**Supported Languages:** javascript, typescript, python, java, go, rust, html, css, json
+**Languages:** `javascript`, `typescript`, `python`, `java`, `go`, `rust`, `html`, `css`, `json`
 
-#### Table Element
+### Table Element
 ```json
 {
   "type": "table",
@@ -357,15 +188,13 @@ The `examples/` directory contains several demonstration presentations:
     ["Bob", "25", "LA"]
   ],
   "caption": "**Table 1:** User Data",
-  "position": {
-    "area": "content"
-  }
+  "position": { "area": "content" }
 }
 ```
 
-### Slide Configuration
+## Slide Configuration
 
-#### Slide Properties
+### Slide Properties
 ```json
 {
   "id": "unique-slide-id",
@@ -378,15 +207,20 @@ The `examples/` directory contains several demonstration presentations:
 }
 ```
 
-**Layout Types:**
-- `single-column`: Standard vertical layout
-- `two-column`: Side-by-side with left/right areas
-- `title`: Centered content for title slides
-- `blank`: Custom positioning
+**Layouts:**
+- `single-column` - Standard vertical layout
+- `two-column` - Side-by-side with left/right areas
+- `title` - Centered content for title slides
+- `blank` - Custom positioning
 
 **Transitions:** `slide`, `fade`, `convex`, `concave`, `zoom`
 
-### Presentation Metadata
+**Position Areas:**
+- `header`, `content`, `footer` (all layouts)
+- `left`, `right` (two-column only)
+- `center` (title layout)
+
+## Presentation Metadata
 
 ```json
 {
@@ -421,10 +255,11 @@ The `examples/` directory contains several demonstration presentations:
 ```
 
 **Built-in Themes:** `default`, `light`, `dark`, `academic`, `minimal`
+**Aspect Ratios:** `16:9`, `4:3`
 
-### Animation System
+## Animation System
 
-**Progressive Reveal with Fragments:**
+### Progressive Reveal with Fragments
 ```json
 {
   "elements": [
@@ -456,43 +291,33 @@ The `examples/` directory contains several demonstration presentations:
 ```
 
 **Animation Types:**
-- `fade`: Fade in
-- `slide-up`: Slide up from bottom
-- `slide-down`: Slide down from top
-- `zoom`: Zoom in
-- `none`: No animation
+- `fade` - Fade in
+- `slide-up` - Slide up from bottom
+- `slide-down` - Slide down from top
+- `zoom` - Zoom in
+- `none` - No animation
 
-**Fragment Order:**
-- Elements with `fragment: false` appear immediately
-- Elements with `fragment: true` appear on click/space
-- `index` controls the order (0, 1, 2, ...)
-- Multiple elements can share the same index (appear together)
+**Fragment Rules:**
+- `fragment: false` → appears immediately
+- `fragment: true` → appears on click/space
+- `index` controls order (0, 1, 2, ...)
+- Multiple elements can share same index (appear together)
 
-## Validation Guide
+---
 
-### Using the Built-in Validator
+# Validation Guide
 
-The project includes an Ajv-based validator that checks your JSON against the schema:
+## Command-Line Validation
 
-```javascript
-import { validatePresentation, getValidationReport } from './src/validator/index.js';
+```bash
+# Validate a specific file
+node scripts/validate.js examples/your-presentation.json
 
-const presentation = { /* your JSON */ };
-
-// Get validation result
-const result = validatePresentation(presentation);
-if (result.valid) {
-  console.log('Valid presentation!');
-} else {
-  console.error('Validation errors:', result.errors);
-}
-
-// Get human-readable report
-const report = getValidationReport(presentation);
-console.log(report);
+# Or use npm command
+npm run validate examples/your-presentation.json
 ```
 
-### Common Validation Errors
+## Common Validation Errors
 
 **Missing Required Fields:**
 ```
@@ -518,51 +343,66 @@ Error: Value does not match required format (e.g., hex color: #FFFFFF)
 Fix: Use proper hex format: "#1E293B" not "blue"
 ```
 
-### Validation Checklist
+## Validation Checklist
 
-Before using a presentation JSON:
+**Required Fields:**
+- ✅ `presentation.metadata.title` exists
+- ✅ `presentation.slides` array has ≥ 1 slide
+- ✅ Each slide has `elements` array
+- ✅ Each element has `type` and required fields
 
-1. **Required Fields:**
-   - ✅ `presentation.metadata.title` exists
-   - ✅ `presentation.slides` array has at least 1 slide
-   - ✅ Each slide has `elements` array (can be empty)
-   - ✅ Each element has `type` and required fields for that type
+**Valid Values:**
+- ✅ Theme: `default`, `light`, `dark`, `academic`, `minimal`
+- ✅ Layout: `single-column`, `two-column`, `title`, `blank`
+- ✅ Transition: `slide`, `fade`, `convex`, `concave`, `zoom`
+- ✅ Colors: hex format `#RRGGBB` or `#RGB`
+- ✅ Font sizes: `small`, `medium`, `large`, `xl`, `xxl`
 
-2. **Valid Values:**
-   - ✅ Theme is one of: default, light, dark, academic, minimal
-   - ✅ Layout is one of: single-column, two-column, title, blank
-   - ✅ Transition is one of: slide, fade, convex, concave, zoom
-   - ✅ Colors use hex format: #RRGGBB or #RGB
-   - ✅ Font sizes use: small, medium, large, xl, xxl
+**Element-Specific:**
+- ✅ Text/Bullets: `content`/`items` not empty
+- ✅ Image: `src` is valid path/URL
+- ✅ Code: `code` not empty, `language` supported
+- ✅ Table: `headers` and `rows` not empty
+- ✅ Mermaid: `diagram` has valid syntax
 
-3. **Element-Specific:**
-   - ✅ Text/Bullets: `content`/`items` not empty
-   - ✅ Image: `src` is valid path/URL
-   - ✅ Code: `code` not empty, `language` is supported
-   - ✅ Table: `headers` and `rows` arrays not empty
-   - ✅ Mermaid: `diagram` contains valid Mermaid syntax
+**Animation:**
+- ✅ Fragment indices are integers ≥ 0
+- ✅ Animation type is valid
 
-4. **Animation:**
-   - ✅ Fragment indices are integers ≥ 0
-   - ✅ Animation type is: fade, slide-up, slide-down, zoom, or none
-   - ✅ Elements in same slide don't have duplicate fragment indices (unless intentional)
+## Programmatic Validation
 
-### Command-Line Validation
+```javascript
+import { validatePresentation, getValidationReport } from './src/validator/index.js';
 
-```bash
-# Validate a presentation file
-npm run validate-schema
+const presentation = { /* your JSON */ };
 
-# Or validate specific file (if custom script added)
-node scripts/validate.js examples/your-presentation.json
+// Get validation result
+const result = validatePresentation(presentation);
+if (result.valid) {
+  console.log('Valid!');
+} else {
+  console.error('Errors:', result.errors);
+}
+
+// Get human-readable report
+console.log(getValidationReport(presentation));
 ```
 
-### Online Schema Reference
+**Schema Location:** `schema/presentation.schema.json` (JSON Schema Draft-07 with Ajv validation)
 
-Complete schema with all validation rules:
-- **File**: `schema/presentation.schema.json`
-- **$schema**: JSON Schema Draft-07
-- **Validation**: Ajv with all errors enabled
+---
+
+# Development
+
+## Commands
+
+```bash
+npm install        # Install dependencies
+npm run dev        # Start dev server (http://localhost:3000)
+npm run build      # Build for production
+npm test           # Run tests
+npm run validate   # Validate presentation file
+```
 
 ## Project Structure
 
@@ -571,16 +411,14 @@ agent-presentation/
 ├── src/
 │   ├── parser/           # JSON to structured data
 │   ├── renderer/         # Structured data to HTML
-│   ├── theme/           # Theme system
-│   ├── utils/           # Markdown, validation
-│   ├── app.js           # Client-side application
-│   ├── index-browser.js # Browser entry point
-│   └── styles.css       # Custom styles
-├── examples/            # Example JSON presentations
-├── schema/              # JSON schema definition
-├── public/              # Static assets
-├── index.html          # HTML template
-└── package.json        # Dependencies
+│   ├── validator/        # JSON schema validation
+│   ├── utils/            # Markdown, theme utilities
+│   ├── app.js            # Client-side application
+│   └── styles.css        # Custom styles
+├── examples/             # Example presentations
+├── schema/               # JSON schema definition
+├── scripts/              # Validation scripts
+└── index.html            # HTML template
 ```
 
 ## Browser Support
@@ -592,39 +430,20 @@ agent-presentation/
 
 ## Technologies
 
-- **Reveal.js**: Presentation framework
-- **Mermaid.js**: Diagram rendering
-- **Prism.js**: Syntax highlighting
-- **Marked.js**: Markdown parsing
-- **Ajv**: JSON schema validation
-- **Vite**: Build tool and dev server
-
-## Development
-
-```bash
-# Install dependencies
-npm install
-
-# Start dev server (http://localhost:3000)
-npm run dev
-
-# Build for production
-npm run build
-
-# Run tests
-npm test
-
-# Validate schema
-npm run validate-schema
-```
+- **Reveal.js** - Presentation framework
+- **Mermaid.js** - Diagram rendering
+- **Prism.js** - Syntax highlighting
+- **Marked.js** - Markdown parsing
+- **Ajv** - JSON schema validation
+- **Vite** - Build tool and dev server
 
 ## Contributing
 
 This project follows atomic commit practices:
-- Each commit should be a single logical change
-- Write clear, descriptive commit messages
+- Each commit = single logical change
+- Clear, descriptive commit messages
 - Test changes before committing
-- See `.rules/git.md` for detailed guidelines
+- See `.rules/git.md` for guidelines
 
 ## License
 
