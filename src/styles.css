@@ -443,13 +443,150 @@ hr {
   color: white;
 }
 
+/* Keyboard shortcuts help button */
+#shortcuts-btn {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 100;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.85);
+  color: #64748B;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  opacity: 0.5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1;
+  padding: 0;
+}
+
+#shortcuts-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--theme-primary, #2563EB);
+  border-color: var(--theme-primary, #2563EB);
+}
+
+#shortcuts-btn.active {
+  opacity: 1;
+  background: var(--theme-primary, #2563EB);
+  color: white;
+  border-color: var(--theme-primary, #2563EB);
+}
+
+/* Shortcuts overlay */
+#shortcuts-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  backdrop-filter: blur(2px);
+}
+
+#shortcuts-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.shortcuts-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 28px 32px;
+  min-width: 320px;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transform: scale(0.95);
+  transition: transform 0.2s ease;
+}
+
+#shortcuts-overlay.visible .shortcuts-panel {
+  transform: scale(1);
+}
+
+.shortcuts-panel h3 {
+  margin: 0 0 20px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1E293B;
+  text-align: left;
+}
+
+.shortcuts-panel dl {
+  margin: 0;
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.shortcut-row:last-child {
+  border-bottom: none;
+}
+
+.shortcut-row dt {
+  flex-shrink: 0;
+}
+
+.shortcut-row dd {
+  margin: 0;
+  color: #475569;
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.shortcuts-panel kbd {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 0.8rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #1E293B;
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  border-radius: 4px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.shortcuts-dismiss {
+  margin: 16px 0 0 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #94A3B8;
+}
+
+.shortcuts-dismiss kbd {
+  font-size: 0.75rem;
+  padding: 1px 5px;
+}
+
 /* Print styles */
 @media print {
   .reveal section {
     page-break-inside: avoid;
   }
 
-  #loading {
+  #loading,
+  #shortcuts-btn,
+  #shortcuts-overlay {
     display: none !important;
   }
 }
