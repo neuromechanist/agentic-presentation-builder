@@ -66,7 +66,7 @@
           },
           {
             "type": "text",
-            "content": "Images can be centered with custom width and height values",
+            "content": "Use `%` for slide-relative sizing, `px` for exact art direction, and `auto` for natural dimensions",
             "style": {
               "fontSize": "medium",
               "alignment": "center",
@@ -211,7 +211,7 @@
           },
           {
             "type": "text",
-            "content": "When both width and height are set to `\"auto\"`, images display at their natural size (constrained by max-width: 100%)",
+            "content": "When both width and height are set to `\"auto\"`, images keep their natural dimensions unless the slide budget forces them to scale down.",
             "style": {
               "fontSize": "medium"
             },
@@ -225,7 +225,7 @@
             "alt": "Auto-sized image",
             "width": "auto",
             "height": "auto",
-            "caption": "This image is displayed at its natural size",
+            "caption": "This image keeps its natural aspect ratio and only scales down when the slide needs more room",
             "position": {
               "area": "content",
               "order": 1

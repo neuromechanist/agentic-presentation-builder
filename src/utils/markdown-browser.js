@@ -3,18 +3,14 @@
  * Converts markdown to HTML and sanitizes output
  */
 
-import { marked } from 'marked';
 import DOMPurify from 'dompurify';
-
-/**
- * Configure marked options
- */
-marked.setOptions({
-  breaks: true, // Convert \n to <br>
-  gfm: true, // GitHub Flavored Markdown
-  headerIds: false, // Don't add IDs to headers
-  mangle: false // Don't mangle email addresses
-});
+import {
+  enhanceMarkdownHtml,
+  INLINE_ALLOWED_TAGS,
+  MARKDOWN_ALLOWED_ATTR,
+  MARKDOWN_ALLOWED_TAGS,
+  renderMarkdown
+} from './markdown-core.js';
 
 /**
  * Convert markdown to safe HTML
@@ -26,18 +22,18 @@ export function markdownToHtml(markdown) {
     return '';
   }
 
-  // Convert markdown to HTML
-  const html = marked.parse(markdown);
+  const html = enhanceMarkdownHtml(
+    renderMarkdown(markdown),
+    source => {
+      const doc = document.implementation.createHTMLDocument('');
+      doc.body.innerHTML = source.replace(/^<body>|<\/body>$/g, '');
+      return doc;
+    }
+  );
 
-  // Sanitize HTML to prevent XSS
   const cleanHtml = DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: [
-      'p', 'br', 'strong', 'em', 'u', 's', 'code', 'pre',
-      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'ul', 'ol', 'li',
-      'a', 'blockquote', 'hr'
-    ],
-    ALLOWED_ATTR: ['href', 'title', 'target', 'rel']
+    ALLOWED_TAGS: MARKDOWN_ALLOWED_TAGS,
+    ALLOWED_ATTR: MARKDOWN_ALLOWED_ATTR
   });
 
   return cleanHtml;
@@ -53,12 +49,11 @@ export function markdownInline(markdown) {
     return '';
   }
 
-  // Use marked's parseInline for inline content
-  const html = marked.parseInline(markdown);
+  const html = renderMarkdown(markdown, true);
 
   const cleanHtml = DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ['strong', 'em', 'u', 's', 'code', 'a'],
-    ALLOWED_ATTR: ['href', 'title', 'target', 'rel']
+    ALLOWED_TAGS: INLINE_ALLOWED_TAGS,
+    ALLOWED_ATTR: MARKDOWN_ALLOWED_ATTR
   });
 
   return cleanHtml;
