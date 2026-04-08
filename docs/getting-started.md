@@ -53,3 +53,11 @@ npm run docs:build
 ```
 
 Both commands use `uvx` and MkDocs Material. The generated site is written to `site/`.
+
+## Docs theme
+
+The documentation site includes:
+
+- light mode
+- dark mode
+- a system-following mode via the palette toggle in the header

@@ -12,6 +12,7 @@ Agentic Presentation Builder is a JSON-first presentation system that renders in
 - validates decks against a JSON Schema and emits non-fatal author warnings
 - exposes browser-side audit data for fit scoring, overflow detection, and recommendations
 - provides authoring, presentation, presenter, and audience delivery modes
+- ships docs with light, dark, and system-following theme support
 
 ## Core workflow
 
