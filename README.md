@@ -18,6 +18,27 @@ npm run dev
 
 ```
 
+## Documentation
+
+This repository now ships a full MkDocs Material documentation site under [`docs/`](docs/).
+
+```bash
+# Preview the docs locally with uv
+npm run docs:serve
+
+# Build the docs site
+npm run docs:build
+```
+
+Key pages:
+
+- `docs/index.md` for the product overview
+- `docs/getting-started.md` for first-run setup
+- `docs/json-authoring.md` for the JSON contract and authoring patterns
+- `docs/agent-workflow.md` for validation, warnings, audit, and browser automation
+- `docs/presenting.md` for presentation, presenter, and audience modes
+- `docs/schema-reference.md` for field-level reference
+
 ## Agent Workflow
 
 Use the repository in two passes when an agent is iterating on a deck:

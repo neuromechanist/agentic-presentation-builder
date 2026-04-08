@@ -1,0 +1,35 @@
+site_name: Agentic Presentation Builder
+site_description: JSON-first presentation engine for human authors and AI agents
+site_url: https://neuromechanist.github.io/agentic-presentation-builder/
+repo_url: https://github.com/neuromechanist/agentic-presentation-builder
+repo_name: neuromechanist/agentic-presentation-builder
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.tabs
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+nav:
+  - Overview: index.md
+  - Getting Started: getting-started.md
+  - JSON Authoring: json-authoring.md
+  - Agent Workflow: agent-workflow.md
+  - Presenting: presenting.md
+  - Schema Reference: schema-reference.md
+  - Examples And Themes: examples-and-themes.md
+  - Development: development.md
