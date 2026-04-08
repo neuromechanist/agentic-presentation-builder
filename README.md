@@ -490,6 +490,4 @@ This project follows atomic commit practices:
 
 ## License
 
-Copyright (c) 2025 Casual-Vibers. All Rights Reserved.
-
-This is proprietary software. See LICENSE file for details.
+This project is licensed under the BSD 3-Clause License. See `LICENSE` for the full text.

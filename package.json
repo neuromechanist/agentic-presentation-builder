@@ -24,10 +24,10 @@
     "agentic"
   ],
   "author": "Casual-Vibers",
-  "license": "UNLICENSED",
+  "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "https://github.com/casual-vibers/agentic-presentation-builder.git"
+    "url": "https://github.com/neuromechanist/agentic-presentation-builder.git"
   },
   "private": true,
   "dependencies": {
