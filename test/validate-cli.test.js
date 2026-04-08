@@ -3,9 +3,11 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const cwd = '/Users/yahya/Documents/git/casual-vibers/agent-presentation';
+const testFilePath = fileURLToPath(import.meta.url);
+const cwd = dirname(dirname(testFilePath));
 
 test('validate CLI supports structured JSON output for valid files', () => {
   const output = execFileSync(
