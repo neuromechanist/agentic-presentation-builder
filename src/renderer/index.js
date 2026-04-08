@@ -29,6 +29,7 @@ export function renderPresentation(presentation) {
 function renderSlide(slide, index, total) {
   const bgAttr = slide.background ? ` data-background="${escapeHtml(slide.background)}"` : '';
   const transitionAttr = slide.transition !== 'slide' ? ` data-transition="${slide.transition}"` : '';
+  const layoutAttr = ` data-layout="${escapeHtml(slide.layout)}"`;
 
   // Add slide number and title data attributes for overview mode
   const slideNumber = index + 1;
@@ -60,7 +61,7 @@ function renderSlide(slide, index, total) {
     slideContent += `\n<aside class="notes">${escapeHtml(slide.speakerNotes)}</aside>`;
   }
 
-  return `<section id="${slide.id}"${bgAttr}${transitionAttr}${slideNumberAttr}${slideTitleAttr}>\n${slideContent}\n</section>`;
+  return `<section id="${slide.id}"${bgAttr}${transitionAttr}${layoutAttr}${slideNumberAttr}${slideTitleAttr}>\n<div class="slide-shell">\n${slideContent}\n</div>\n</section>`;
 }
 
 /**
@@ -258,20 +259,31 @@ function renderImageElement(element) {
   const alt = escapeHtml(element.alt);
   const widthStyle = element.width !== 'auto' ? `width: ${element.width};` : '';
   const heightStyle = element.height !== 'auto' ? `height: ${element.height};` : '';
-  const style = widthStyle || heightStyle ? ` style="${widthStyle}${heightStyle}"` : '';
+  const frameStyle = widthStyle || heightStyle ? ` style="${widthStyle}${heightStyle}"` : '';
   const animation = buildAnimationAttributes(element.animation);
+  const widthMode = element.width === 'auto' ? 'auto' : 'fixed';
+  const heightMode = element.height === 'auto' ? 'auto' : 'fixed';
+  const sizingMode = widthMode === 'auto' && heightMode === 'auto'
+    ? 'natural'
+    : widthMode === 'auto'
+      ? 'height-driven'
+      : heightMode === 'auto'
+        ? 'width-driven'
+        : 'bounded';
 
   const classes = ['image-element', ...animation.classes].join(' ');
   const attrs = animation.attributes ? ` ${animation.attributes}` : '';
 
-  let html = `<div class="${classes}"${attrs}>`;
-  html += `<img src="${src}" alt="${alt}"${style}>`;
+  let html = `<figure class="${classes}" data-image-sizing="${sizingMode}"${attrs}>`;
+  html += `<div class="image-frame" data-width-mode="${widthMode}" data-height-mode="${heightMode}" data-requested-width="${escapeHtml(element.width)}" data-requested-height="${escapeHtml(element.height)}"${frameStyle}>`;
+  html += `<img src="${src}" alt="${alt}" loading="lazy" decoding="async">`;
+  html += `</div>`;
 
   if (element.caption) {
-    html += `<div class="image-caption">${markdownToHtml(element.caption)}</div>`;
+    html += `<figcaption class="image-caption">${markdownToHtml(element.caption)}</figcaption>`;
   }
 
-  html += `</div>`;
+  html += `</figure>`;
   return html;
 }
 
@@ -287,8 +299,10 @@ function renderMermaidElement(element) {
   const attrs = animation.attributes ? ` ${animation.attributes}` : '';
 
   return `<div class="${classes}"${attrs}>
-  <div class="mermaid">
+  <div class="mermaid-frame">
+    <div class="mermaid" data-mermaid-theme="${escapeHtml(element.theme || 'default')}">
 ${diagram}
+    </div>
   </div>
 </div>`;
 }

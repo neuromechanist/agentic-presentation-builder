@@ -4,7 +4,9 @@
  */
 
 import Ajv from 'ajv';
-import presentationSchema from '../../schema/presentation.schema.json';
+import presentationSchema from '../../schema/presentation.schema.json' with { type: 'json' };
+export { getPresentationWarnings } from './advisory.js';
+import { getPresentationWarnings } from './advisory.js';
 
 /**
  * Initialize Ajv validator with the presentation schema
@@ -21,15 +23,17 @@ const validate = ajv.compile(presentationSchema);
 /**
  * Validate a presentation JSON object
  * @param {object} presentationData - The presentation data to validate
- * @returns {{valid: boolean, errors: Array|null}} Validation result
+ * @returns {{valid: boolean, errors: Array|null, warnings: Array}} Validation result
  */
 export function validatePresentation(presentationData) {
+  const warnings = getPresentationWarnings(presentationData);
   const valid = validate(presentationData);
 
   if (valid) {
     return {
       valid: true,
-      errors: null
+      errors: null,
+      warnings
     };
   }
 
@@ -54,8 +58,11 @@ export function validatePresentation(presentationData) {
     }
 
     return {
+      code: `schema-${error.keyword}`,
+      severity: 'error',
       path,
       message: friendlyMessage,
+      suggestion: getValidationSuggestion(error),
       originalMessage: message,
       keyword: error.keyword,
       params
@@ -64,7 +71,8 @@ export function validatePresentation(presentationData) {
 
   return {
     valid: false,
-    errors: formattedErrors
+    errors: formattedErrors,
+    warnings
   };
 }
 
@@ -94,20 +102,54 @@ export function validatePresentationStrict(presentationData) {
  */
 export function getValidationReport(presentationData) {
   const result = validatePresentation(presentationData);
+  const warningSection = formatWarningSection(result.warnings);
 
   if (result.valid) {
-    return '✓ Presentation is valid';
+    return `✓ Presentation is valid${warningSection}`;
   }
 
   const errorList = result.errors.map((err, index) =>
     `${index + 1}. Path: ${err.path}\n   Error: ${err.message}`
   ).join('\n\n');
 
-  return `✗ Presentation has ${result.errors.length} validation error(s):\n\n${errorList}`;
+  return `✗ Presentation has ${result.errors.length} validation error(s):\n\n${errorList}${warningSection}`;
+}
+
+function formatWarningSection(warnings) {
+  if (!warnings.length) {
+    return '';
+  }
+
+  const warningList = warnings.map((warning, index) =>
+    `${index + 1}. Slide: ${warning.slideTitle}\n   Warning: ${warning.message}\n   Suggestion: ${warning.suggestion}`
+  ).join('\n\n');
+
+  return `\n\nWarnings (${warnings.length}):\n\n${warningList}`;
+}
+
+function getValidationSuggestion(error) {
+  if (error.keyword === 'required') {
+    return `Add the missing \`${error.params.missingProperty}\` field at this location.`;
+  }
+  if (error.keyword === 'enum') {
+    return `Replace the value with one of the allowed options: ${error.params.allowedValues.join(', ')}.`;
+  }
+  if (error.keyword === 'type') {
+    return `Update the value so it matches the expected ${error.params.type} type.`;
+  }
+  if (error.keyword === 'minLength') {
+    return `Provide at least ${error.params.limit} characters for this field.`;
+  }
+  if (error.keyword === 'pattern') {
+    return 'Update the value to match the documented format for this field.';
+  }
+
+  return 'Adjust this field to satisfy the presentation schema.';
 }
 
 export default {
   validatePresentation,
   validatePresentationStrict,
-  getValidationReport
+  getValidationReport,
+  getPresentationWarnings
 };

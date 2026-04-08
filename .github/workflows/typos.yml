@@ -1,0 +1,23 @@
+name: Typos
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - develop
+      - 'fix/**'
+      - 'feature/**'
+
+jobs:
+  typos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Check repository spelling
+        uses: crate-ci/typos@v1.31.1
+        with:
+          config: .typos.toml

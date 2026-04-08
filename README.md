@@ -18,6 +18,24 @@ npm run dev
 
 ```
 
+## Agent Workflow
+
+Use the repository in two passes when an agent is iterating on a deck:
+
+```bash
+npm run validate -- examples/image-demo.json --json
+```
+
+This returns machine-readable schema errors and author warnings with `code`, `path`, `message`, and `suggestion`.
+
+Then open the deck in a browser and read:
+
+- `window.__presentationValidation` for the same validation payload available from the CLI
+- `window.__presentationAudit` for rendered slide-fit findings
+- `window.__presentationAgentReport` for both in one object
+
+The browser audit contains per-slide `fitScore`, `fitSeverity`, `layoutFindings`, `authorWarnings`, and recommendations based on the actual rendered layout at presentation size.
+
 ## Features Overview
 
 **7 Element Types:** [Text](#text-element) • [Bullets](#bullets-element) • [Images](#image-element) • [Mermaid Diagrams](#mermaid-diagram-element) • [Callouts](#callout-element) • [Code Blocks](#code-element) • [Tables](#table-element)

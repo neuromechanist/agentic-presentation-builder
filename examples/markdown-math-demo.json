@@ -1,0 +1,116 @@
+{
+  "presentation": {
+    "metadata": {
+      "title": "Markdown and Math Demo",
+      "author": "Agentic Presentation Builder",
+      "description": "Demonstrates GitHub-style alerts, fenced code, inline code, and LaTeX math rendering",
+      "theme": "default",
+      "aspectRatio": "16:9"
+    },
+    "slides": [
+      {
+        "id": "title",
+        "layout": "title",
+        "elements": [
+          {
+            "type": "text",
+            "content": "# Markdown and Math Demo",
+            "style": {
+              "fontSize": "xxl",
+              "alignment": "center",
+              "fontWeight": "bold"
+            },
+            "position": {
+              "area": "center"
+            }
+          },
+          {
+            "type": "text",
+            "content": "GitHub alerts, inline code, fenced code, and LaTeX are all rendered from plain JSON content.",
+            "style": {
+              "fontSize": "large",
+              "alignment": "center",
+              "color": "#64748B"
+            },
+            "position": {
+              "area": "center",
+              "order": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "markdown-features",
+        "layout": "two-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## Markdown Features",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "Use inline code like `npm run build`, GitHub alerts, and math such as $E=mc^2$ directly inside markdown.\n\n> [!TIP]\n> Prefer percentage widths for presentation images when you want layouts to stay responsive.",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "left"
+            }
+          },
+          {
+            "type": "text",
+            "content": "```js\nconst ratio = width / slideWidth;\nconsole.log(`Scaled to ${Math.round(ratio * 100)}%`);\n```\n\n$$\\int_0^1 x^2\\,dx = \\frac{1}{3}$$",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "right"
+            }
+          }
+        ]
+      },
+      {
+        "id": "alerts-and-math",
+        "layout": "two-column",
+        "elements": [
+          {
+            "type": "text",
+            "content": "## GitHub Alerts and Display Math",
+            "style": {
+              "fontSize": "xl"
+            },
+            "position": {
+              "area": "header"
+            }
+          },
+          {
+            "type": "text",
+            "content": "> [!IMPORTANT]\n> Display math works directly in markdown.\n>\n> $$\\nabla \\cdot \\vec{E} = \\frac{\\rho}{\\varepsilon_0}$$",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "left"
+            }
+          },
+          {
+            "type": "text",
+            "content": "> [!WARNING]\n> Dense slides still need author judgment even when the syntax is valid.\n\nUse display math like $$\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}$$ without leaving markdown.",
+            "style": {
+              "fontSize": "medium"
+            },
+            "position": {
+              "area": "right"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
