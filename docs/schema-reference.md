@@ -55,6 +55,8 @@ The source of truth is `schema/presentation.schema.json` in the repository root.
 | `fragment` | `boolean` | Progressive reveal toggle |
 | `index` | `integer` | Reveal order |
 
+`animation` can be used on all top-level element types. For `bullets`, object-form items may also define their own `animation`.
+
 ## Element-specific fields
 
 ### `text`
@@ -67,6 +69,7 @@ The source of truth is `schema/presentation.schema.json` in the repository root.
 - required: `type`, `items`
 - `bulletStyle`: `disc`, `circle`, `square`, `number`, `none`
 - items can be strings or nested `{ text, children, animation }` objects
+- use item-level `animation.index` values to reveal bullet points one at a time
 
 ### `image`
 
@@ -84,11 +87,13 @@ The source of truth is `schema/presentation.schema.json` in the repository root.
 - required: `type`, `content`
 - `calloutType`: `tip`, `warning`, `important`, `note`, `info`
 - optional `title`
+- supports shared `animation` settings for fragment reveals
 
 ### `code`
 
 - required: `type`, `code`
 - optional `language`, `caption`, `lineNumbers`
+- supports shared `animation` settings for fragment reveals
 
 ### `table`
 

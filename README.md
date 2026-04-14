@@ -333,6 +333,10 @@ View: `http://localhost:3000/?presentation=./examples/your-file.json`
 }
 ```
 
+**Supported Fragment Targets:**
+- whole `text`, `bullets`, `image`, `mermaid`, `callout`, `code`, and `table` elements
+- individual bullet items via object entries in `bullets.items`
+
 **Animation Types:**
 - `fade` - Fade in
 - `slide-up` - Slide up from bottom
@@ -346,6 +350,17 @@ View: `http://localhost:3000/?presentation=./examples/your-file.json`
 - `index` controls order (0, 1, 2, ...)
 - Multiple elements can share same index (appear together)
 - `code`, `callout`, and individual bullet items support fragment animation
+
+**Per-Item Bullet Example:**
+```json
+{
+  "type": "bullets",
+  "items": [
+    { "text": "Step 1", "animation": { "fragment": true, "index": 0 } },
+    { "text": "Step 2", "animation": { "fragment": true, "index": 1 } }
+  ]
+}
+```
 
 ---
 

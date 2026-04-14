@@ -139,6 +139,31 @@ For lists with optional nesting and per-item fragment animation.
 }
 ```
 
+Bullet items can stay as strings for simple lists, or switch to object form when you need nested children or item-level `animation`.
+
+### Animation and Fragments
+
+`animation` is supported on all top-level element types: `text`, `bullets`, `image`, `mermaid`, `callout`, `code`, and `table`.
+
+Use it when you want progressive reveal behavior:
+
+```json
+{
+  "type": "callout",
+  "calloutType": "tip",
+  "content": "Explain this after the code example.",
+  "animation": {
+    "fragment": true,
+    "type": "fade",
+    "index": 2
+  }
+}
+```
+
+For bullet lists, you have two choices:
+- put `animation` on the `bullets` element to reveal the whole list at once
+- put `animation` on individual bullet item objects to reveal list items one at a time
+
 ### 3. Image Element
 
 Display images with captions.

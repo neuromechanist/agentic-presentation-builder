@@ -56,6 +56,38 @@ Each slide can define:
 - Use `speakerNotes` for delivery notes instead of embedding presenter-only copy in slide text.
 - Keep fragment counts low. Heavy reveal sequences are flagged by advisory warnings.
 
+## Fragment animation
+
+- Top-level `animation` works on `text`, `bullets`, `image`, `mermaid`, `callout`, `code`, and `table` elements.
+- Bullet lists can animate as a whole, or individual bullet items can animate separately.
+- Use `animation.index` to control reveal order across mixed content, such as bullets followed by a code block and then a callout.
+
+```json
+{
+  "elements": [
+    {
+      "type": "bullets",
+      "items": [
+        { "text": "First point", "animation": { "fragment": true, "index": 0 } },
+        { "text": "Second point", "animation": { "fragment": true, "index": 1 } }
+      ]
+    },
+    {
+      "type": "code",
+      "code": "npm test",
+      "language": "bash",
+      "animation": { "fragment": true, "type": "zoom", "index": 2 }
+    },
+    {
+      "type": "callout",
+      "calloutType": "tip",
+      "content": "Discuss the test output here.",
+      "animation": { "fragment": true, "type": "fade", "index": 3 }
+    }
+  ]
+}
+```
+
 ## Markdown support
 
 `text`, `bullets`, `callout`, `caption`, and similar content fields support Markdown. The renderer also supports:
