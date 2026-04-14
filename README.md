@@ -69,7 +69,7 @@ The browser audit contains per-slide `fitScore`, `fitSeverity`, `layoutFindings`
 
 **Themes:** [5 built-in + custom](#presentation-metadata) themes with colors and fonts
 
-**Navigation:** Keyboard, touch, [overview mode](#navigation) (Escape), speaker notes (S)
+**Navigation:** Keyboard, touch, [overview mode](#navigation) (Escape), presenter view (S)
 
 ## Minimal Example
 
@@ -106,7 +106,7 @@ View: `http://localhost:3000/?presentation=./examples/your-file.json`
 
 - **Arrow keys** / **Space**: Navigate slides
 - **Escape**: Toggle overview mode (grid view with slide titles)
-- **S**: Show speaker notes
+- **S**: Open presenter view
 - **F**: Fullscreen
 
 ## Examples
