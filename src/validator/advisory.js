@@ -22,7 +22,7 @@ export function getPresentationWarnings(presentationData) {
     const textElements = elements.filter(element => element.type === 'text');
     const bulletElements = elements.filter(element => element.type === 'bullets');
     const mediaElements = elements.filter(element => MEDIA_TYPES.has(element.type));
-    const animatedElements = elements.filter(element => element.animation?.fragment);
+    const fragmentCount = countFragments(elements);
 
     const totalWords = textElements.reduce((sum, element) => sum + countWords(element.content), 0);
     const totalBulletItems = bulletElements.reduce((sum, element) => sum + countBulletItems(element.items || []), 0);
@@ -67,11 +67,11 @@ export function getPresentationWarnings(presentationData) {
       ));
     }
 
-    if (animatedElements.length > 5) {
+    if (fragmentCount > 5) {
       warnings.push(createWarning(
         'fragment-overuse',
         `${pathBase}/elements`,
-        `Slide uses ${animatedElements.length} fragments. Too many sequential reveals can slow the presentation.`,
+        `Slide uses ${fragmentCount} fragments. Too many sequential reveals can slow the presentation.`,
         'Reduce fragment count or combine adjacent reveals into fewer steps.',
         slideContext
       ));
@@ -128,8 +128,30 @@ function countBulletItems(items) {
     if (typeof item === 'string') {
       return sum + 1;
     }
-    const children = Array.isArray(item.children) ? item.children.length : 0;
-    return sum + 1 + children;
+    return sum + 1 + countBulletItems(item.children || []);
+  }, 0);
+}
+
+function countFragments(elements) {
+  return elements.reduce((sum, element) => {
+    const elementFragments = element.animation?.fragment ? 1 : 0;
+
+    if (element.type !== 'bullets') {
+      return sum + elementFragments;
+    }
+
+    return sum + elementFragments + countBulletFragments(element.items || []);
+  }, 0);
+}
+
+function countBulletFragments(items) {
+  return items.reduce((sum, item) => {
+    if (typeof item === 'string') {
+      return sum;
+    }
+
+    const ownFragment = item.animation?.fragment ? 1 : 0;
+    return sum + ownFragment + countBulletFragments(item.children || []);
   }, 0);
 }
 

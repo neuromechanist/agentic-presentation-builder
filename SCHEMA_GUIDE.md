@@ -114,15 +114,19 @@ Supports full markdown syntax.
 
 ### 2. Bullets Element
 
-For lists with optional nesting.
+For lists with optional nesting and per-item fragment animation.
 
 ```json
 {
   "type": "bullets",
   "items": [
-    "Simple bullet (supports markdown)",
     {
       "text": "Nested bullet",
+      "animation": {
+        "fragment": true,
+        "type": "fade",
+        "index": 0
+      },
       "children": [
         "Sub-item 1",
         "Sub-item 2"
@@ -134,6 +138,31 @@ For lists with optional nesting.
   "position": { /* same as text position */ }
 }
 ```
+
+Bullet items can stay as strings for simple lists, or switch to object form when you need nested children or item-level `animation`.
+
+### Animation and Fragments
+
+`animation` is supported on all top-level element types: `text`, `bullets`, `image`, `mermaid`, `callout`, `code`, and `table`.
+
+Use it when you want progressive reveal behavior:
+
+```json
+{
+  "type": "callout",
+  "calloutType": "tip",
+  "content": "Explain this after the code example.",
+  "animation": {
+    "fragment": true,
+    "type": "fade",
+    "index": 2
+  }
+}
+```
+
+For bullet lists, you have two choices:
+- put `animation` on the `bullets` element to reveal the whole list at once
+- put `animation` on individual bullet item objects to reveal list items one at a time
 
 ### 3. Image Element
 
@@ -398,14 +427,12 @@ See the `examples/` directory for:
 - `comprehensive-demo.json` - All features demonstrated
 - `github-course-demo.json` - Real-world presentation
 
-## Future Features (Not Yet Implemented)
+## Implemented Advanced Features
 
-The schema includes support for Phase 2 and 3 features:
-- `animation` properties (fragment reveals, effects)
+The current renderer supports:
+- `animation` properties, including fragment ordering
 - `transition` overrides per slide
-- Additional themes
-
-These properties can be included but won't be rendered until future phases.
+- additional built-in themes such as `dark`, `academic`, and `minimal`
 
 ## Support
 

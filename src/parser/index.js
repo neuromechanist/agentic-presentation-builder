@@ -67,7 +67,7 @@ function parseElement(element, index) {
   const baseElement = {
     type: element.type,
     position: parsePosition(element.position),
-    animation: element.animation || null,
+    animation: parseAnimation(element.animation),
     id: `element-${index}`
   };
 
@@ -82,7 +82,7 @@ function parseElement(element, index) {
     case 'bullets':
       return {
         ...baseElement,
-        items: element.items,
+        items: parseBulletItems(element.items),
         bulletStyle: element.bulletStyle || 'disc',
         style: parseTextStyle(element.style)
       };
@@ -157,6 +157,30 @@ function parsePosition(position = {}) {
   return {
     area: position.area || 'content',
     order: position.order || 0
+  };
+}
+
+function parseAnimation(animation) {
+  return animation || null;
+}
+
+function parseBulletItems(items = []) {
+  return items.map(parseBulletItem);
+}
+
+function parseBulletItem(item) {
+  if (typeof item === 'string') {
+    return {
+      text: item,
+      children: [],
+      animation: null
+    };
+  }
+
+  return {
+    text: item.text,
+    children: parseBulletItems(item.children || []),
+    animation: parseAnimation(item.animation)
   };
 }
 

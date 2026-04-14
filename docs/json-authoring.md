@@ -42,7 +42,7 @@ Each slide can define:
 ## Element types
 
 - `text`: Markdown-rich prose and headings
-- `bullets`: flat or nested lists
+- `bullets`: flat or nested lists, with optional per-item `animation`
 - `image`: image with `src`, `alt`, optional `caption`, `width`, and `height`
 - `mermaid`: inline Mermaid diagrams
 - `callout`: highlighted content blocks
@@ -55,6 +55,38 @@ Each slide can define:
 - Keep `alt` text on every image.
 - Use `speakerNotes` for delivery notes instead of embedding presenter-only copy in slide text.
 - Keep fragment counts low. Heavy reveal sequences are flagged by advisory warnings.
+
+## Fragment animation
+
+- Top-level `animation` works on `text`, `bullets`, `image`, `mermaid`, `callout`, `code`, and `table` elements.
+- Bullet lists can animate as a whole, or individual bullet items can animate separately.
+- Use `animation.index` to control reveal order across mixed content, such as bullets followed by a code block and then a callout.
+
+```json
+{
+  "elements": [
+    {
+      "type": "bullets",
+      "items": [
+        { "text": "First point", "animation": { "fragment": true, "index": 0 } },
+        { "text": "Second point", "animation": { "fragment": true, "index": 1 } }
+      ]
+    },
+    {
+      "type": "code",
+      "code": "npm test",
+      "language": "bash",
+      "animation": { "fragment": true, "type": "zoom", "index": 2 }
+    },
+    {
+      "type": "callout",
+      "calloutType": "tip",
+      "content": "Discuss the test output here.",
+      "animation": { "fragment": true, "type": "fade", "index": 3 }
+    }
+  ]
+}
+```
 
 ## Markdown support
 

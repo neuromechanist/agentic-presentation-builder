@@ -218,30 +218,7 @@
           "description": "Array of bullet point items (strings or nested objects)",
           "minItems": 1,
           "items": {
-            "oneOf": [
-              {
-                "type": "string",
-                "description": "Simple bullet point (supports markdown)"
-              },
-              {
-                "type": "object",
-                "description": "Nested bullet point",
-                "required": ["text"],
-                "properties": {
-                  "text": {
-                    "type": "string",
-                    "description": "Bullet point text (supports markdown)"
-                  },
-                  "children": {
-                    "type": "array",
-                    "description": "Nested sub-items",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            ]
+            "$ref": "#/definitions/bulletItemNode"
           }
         },
         "bulletStyle": {
@@ -255,6 +232,38 @@
         },
         "position": {
           "$ref": "#/definitions/position"
+        },
+        "animation": {
+          "$ref": "#/definitions/animation"
+        }
+      }
+    },
+    "bulletItemNode": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Simple bullet point (supports markdown)"
+        },
+        {
+          "$ref": "#/definitions/bulletItem"
+        }
+      ]
+    },
+    "bulletItem": {
+      "type": "object",
+      "description": "Bullet point with optional nested items and animation",
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Bullet point text (supports markdown)"
+        },
+        "children": {
+          "type": "array",
+          "description": "Nested sub-items",
+          "items": {
+            "$ref": "#/definitions/bulletItemNode"
+          }
         },
         "animation": {
           "$ref": "#/definitions/animation"
