@@ -4,9 +4,9 @@
  */
 
 import Reveal from 'reveal.js';
-import RevealNotes from 'reveal.js/plugin/notes/notes.esm.js';
 import { buildPresentation } from './index-browser.js';
 import { validatePresentation } from './validator/index.js';
+import { markdownToHtml } from './utils/markdown-browser.js';
 import {
   buildRecommendations,
   calculateFitScore,
@@ -31,6 +31,7 @@ let presentationModeEnabled = getInitialPresentationMode();
 let warningsVisible = getInitialWarningsVisibility();
 let revealInstance = null;
 let presentationSyncChannel = null;
+let presenterSlides = [];
 window.__presentationValidation = null;
 window.__presentationAudit = null;
 window.__presentationAgentReport = null;
@@ -62,8 +63,16 @@ async function loadAndRenderPresentation() {
     publishPresentationValidation(validationResult);
     presentationWarningsBySlide = indexWarningsBySlide(validationResult.warnings);
     const built = buildPresentation(presentationData);
+    presenterSlides = buildPresenterSlides(presentationData);
 
     document.title = built.metadata.title || 'Presentation';
+
+    if (presentationRole === 'presenter') {
+      renderPresenterView(built, presenterSlides);
+      setupPresenterSync();
+      document.getElementById('loading').style.display = 'none';
+      return;
+    }
 
     const styleEl = document.createElement('style');
     styleEl.textContent = built.themeCSS;
@@ -95,8 +104,7 @@ async function loadAndRenderPresentation() {
       margin: 0.04,
       minScale: 0.3,
       maxScale: 1.5,
-      overview: true,
-      plugins: [RevealNotes]
+      overview: true
     });
     revealInstance = Reveal;
 
@@ -342,7 +350,7 @@ function createShortcutsHelp() {
   const shortcuts = [
     { key: ',', description: 'Open presentation settings' },
     { key: 'P', description: 'Toggle presentation mode' },
-    { key: 'S', description: 'Speaker notes (popup)' },
+    { key: 'S', description: 'Open presenter view' },
     { key: 'O', description: 'Slide overview' },
     { key: 'F', description: 'Fullscreen' },
     { key: 'Esc', description: 'Exit overview / pause' },
@@ -516,6 +524,11 @@ function createSettingsControls(auditControls) {
     if (event.key.toLowerCase() === 'p' && !event.ctrlKey && !event.metaKey && !event.altKey) {
       event.preventDefault();
       applyPresentationMode(!presentationModeEnabled, auditControls);
+    } else if (event.key.toLowerCase() === 's' && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      event.preventDefault();
+      closeSettings();
+      applyPresentationMode(true, auditControls);
+      openPresenterView();
     } else if (event.key === ',' && !event.ctrlKey && !event.metaKey && !event.altKey) {
       event.preventDefault();
       panel.classList.toggle('visible');
@@ -600,18 +613,180 @@ function syncSettingsControls() {
 }
 
 function openPresenterView() {
-  const notesPlugin = revealInstance?.getPlugin?.('notes');
-  if (notesPlugin?.open) {
-    notesPlugin.open();
+  const presenterUrl = buildCompanionPresentationURL('presenter');
+  const presenterWindow = window.open(presenterUrl.toString(), 'agentic-presenter-view');
+  if (!presenterWindow) {
+    window.alert('Presenter view popup failed to open. Please allow popups and try again.');
   }
 }
 
 function openAudienceScreen() {
+  const audienceUrl = buildCompanionPresentationURL('audience');
+  window.open(audienceUrl.toString(), 'agentic-audience-screen');
+}
+
+function buildCompanionPresentationURL(role) {
   const url = new URL(window.location.href);
   url.searchParams.set('presentation', presentationPath);
-  url.searchParams.set('role', 'audience');
+  url.searchParams.set('role', role);
   url.searchParams.set('mode', 'presentation');
-  window.open(url.toString(), 'agentic-audience-screen');
+  url.searchParams.set('warnings', 'hidden');
+
+  const currentState = revealInstance?.getState?.();
+  if (currentState && Number.isInteger(currentState.indexh)) {
+    const parts = [currentState.indexh, currentState.indexv || 0];
+    if (Number.isInteger(currentState.indexf) && currentState.indexf >= 0) {
+      parts.push(currentState.indexf);
+    }
+    url.hash = `#/${parts.join('/')}`;
+  } else if (window.location.hash) {
+    url.hash = window.location.hash;
+  }
+
+  return url;
+}
+
+function renderPresenterView(built, slides) {
+  document.body.classList.add('presenter-screen');
+  document.body.innerHTML = `
+    <div id="presenter-root">
+      <section class="presenter-preview-panel">
+        <div class="presenter-toolbar">
+          <div>
+            <p class="presenter-kicker">Presenter View</p>
+            <h1>${escapeHtml(built.metadata.title || 'Presentation')}</h1>
+          </div>
+          <div class="presenter-toolbar-meta">
+            <div class="presenter-status" data-presenter-slide-status>Slide 1 of ${slides.length}</div>
+            <div class="presenter-status" data-presenter-fragment-status>Fragment 0</div>
+          </div>
+        </div>
+        <div class="presenter-preview-frame" style="aspect-ratio: ${built.dimensions.width} / ${built.dimensions.height};">
+          <iframe
+            src="${escapeHtml(buildCompanionPresentationURL('audience').toString())}"
+            title="Live presentation preview"
+            data-presenter-preview
+          ></iframe>
+        </div>
+      </section>
+      <aside class="presenter-sidebar">
+        <section class="presenter-card">
+          <p class="presenter-card-label">Current Slide</p>
+          <h2 data-presenter-current-title></h2>
+        </section>
+        <section class="presenter-card">
+          <p class="presenter-card-label">Speaker Notes</p>
+          <div class="presenter-notes" data-presenter-notes></div>
+        </section>
+        <section class="presenter-card">
+          <p class="presenter-card-label">Up Next</p>
+          <div class="presenter-up-next" data-presenter-next></div>
+        </section>
+      </aside>
+    </div>
+  `;
+
+  updatePresenterView(getPresentationStateFromHash(window.location.hash));
+}
+
+function buildPresenterSlides(presentationData) {
+  const slides = presentationData?.presentation?.slides || [];
+
+  return slides.map((slide, index) => ({
+    number: index + 1,
+    title: derivePresenterSlideTitle(slide, index),
+    notesHtml: slide.speakerNotes?.trim()
+      ? markdownToHtml(slide.speakerNotes)
+      : '<p class="presenter-empty-notes">No speaker notes for this slide.</p>'
+  }));
+}
+
+function derivePresenterSlideTitle(slide, index) {
+  if (slide?.title?.trim()) {
+    return slide.title.trim();
+  }
+
+  const firstTextElement = slide?.elements?.find(element => element.type === 'text' && typeof element.content === 'string');
+  const fallbackText = stripMarkdown(firstTextElement?.content || '').trim();
+  return fallbackText || `Slide ${index + 1}`;
+}
+
+function stripMarkdown(text) {
+  return text
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[`*_>#-]/g, ' ')
+    .replace(/\n+/g, ' ')
+    .replace(/\s+/g, ' ');
+}
+
+function getPresentationStateFromHash(hash) {
+  const match = hash.match(/^#\/(\d+)(?:\/(\d+))?(?:\/(\d+))?/);
+  if (!match) {
+    return { indexh: 0, indexv: 0, indexf: -1 };
+  }
+
+  return {
+    indexh: Number.parseInt(match[1], 10) || 0,
+    indexv: Number.parseInt(match[2] || '0', 10) || 0,
+    indexf: Number.parseInt(match[3] || '-1', 10)
+  };
+}
+
+function updatePresenterView(state = { indexh: 0, indexv: 0, indexf: -1 }) {
+  if (presentationRole !== 'presenter' || presenterSlides.length === 0) {
+    return;
+  }
+
+  const slideIndex = Math.min(Math.max(state.indexh || 0, 0), presenterSlides.length - 1);
+  const currentSlide = presenterSlides[slideIndex];
+  const nextSlide = presenterSlides[slideIndex + 1] || null;
+  const currentTitle = document.querySelector('[data-presenter-current-title]');
+  const notes = document.querySelector('[data-presenter-notes]');
+  const next = document.querySelector('[data-presenter-next]');
+  const slideStatus = document.querySelector('[data-presenter-slide-status]');
+  const fragmentStatus = document.querySelector('[data-presenter-fragment-status]');
+
+  if (currentTitle) {
+    currentTitle.textContent = currentSlide.title;
+  }
+
+  if (notes) {
+    notes.innerHTML = currentSlide.notesHtml;
+  }
+
+  if (next) {
+    next.innerHTML = nextSlide
+      ? `<strong>${escapeHtml(nextSlide.title)}</strong><span>Slide ${nextSlide.number}</span>`
+      : '<span class="presenter-empty-notes">End of deck</span>';
+  }
+
+  if (slideStatus) {
+    slideStatus.textContent = `Slide ${currentSlide.number} of ${presenterSlides.length}`;
+  }
+
+  if (fragmentStatus) {
+    fragmentStatus.textContent = state.indexf >= 0
+      ? `Fragment ${state.indexf + 1}`
+      : 'Fragment 0';
+  }
+}
+
+function setupPresenterSync() {
+  if (!window.BroadcastChannel) {
+    return;
+  }
+
+  const channelName = `agentic-presentation-sync:${presentationPath}`;
+  presentationSyncChannel = new BroadcastChannel(channelName);
+  presentationSyncChannel.addEventListener('message', event => {
+    const payload = event.data;
+    if (payload?.type !== 'state' || !payload.state) {
+      return;
+    }
+
+    updatePresenterView(payload.state);
+  });
 }
 
 /**
@@ -1122,7 +1297,7 @@ function publishPresentationState() {
 }
 
 function getInitialPresentationMode() {
-  if (presentationRole === 'audience') {
+  if (presentationRole === 'audience' || presentationRole === 'presenter') {
     return true;
   }
 
@@ -1138,7 +1313,7 @@ function getInitialPresentationMode() {
 }
 
 function getInitialWarningsVisibility() {
-  if (presentationRole === 'audience') {
+  if (presentationRole === 'audience' || presentationRole === 'presenter') {
     return false;
   }
 
@@ -1156,7 +1331,13 @@ function getInitialWarningsVisibility() {
 
 function getPresentationRole() {
   const role = params.get('role');
-  return role === 'audience' ? 'audience' : 'controller';
+  if (role === 'audience') {
+    return 'audience';
+  }
+  if (role === 'presenter') {
+    return 'presenter';
+  }
+  return 'controller';
 }
 
 function setupPresentationSync(reveal) {

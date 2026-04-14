@@ -6,7 +6,7 @@ The runtime supports four practical delivery states:
 
 - `authoring`: diagnostics and fit overlays available
 - `presentation`: clean deck mode
-- `presenter`: Reveal notes popup for speaker notes
+- `presenter`: dedicated presenter window with a live synced preview and speaker notes
 - `audience`: synced external screen with authoring chrome removed
 
 ## Settings panel
@@ -23,8 +23,10 @@ The `Settings` button controls:
 
 Use `speakerNotes` on each slide. In the browser:
 
-- press `S` to open the presenter notes popup
+- press `S` to open the presenter view
 - or use `Settings` -> `Open Presenter View`
+
+Presenter notes support Markdown, including paragraphs, bullet lists, and nested lists.
 
 ## Audience screen
 
@@ -46,7 +48,7 @@ In audience mode:
 
 - `,`: open settings
 - `P`: toggle presentation mode
-- `S`: open speaker notes
+- `S`: open presenter view
 - `O`: overview
 - `F`: fullscreen
 - `?`: keyboard shortcuts help
@@ -58,5 +60,5 @@ Useful runtime query parameters:
 
 - `presentation=...`: JSON deck path
 - `mode=presentation` or `mode=authoring`
-- `role=audience`
+- `role=audience` or `role=presenter`
 - `warnings=visible` or `warnings=hidden`

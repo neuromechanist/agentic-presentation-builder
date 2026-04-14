@@ -58,7 +58,7 @@ function renderSlide(slide, index, total) {
 
   // Add speaker notes if present
   if (slide.speakerNotes) {
-    slideContent += `\n<aside class="notes">${escapeHtml(slide.speakerNotes)}</aside>`;
+    slideContent += `\n<aside class="notes">${markdownToHtml(slide.speakerNotes)}</aside>`;
   }
 
   return `<section id="${slide.id}"${bgAttr}${transitionAttr}${layoutAttr}${slideNumberAttr}${slideTitleAttr}>\n<div class="slide-shell">\n${slideContent}\n</div>\n</section>`;

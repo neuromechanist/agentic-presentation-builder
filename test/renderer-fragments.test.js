@@ -103,3 +103,22 @@ test('renderPresentation supports fragment animations on individual bullet items
   assert.match(html, /<li class="fragment zoom-in" data-fragment-index="2"><p>Nested reveal<\/p>\s*<\/li>/);
   assert.match(html, /<li><p>Always visible<\/p>\s*<\/li>/);
 });
+
+test('renderPresentation renders speaker notes as markdown HTML', () => {
+  const html = renderDeck([
+    {
+      id: 'speaker-notes-markdown',
+      speakerNotes: '[Press -> 3x]\n\n- First point\n- Second point',
+      elements: [
+        {
+          type: 'text',
+          content: 'Slide body'
+        }
+      ]
+    }
+  ]);
+
+  assert.match(html, /<aside class="notes">/);
+  assert.match(html, /<p>\[Press -&gt; 3x\]<\/p>/);
+  assert.match(html, /<ul>\s*<li>First point<\/li>\s*<li>Second point<\/li>\s*<\/ul>/);
+});
