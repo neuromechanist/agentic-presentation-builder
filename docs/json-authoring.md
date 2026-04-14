@@ -42,7 +42,7 @@ Each slide can define:
 ## Element types
 
 - `text`: Markdown-rich prose and headings
-- `bullets`: flat or nested lists
+- `bullets`: flat or nested lists, with optional per-item `animation`
 - `image`: image with `src`, `alt`, optional `caption`, `width`, and `height`
 - `mermaid`: inline Mermaid diagrams
 - `callout`: highlighted content blocks

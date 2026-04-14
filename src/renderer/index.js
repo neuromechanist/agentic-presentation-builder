@@ -233,22 +233,27 @@ function renderBulletsElement(element) {
   const styleAttr = buildStyleAttribute(element.style);
   const animation = buildAnimationAttributes(element.animation);
 
-  const items = element.items.map(item => {
-    if (typeof item === 'string') {
-      return `<li>${markdownToHtml(item)}</li>`;
-    } else {
-      // Nested bullet
-      const childrenHtml = item.children
-        ? `<ul>${item.children.map(child => `<li>${markdownToHtml(child)}</li>`).join('')}</ul>`
-        : '';
-      return `<li>${markdownToHtml(item.text)}${childrenHtml}</li>`;
-    }
-  }).join('\n');
+  const items = element.items.map(item => renderBulletItem(item)).join('\n');
 
   const classes = ['bullet-list', `style-${element.bulletStyle}`, getSizeClass(element.style.fontSize), ...animation.classes].join(' ');
   const attrs = [styleAttr, animation.attributes].filter(a => a).join(' ');
 
   return `<${listType} class="${classes}" ${attrs}>\n${items}\n</${listType}>`;
+}
+
+function renderBulletItem(item) {
+  const bulletItem = typeof item === 'string'
+    ? { text: item, children: [], animation: null }
+    : item;
+  const animation = buildAnimationAttributes(bulletItem.animation);
+  const classAttr = animation.classes.length > 0 ? ` class="${animation.classes.join(' ')}"` : '';
+  const attrSuffix = animation.attributes ? ` ${animation.attributes}` : '';
+  const children = bulletItem.children || [];
+  const childrenHtml = children.length > 0
+    ? `<ul>${children.map(child => renderBulletItem(child)).join('')}</ul>`
+    : '';
+
+  return `<li${classAttr}${attrSuffix}>${markdownToHtml(bulletItem.text)}${childrenHtml}</li>`;
 }
 
 /**

@@ -66,7 +66,7 @@ The source of truth is `schema/presentation.schema.json` in the repository root.
 
 - required: `type`, `items`
 - `bulletStyle`: `disc`, `circle`, `square`, `number`, `none`
-- items can be strings or nested `{ text, children }` objects
+- items can be strings or nested `{ text, children, animation }` objects
 
 ### `image`
 

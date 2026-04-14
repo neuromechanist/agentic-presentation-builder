@@ -396,7 +396,7 @@
           },
           {
             "type": "text",
-            "content": "Entire bullet lists can be animated:",
+            "content": "Bullet lists can animate as a group or one item at a time:",
             "style": {
               "fontSize": "medium"
             },
@@ -407,18 +407,42 @@
           {
             "type": "bullets",
             "items": [
-              "First bullet point",
-              "Second bullet point",
-              "Third bullet point",
-              "Fourth bullet point"
+              {
+                "text": "First bullet point",
+                "animation": {
+                  "fragment": true,
+                  "type": "fade",
+                  "index": 0
+                }
+              },
+              {
+                "text": "Second bullet point",
+                "animation": {
+                  "fragment": true,
+                  "type": "fade",
+                  "index": 1
+                }
+              },
+              {
+                "text": "Third bullet point",
+                "animation": {
+                  "fragment": true,
+                  "type": "slide-up",
+                  "index": 2
+                }
+              },
+              {
+                "text": "Fourth bullet point",
+                "animation": {
+                  "fragment": true,
+                  "type": "slide-up",
+                  "index": 3
+                }
+              }
             ],
             "bulletStyle": "disc",
             "style": {
               "fontSize": "medium"
-            },
-            "animation": {
-              "fragment": true,
-              "type": "fade"
             },
             "position": {
               "area": "content",
@@ -504,6 +528,21 @@
             "position": {
               "area": "right",
               "order": 2
+            }
+          },
+          {
+            "type": "code",
+            "code": "git checkout -b feature/issue-9-fragment-support\nnpm test",
+            "language": "bash",
+            "caption": "Code blocks can fragment too",
+            "animation": {
+              "fragment": true,
+              "type": "zoom",
+              "index": 2
+            },
+            "position": {
+              "area": "right",
+              "order": 3
             }
           }
         ]

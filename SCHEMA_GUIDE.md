@@ -114,15 +114,19 @@ Supports full markdown syntax.
 
 ### 2. Bullets Element
 
-For lists with optional nesting.
+For lists with optional nesting and per-item fragment animation.
 
 ```json
 {
   "type": "bullets",
   "items": [
-    "Simple bullet (supports markdown)",
     {
       "text": "Nested bullet",
+      "animation": {
+        "fragment": true,
+        "type": "fade",
+        "index": 0
+      },
       "children": [
         "Sub-item 1",
         "Sub-item 2"
@@ -398,14 +402,12 @@ See the `examples/` directory for:
 - `comprehensive-demo.json` - All features demonstrated
 - `github-course-demo.json` - Real-world presentation
 
-## Future Features (Not Yet Implemented)
+## Implemented Advanced Features
 
-The schema includes support for Phase 2 and 3 features:
-- `animation` properties (fragment reveals, effects)
+The current renderer supports:
+- `animation` properties, including fragment ordering
 - `transition` overrides per slide
-- Additional themes
-
-These properties can be included but won't be rendered until future phases.
+- additional built-in themes such as `dark`, `academic`, and `minimal`
 
 ## Support
 
