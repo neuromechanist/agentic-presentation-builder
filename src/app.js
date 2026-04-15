@@ -6,6 +6,10 @@
 import Reveal from 'reveal.js';
 import { buildPresentation } from './index-browser.js';
 import { validatePresentation } from './validator/index.js';
+import {
+  createImportedDeckFileCatalog,
+  rewriteImportedPresentationAssetPaths
+} from './utils/local-deck.js';
 import { markdownToHtml } from './utils/markdown-browser.js';
 import {
   buildRecommendations,
@@ -15,12 +19,13 @@ import {
   toIssueKey
 } from './utils/fit-guidance.js';
 
-// Get presentation path from URL parameter or default to hello-world
+// Get presentation path from URL parameter or fall back to the local deck launcher
 const params = new URLSearchParams(window.location.search);
-const presentationPath = params.get('presentation') || './examples/hello-world.json';
+let presentationPath = params.get('presentation');
 const PRESENTATION_MODE_STORAGE_KEY = 'agentic-presentation-mode';
 const WARNINGS_VISIBILITY_STORAGE_KEY = 'agentic-presentation-warnings';
 const presentationRole = getPresentationRole();
+let presentationSourceKind = presentationPath ? 'remote' : 'launcher';
 let mermaidLoaderPromise = null;
 let prismLoaderPromise = null;
 let mathRendererPromise = null;
@@ -32,6 +37,7 @@ let warningsVisible = getInitialWarningsVisibility();
 let revealInstance = null;
 let presentationSyncChannel = null;
 let presenterSlides = [];
+let localDeckObjectUrls = [];
 window.__presentationValidation = null;
 window.__presentationAudit = null;
 window.__presentationAgentReport = null;
@@ -48,29 +54,34 @@ window.__getPresentationAgentReport = () => window.__presentationAgentReport;
 /**
  * Load and render presentation
  */
-async function loadAndRenderPresentation() {
+async function loadAndRenderPresentation(presentationData = null, options = {}) {
   try {
-    document.body.classList.toggle('audience-screen', presentationRole === 'audience');
-    document.getElementById('loading').style.display = 'flex';
-
-    const response = await fetch(presentationPath);
-    if (!response.ok) {
-      throw new Error(`Failed to load presentation: ${response.statusText}`);
+    if (options.presentationPath) {
+      presentationPath = options.presentationPath;
     }
 
-    const presentationData = await response.json();
-    const validationResult = validatePresentation(presentationData);
+    if (options.sourceKind) {
+      presentationSourceKind = options.sourceKind;
+    }
+
+    document.body.classList.toggle('audience-screen', presentationRole === 'audience');
+    const loading = document.getElementById('loading');
+    loading.style.display = 'flex';
+    loading.innerHTML = '<div>Loading presentation...</div>';
+
+    const resolvedPresentationData = presentationData || await loadPresentationFromUrl(presentationPath);
+    const validationResult = validatePresentation(resolvedPresentationData);
     publishPresentationValidation(validationResult);
     presentationWarningsBySlide = indexWarningsBySlide(validationResult.warnings);
-    const built = buildPresentation(presentationData);
-    presenterSlides = buildPresenterSlides(presentationData);
+    const built = buildPresentation(resolvedPresentationData);
+    presenterSlides = buildPresenterSlides(resolvedPresentationData);
 
     document.title = built.metadata.title || 'Presentation';
 
     if (presentationRole === 'presenter') {
       renderPresenterView(built, presenterSlides);
       setupPresenterSync();
-      document.getElementById('loading').style.display = 'none';
+      loading.style.display = 'none';
       return;
     }
 
@@ -83,7 +94,7 @@ async function loadAndRenderPresentation() {
 
     await hydrateRenderedImages(slidesContainer);
 
-    document.getElementById('loading').style.display = 'none';
+    loading.style.display = 'none';
 
     const controls = built.metadata.controls || {
       slideNumbers: false,
@@ -126,14 +137,184 @@ async function loadAndRenderPresentation() {
     console.log('Presentation loaded successfully:', built.metadata.title);
   } catch (error) {
     console.error('Error loading presentation:', error);
+    if (presentationSourceKind === 'local' || presentationSourceKind === 'launcher') {
+      renderLocalDeckLauncher(error.message);
+      return;
+    }
+
     document.getElementById('loading').innerHTML = `
       <div style="color: #DC2626; text-align: center;">
         <h2>Error Loading Presentation</h2>
         <p>${error.message}</p>
+        <p><a href="/">Open the local deck picker</a></p>
         <p><a href="?presentation=./examples/hello-world.json">Try hello-world example</a></p>
       </div>
     `;
   }
+}
+
+async function loadPresentationFromUrl(path) {
+  const response = await fetch(path);
+  if (!response.ok) {
+    throw new Error(`Failed to load presentation: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+function renderLocalDeckLauncher(errorMessage = '') {
+  presentationSourceKind = 'launcher';
+  document.title = 'Open Local Presentation';
+  document.body.classList.remove('audience-screen');
+  document.querySelector('.reveal .slides').innerHTML = '';
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('loading').innerHTML = `
+    <div class="deck-launcher">
+      <div class="deck-launcher-card">
+        <p class="deck-launcher-kicker">Local Deck Loader</p>
+        <h1>Open any presentation folder on your computer</h1>
+        <p class="deck-launcher-copy">
+          Choose the folder that contains your JSON deck and any relative assets. The browser will import the deck,
+          rewrite local image and background paths, and render it without copying files into this repo.
+        </p>
+        ${errorMessage ? `<p class="deck-launcher-error">${escapeHtml(errorMessage)}</p>` : ''}
+        <div class="deck-launcher-actions">
+          <button type="button" id="open-local-deck-btn">Choose Deck Folder</button>
+          <a href="?presentation=./examples/hello-world.json" class="deck-launcher-link">Open hello-world example</a>
+        </div>
+        <p class="deck-launcher-hint">
+          Relative <code>image.src</code> and <code>slide.background</code> paths are resolved against the selected JSON file inside that folder.
+        </p>
+        <input id="local-deck-folder-input" type="file" webkitdirectory directory multiple hidden>
+        <div id="local-deck-selection"></div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('open-local-deck-btn')?.addEventListener('click', async () => {
+    try {
+      if (typeof window.showDirectoryPicker === 'function') {
+        const directoryHandle = await window.showDirectoryPicker();
+        const files = await collectLocalDeckFiles(directoryHandle, directoryHandle.name);
+        await handleLocalDeckFiles(files);
+        return;
+      }
+    } catch (error) {
+      if (error?.name !== 'AbortError') {
+        renderLocalDeckLauncher(error.message);
+      }
+      return;
+    }
+
+    document.getElementById('local-deck-folder-input')?.click();
+  });
+
+  document.getElementById('local-deck-folder-input')?.addEventListener('change', async event => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) {
+      return;
+    }
+
+    await handleLocalDeckFiles(files);
+  });
+}
+
+async function handleLocalDeckFiles(files) {
+  const { filesByPath, jsonFiles } = createImportedDeckFileCatalog(files);
+
+  if (jsonFiles.length === 0) {
+    renderLocalDeckLauncher('No JSON files were found in the selected folder.');
+    return;
+  }
+
+  if (jsonFiles.length === 1) {
+    await loadImportedPresentation(filesByPath, jsonFiles[0]);
+    return;
+  }
+
+  const selection = document.getElementById('local-deck-selection');
+  if (!selection) {
+    return;
+  }
+
+  selection.innerHTML = `
+    <div class="deck-launcher-select">
+      <label for="local-deck-json-select">Choose a JSON deck from the selected folder</label>
+      <select id="local-deck-json-select">
+        ${jsonFiles.map(path => `<option value="${escapeHtml(path)}">${escapeHtml(path)}</option>`).join('')}
+      </select>
+      <button type="button" id="load-selected-local-deck">Load Deck</button>
+    </div>
+  `;
+
+  selection.querySelector('#load-selected-local-deck')?.addEventListener('click', async () => {
+    const selectedPath = selection.querySelector('#local-deck-json-select')?.value;
+    if (!selectedPath) {
+      return;
+    }
+
+    await loadImportedPresentation(filesByPath, selectedPath);
+  });
+}
+
+async function loadImportedPresentation(filesByPath, jsonRelativePath) {
+  const jsonFile = filesByPath.get(jsonRelativePath);
+  if (!jsonFile) {
+    renderLocalDeckLauncher(`Could not find ${jsonRelativePath} in the selected folder.`);
+    return;
+  }
+
+  try {
+    revokeLocalDeckObjectUrls();
+    const fileContent = await jsonFile.text();
+    const presentationData = JSON.parse(fileContent);
+    const rewrittenPresentation = rewriteImportedPresentationAssetPaths(presentationData, {
+      createObjectUrl: file => URL.createObjectURL(file),
+      filesByPath,
+      jsonRelativePath
+    });
+
+    localDeckObjectUrls = rewrittenPresentation.objectUrls;
+    presentationPath = `local:${jsonRelativePath}`;
+    presentationSourceKind = 'local';
+
+    if (rewrittenPresentation.unresolvedAssets.length > 0) {
+      console.warn('Some imported local assets could not be resolved:', rewrittenPresentation.unresolvedAssets);
+    }
+
+    await loadAndRenderPresentation(rewrittenPresentation.presentationData, {
+      presentationPath,
+      sourceKind: 'local'
+    });
+  } catch (error) {
+    revokeLocalDeckObjectUrls();
+    renderLocalDeckLauncher(error.message);
+  }
+}
+
+async function collectLocalDeckFiles(directoryHandle, pathPrefix = '') {
+  const files = [];
+
+  for await (const [entryName, entryHandle] of directoryHandle.entries()) {
+    const relativePath = pathPrefix ? `${pathPrefix}/${entryName}` : entryName;
+
+    if (entryHandle.kind === 'file') {
+      const file = await entryHandle.getFile();
+      files.push({ file, relativePath });
+      continue;
+    }
+
+    if (entryHandle.kind === 'directory') {
+      files.push(...await collectLocalDeckFiles(entryHandle, relativePath));
+    }
+  }
+
+  return files;
+}
+
+function revokeLocalDeckObjectUrls() {
+  localDeckObjectUrls.forEach(url => URL.revokeObjectURL(url));
+  localDeckObjectUrls = [];
 }
 
 /**
@@ -350,7 +531,7 @@ function createShortcutsHelp() {
   const shortcuts = [
     { key: ',', description: 'Open presentation settings' },
     { key: 'P', description: 'Toggle presentation mode' },
-    { key: 'S', description: 'Open presenter view' },
+    { key: 'S', description: canOpenCompanionViews() ? 'Open presenter view' : 'Presenter view (URL-backed decks only)' },
     { key: 'O', description: 'Slide overview' },
     { key: 'F', description: 'Fullscreen' },
     { key: 'Esc', description: 'Exit overview / pause' },
@@ -610,9 +791,21 @@ function syncSettingsControls() {
     warningsToggle.checked = warningsVisible;
     warningsToggle.disabled = presentationRole === 'audience';
   }
+
+  const companionViewsAvailable = canOpenCompanionViews();
+  panel.querySelectorAll('[data-settings-action="presenter"], [data-settings-action="audience"]').forEach(buttonEl => {
+    buttonEl.disabled = !companionViewsAvailable;
+    buttonEl.title = companionViewsAvailable
+      ? ''
+      : 'Companion presenter and audience windows are only available when the deck is loaded from a URL.';
+  });
 }
 
 function openPresenterView() {
+  if (!canOpenCompanionViews()) {
+    window.alert('Presenter view is only available for URL-backed decks. Use a served URL or the CLI when you need companion windows.');
+    return;
+  }
   const presenterUrl = buildCompanionPresentationURL('presenter');
   const presenterWindow = window.open(presenterUrl.toString(), 'agentic-presenter-view');
   if (!presenterWindow) {
@@ -621,6 +814,10 @@ function openPresenterView() {
 }
 
 function openAudienceScreen() {
+  if (!canOpenCompanionViews()) {
+    window.alert('Audience screen is only available for URL-backed decks. Use a served URL or the CLI when you need companion windows.');
+    return;
+  }
   const audienceUrl = buildCompanionPresentationURL('audience');
   window.open(audienceUrl.toString(), 'agentic-audience-screen');
 }
@@ -644,6 +841,10 @@ function buildCompanionPresentationURL(role) {
   }
 
   return url;
+}
+
+function canOpenCompanionViews() {
+  return presentationSourceKind === 'remote';
 }
 
 function renderPresenterView(built, slides) {
@@ -1412,7 +1613,18 @@ function escapeHtml(text) {
 
 // Load presentation when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', loadAndRenderPresentation);
+  document.addEventListener('DOMContentLoaded', initializeApplication);
 } else {
-  loadAndRenderPresentation();
+  initializeApplication();
+}
+
+window.addEventListener('beforeunload', revokeLocalDeckObjectUrls);
+
+function initializeApplication() {
+  if (presentationPath) {
+    loadAndRenderPresentation();
+    return;
+  }
+
+  renderLocalDeckLauncher();
 }

@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "present": "node scripts/present.js",
     "docs:serve": "uvx --with-requirements docs/requirements.txt mkdocs serve",
     "docs:build": "uvx --with-requirements docs/requirements.txt mkdocs build --strict",
     "test": "node --test",
