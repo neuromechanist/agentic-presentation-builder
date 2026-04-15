@@ -11,12 +11,29 @@ Enable AI agents and LLMs to create professional presentations by generating sim
 ```bash
 npm install
 npm run dev
-# Open http://localhost:3000/?presentation=./examples/hello-world.json
-
-# For your own files use the public directory or a local server
-# e.g. http://localhost:3000/?presentation=./public/my-presentation.json
-
 ```
+
+Then open `http://localhost:3000`.
+
+The root page now includes a local deck loader:
+
+- choose the folder that contains your presentation JSON and its assets
+- pick the JSON file if the folder has more than one deck
+- relative `image.src` and `slide.background` paths are resolved against that JSON file automatically
+
+Built-in example:
+
+```text
+http://localhost:3000/?presentation=./examples/hello-world.json
+```
+
+If you want a URL-backed launch flow from the terminal, use the CLI:
+
+```bash
+npm run present -- ~/slides/demo.json
+```
+
+That prints a browser URL and keeps companion presenter/audience windows available.
 
 ## Documentation
 
@@ -34,6 +51,7 @@ Key pages:
 
 - `docs/index.md` for the product overview
 - `docs/getting-started.md` for first-run setup
+- `docs/local-decks.md` for opening decks directly from your computer
 - `docs/json-authoring.md` for the JSON contract and authoring patterns
 - `docs/agent-workflow.md` for validation, warnings, audit, and browser automation
 - `docs/presenting.md` for presentation, presenter, and audience modes
@@ -100,7 +118,10 @@ Single slide presentation:
 }
 ```
 
-View: `http://localhost:3000/?presentation=./examples/your-file.json`
+View it in one of two ways:
+
+- open `http://localhost:3000` and use the local deck loader
+- or use `http://localhost:3000/?presentation=./examples/your-file.json` for URL-backed decks
 
 ## Navigation
 
