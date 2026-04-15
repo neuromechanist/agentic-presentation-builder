@@ -1,66 +1,66 @@
-import { existsSync } from 'node:fs';
-import { basename, dirname, extname, isAbsolute, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { existsSync } from "node:fs";
+import { basename, dirname, extname, isAbsolute, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-export const DEFAULT_PRESENTATION_ROUTE = '/__agentic__/presentation.json';
-export const DEFAULT_ASSET_ROUTE = '/__agentic__/asset';
+export const DEFAULT_PRESENTATION_ROUTE = "/__agentic__/presentation.json";
+export const DEFAULT_ASSET_ROUTE = "/__agentic__/asset";
 
 export function parsePresentCliArgs(argv) {
   const options = {
-    host: 'localhost',
+    host: "localhost",
     open: false,
     port: 3000,
-    presentationPath: null
+    presentationPath: null,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
 
-    if (arg === '--help' || arg === '-h') {
+    if (arg === "--help" || arg === "-h") {
       return { ...options, help: true };
     }
 
-    if (arg === '--open') {
+    if (arg === "--open") {
       options.open = true;
       continue;
     }
 
-    if (arg === '--port') {
+    if (arg === "--port") {
       const value = argv[index + 1];
       if (!value) {
-        throw new Error('Missing value for --port');
+        throw new Error("Missing value for --port");
       }
       options.port = parsePort(value);
       index += 1;
       continue;
     }
 
-    if (arg.startsWith('--port=')) {
-      options.port = parsePort(arg.slice('--port='.length));
+    if (arg.startsWith("--port=")) {
+      options.port = parsePort(arg.slice("--port=".length));
       continue;
     }
 
-    if (arg === '--host') {
+    if (arg === "--host") {
       const value = argv[index + 1];
       if (!value) {
-        throw new Error('Missing value for --host');
+        throw new Error("Missing value for --host");
       }
       options.host = value;
       index += 1;
       continue;
     }
 
-    if (arg.startsWith('--host=')) {
-      options.host = arg.slice('--host='.length);
+    if (arg.startsWith("--host=")) {
+      options.host = arg.slice("--host=".length);
       continue;
     }
 
-    if (arg.startsWith('-')) {
+    if (arg.startsWith("-")) {
       throw new Error(`Unknown option: ${arg}`);
     }
 
     if (options.presentationPath) {
-      throw new Error('Only one presentation JSON path can be provided');
+      throw new Error("Only one presentation JSON path can be provided");
     }
 
     options.presentationPath = arg;
@@ -68,19 +68,19 @@ export function parsePresentCliArgs(argv) {
 
   return {
     ...options,
-    help: false
+    help: false,
   };
 }
 
 export function formatPresentCliUsage() {
   return [
-    'Usage: npm run present -- <path-to-json> [--port 3000] [--host localhost] [--open]',
-    '',
-    'Examples:',
-    '  npm run present -- examples/hello-world.json',
-    '  npm run present -- ~/slides/q2-review.json --open',
-    '  npm run present -- /Users/name/slides/demo.json --port 4173'
-  ].join('\n');
+    "Usage: npm run present -- <path-to-json> [--port 3000] [--host localhost] [--open]",
+    "",
+    "Examples:",
+    "  npm run present -- examples/hello-world.json",
+    "  npm run present -- ~/slides/q2-review.json --open",
+    "  npm run present -- /Users/name/slides/demo.json --port 4173",
+  ].join("\n");
 }
 
 export function rewritePresentationAssetPaths(presentationData, deckPath) {
@@ -90,29 +90,42 @@ export function rewritePresentationAssetPaths(presentationData, deckPath) {
   const clonedPresentation = structuredClone(presentationData);
 
   for (const slide of clonedPresentation.presentation?.slides || []) {
-    slide.background = registerAsset(slide.background, deckDirectory, assetIdsByPath, assetFiles);
+    slide.background = registerAsset(
+      slide.background,
+      deckDirectory,
+      assetIdsByPath,
+      assetFiles,
+    );
 
     for (const element of slide.elements || []) {
-      if (element.type === 'image') {
-        element.src = registerAsset(element.src, deckDirectory, assetIdsByPath, assetFiles);
+      if (element.type === "image") {
+        element.src = registerAsset(
+          element.src,
+          deckDirectory,
+          assetIdsByPath,
+          assetFiles,
+        );
       }
     }
   }
 
   return {
     assetFiles,
-    presentationData: clonedPresentation
+    presentationData: clonedPresentation,
   };
 }
 
-export function buildPresentationUrl(baseUrl, presentationRoute = DEFAULT_PRESENTATION_ROUTE) {
-  const url = new URL('/', ensureTrailingSlash(baseUrl));
-  url.searchParams.set('presentation', presentationRoute);
+export function buildPresentationUrl(
+  baseUrl,
+  presentationRoute = DEFAULT_PRESENTATION_ROUTE,
+) {
+  const url = new URL("/", ensureTrailingSlash(baseUrl));
+  url.searchParams.set("presentation", presentationRoute);
   return url.toString();
 }
 
 function registerAsset(assetPath, deckDirectory, assetIdsByPath, assetFiles) {
-  const resolvedPath = resolveAssetPath(assetPath, deckDirectory);
+  const resolvedPath = resolvePresentationAssetPath(assetPath, deckDirectory);
 
   if (!resolvedPath) {
     return assetPath;
@@ -130,16 +143,16 @@ function registerAsset(assetPath, deckDirectory, assetIdsByPath, assetFiles) {
   return `${DEFAULT_ASSET_ROUTE}/${assetId}/${assetName}`;
 }
 
-function resolveAssetPath(assetPath, deckDirectory) {
-  if (typeof assetPath !== 'string' || assetPath.length === 0) {
+export function resolvePresentationAssetPath(assetPath, deckDirectory) {
+  if (typeof assetPath !== "string" || assetPath.length === 0) {
     return null;
   }
 
-  if (assetPath.startsWith('#') || assetPath.startsWith('//')) {
+  if (assetPath.startsWith("#") || assetPath.startsWith("//")) {
     return null;
   }
 
-  if (assetPath.startsWith('file://')) {
+  if (assetPath.startsWith("file://")) {
     const filePath = fileURLToPath(assetPath);
     return existsSync(filePath) ? resolve(filePath) : null;
   }
@@ -165,7 +178,7 @@ function hasRemoteProtocol(value) {
     return false;
   }
 
-  return protocolMatch[1] !== 'file';
+  return protocolMatch[1] !== "file";
 }
 
 function parsePort(value) {
@@ -179,27 +192,27 @@ function parsePort(value) {
 }
 
 function ensureTrailingSlash(value) {
-  return value.endsWith('/') ? value : `${value}/`;
+  return value.endsWith("/") ? value : `${value}/`;
 }
 
 export function getContentType(filePath) {
   switch (extname(filePath).toLowerCase()) {
-    case '.avif':
-      return 'image/avif';
-    case '.gif':
-      return 'image/gif';
-    case '.jpeg':
-    case '.jpg':
-      return 'image/jpeg';
-    case '.json':
-      return 'application/json; charset=utf-8';
-    case '.png':
-      return 'image/png';
-    case '.svg':
-      return 'image/svg+xml';
-    case '.webp':
-      return 'image/webp';
+    case ".avif":
+      return "image/avif";
+    case ".gif":
+      return "image/gif";
+    case ".jpeg":
+    case ".jpg":
+      return "image/jpeg";
+    case ".json":
+      return "application/json; charset=utf-8";
+    case ".png":
+      return "image/png";
+    case ".svg":
+      return "image/svg+xml";
+    case ".webp":
+      return "image/webp";
     default:
-      return 'application/octet-stream';
+      return "application/octet-stream";
   }
 }

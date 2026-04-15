@@ -35,6 +35,22 @@ npm run present -- ~/slides/demo.json
 
 That prints a browser URL and keeps companion presenter/audience windows available.
 
+## Exporting
+
+Export a deck directly from the terminal:
+
+```bash
+npm run export -- examples/hello-world.json
+npm run export -- examples/hello-world.json --format pptx
+```
+
+- `pdf` is the default format and preserves the rendered deck through headless Chrome print export
+- `pptx` creates a presentation-ready PowerPoint deck using one rendered slide image per slide and copies `speakerNotes`
+- pass `--output <path>` to choose the destination file
+- pass `--chrome-path <path>` if Chrome is installed outside the default system locations
+
+Native ODP export is not implemented yet. The practical path today is `JSON -> PPTX -> ODP` using LibreOffice or another office suite that imports PowerPoint decks.
+
 ## Documentation
 
 This repository now ships a full MkDocs Material documentation site under [`docs/`](docs/).
@@ -142,6 +158,7 @@ View it in one of two ways:
 ## Element Types Reference
 
 ### Text Element
+
 ```json
 {
   "type": "text",
@@ -163,11 +180,13 @@ View it in one of two ways:
   }
 }
 ```
+
 **Font Sizes:** `small`, `medium`, `large`, `xl`, `xxl`
 **Alignment:** `left`, `center`, `right`, `justify`
 **Font Weight:** `normal`, `bold`, `light`
 
 ### Bullets Element
+
 ```json
 {
   "type": "bullets",
@@ -186,10 +205,12 @@ View it in one of two ways:
   "style": { "fontSize": "medium" }
 }
 ```
+
 **Bullet Styles:** `disc`, `circle`, `square`, `number`, `none`
 **Bullet Item Animation:** object items can also include `animation` for per-item fragments
 
 ### Image Element
+
 ```json
 {
   "type": "image",
@@ -202,9 +223,11 @@ View it in one of two ways:
   "animation": { "fragment": true, "type": "zoom" }
 }
 ```
+
 **Width/Height:** Percentage (`50%`), pixels (`400px`), or `auto`
 
 ### Mermaid Diagram Element
+
 ```json
 {
   "type": "mermaid",
@@ -213,10 +236,12 @@ View it in one of two ways:
   "position": { "area": "content" }
 }
 ```
+
 **Themes:** `default`, `dark`, `forest`, `neutral`
 **Diagram Types:** flowcharts, sequence, Gantt, git graphs, state diagrams
 
 ### Callout Element
+
 ```json
 {
   "type": "callout",
@@ -227,9 +252,11 @@ View it in one of two ways:
   "animation": { "fragment": true, "type": "fade" }
 }
 ```
+
 **Types:** `tip` (green), `warning` (yellow), `important` (red), `note` (blue), `info` (gray)
 
 ### Code Element
+
 ```json
 {
   "type": "code",
@@ -240,9 +267,11 @@ View it in one of two ways:
   "position": { "area": "content" }
 }
 ```
+
 **Languages:** `javascript`, `typescript`, `python`, `java`, `go`, `rust`, `html`, `css`, `json`
 
 ### Table Element
+
 ```json
 {
   "type": "table",
@@ -259,6 +288,7 @@ View it in one of two ways:
 ## Slide Configuration
 
 ### Slide Properties
+
 ```json
 {
   "id": "unique-slide-id",
@@ -272,6 +302,7 @@ View it in one of two ways:
 ```
 
 **Layouts:**
+
 - `single-column` - Standard vertical layout
 - `two-column` - Side-by-side with left/right areas
 - `title` - Centered content for title slides
@@ -280,6 +311,7 @@ View it in one of two ways:
 **Transitions:** `slide`, `fade`, `convex`, `concave`, `zoom`
 
 **Position Areas:**
+
 - `header`, `content`, `footer` (all layouts)
 - `left`, `right` (two-column only)
 - `center` (title layout)
@@ -324,6 +356,7 @@ View it in one of two ways:
 ## Animation System
 
 ### Progressive Reveal with Fragments
+
 ```json
 {
   "elements": [
@@ -355,10 +388,12 @@ View it in one of two ways:
 ```
 
 **Supported Fragment Targets:**
+
 - whole `text`, `bullets`, `image`, `mermaid`, `callout`, `code`, and `table` elements
 - individual bullet items via object entries in `bullets.items`
 
 **Animation Types:**
+
 - `fade` - Fade in
 - `slide-up` - Slide up from bottom
 - `slide-down` - Slide down from top
@@ -366,6 +401,7 @@ View it in one of two ways:
 - `none` - No animation
 
 **Fragment Rules:**
+
 - `fragment: false` → appears immediately
 - `fragment: true` → appears on click/space
 - `index` controls order (0, 1, 2, ...)
@@ -373,6 +409,7 @@ View it in one of two ways:
 - `code`, `callout`, and individual bullet items support fragment animation
 
 **Per-Item Bullet Example:**
+
 ```json
 {
   "type": "bullets",
@@ -400,24 +437,28 @@ npm run validate examples/your-presentation.json
 ## Common Validation Errors
 
 **Missing Required Fields:**
+
 ```
 Error: Missing required field: title
 Fix: Add "title" to metadata
 ```
 
 **Invalid Enum Value:**
+
 ```
 Error: Invalid value. Must be one of: fade, slide, convex, concave, zoom
 Fix: Use one of the allowed transition types
 ```
 
 **Type Mismatch:**
+
 ```
 Error: Expected boolean but got string
 Fix: Change "slideNumbers": "true" to "slideNumbers": true
 ```
 
 **Invalid Color Format:**
+
 ```
 Error: Value does not match required format (e.g., hex color: #FFFFFF)
 Fix: Use proper hex format: "#1E293B" not "blue"
@@ -426,12 +467,14 @@ Fix: Use proper hex format: "#1E293B" not "blue"
 ## Validation Checklist
 
 **Required Fields:**
+
 - ✅ `presentation.metadata.title` exists
 - ✅ `presentation.slides` array has ≥ 1 slide
 - ✅ Each slide has `elements` array
 - ✅ Each element has `type` and required fields
 
 **Valid Values:**
+
 - ✅ Theme: `default`, `light`, `dark`, `academic`, `minimal`
 - ✅ Layout: `single-column`, `two-column`, `title`, `blank`
 - ✅ Transition: `slide`, `fade`, `convex`, `concave`, `zoom`
@@ -439,6 +482,7 @@ Fix: Use proper hex format: "#1E293B" not "blue"
 - ✅ Font sizes: `small`, `medium`, `large`, `xl`, `xxl`
 
 **Element-Specific:**
+
 - ✅ Text/Bullets: `content`/`items` not empty
 - ✅ Image: `src` is valid path/URL
 - ✅ Code: `code` not empty, `language` supported
@@ -446,22 +490,28 @@ Fix: Use proper hex format: "#1E293B" not "blue"
 - ✅ Mermaid: `diagram` has valid syntax
 
 **Animation:**
+
 - ✅ Fragment indices are integers ≥ 0
 - ✅ Animation type is valid
 
 ## Programmatic Validation
 
 ```javascript
-import { validatePresentation, getValidationReport } from './src/validator/index.js';
+import {
+  validatePresentation,
+  getValidationReport,
+} from "./src/validator/index.js";
 
-const presentation = { /* your JSON */ };
+const presentation = {
+  /* your JSON */
+};
 
 // Get validation result
 const result = validatePresentation(presentation);
 if (result.valid) {
-  console.log('Valid!');
+  console.log("Valid!");
 } else {
-  console.error('Errors:', result.errors);
+  console.error("Errors:", result.errors);
 }
 
 // Get human-readable report
@@ -520,6 +570,7 @@ agent-presentation/
 ## Contributing
 
 This project follows atomic commit practices:
+
 - Each commit = single logical change
 - Clear, descriptive commit messages
 - Test changes before committing

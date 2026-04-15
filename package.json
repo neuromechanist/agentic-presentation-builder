@@ -9,6 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "present": "node scripts/present.js",
+    "export": "node scripts/export.js",
     "docs:serve": "uvx --with-requirements docs/requirements.txt mkdocs serve",
     "docs:build": "uvx --with-requirements docs/requirements.txt mkdocs build --strict",
     "test": "node --test",
@@ -38,7 +39,9 @@
     "katex": "^0.16.9",
     "marked": "^11.0.0",
     "mermaid": "^10.6.1",
+    "pptxgenjs": "^4.0.1",
     "prismjs": "^1.30.0",
+    "puppeteer-core": "^24.41.0",
     "reveal.js": "^5.0.4"
   },
   "devDependencies": {

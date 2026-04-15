@@ -3,10 +3,10 @@
  * Same as index.js but without Node.js specific modules
  */
 
-import { validatePresentationStrict } from './validator/index.js';
-import { parsePresentation } from './parser/index.js';
-import { renderPresentation } from './renderer/index.js';
-import { generateThemeCSS } from './utils/theme.js';
+import { validatePresentationStrict } from "./validator/index.js";
+import { parsePresentation } from "./parser/index.js";
+import { renderPresentation } from "./renderer/browser.js";
+import { generateThemeCSS } from "./utils/theme.js";
 
 /**
  * Build presentation from JSON
@@ -21,7 +21,10 @@ export function buildPresentation(presentationData) {
   const parsed = parsePresentation(presentationData);
 
   // Step 3: Generate theme CSS
-  const themeCSS = generateThemeCSS(parsed.metadata.theme, parsed.metadata.customTheme);
+  const themeCSS = generateThemeCSS(
+    parsed.metadata.theme,
+    parsed.metadata.customTheme,
+  );
 
   // Step 4: Render slides to HTML
   const slidesHTML = renderPresentation(parsed);
@@ -33,7 +36,7 @@ export function buildPresentation(presentationData) {
     metadata: parsed.metadata,
     slidesHTML,
     themeCSS,
-    dimensions
+    dimensions,
   };
 }
 
@@ -43,7 +46,7 @@ export function buildPresentation(presentationData) {
  * @returns {object} Width and height
  */
 function getAspectRatioDimensions(aspectRatio) {
-  if (aspectRatio === '4:3') {
+  if (aspectRatio === "4:3") {
     return { width: 1024, height: 768 };
   }
   // Default to 16:9
@@ -51,5 +54,5 @@ function getAspectRatioDimensions(aspectRatio) {
 }
 
 export default {
-  buildPresentation
+  buildPresentation,
 };
