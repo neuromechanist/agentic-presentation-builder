@@ -36,3 +36,55 @@ test("resolveDefaultOutputPath keeps the deck next to the source json", () => {
     "/tmp/slides/demo.pptx",
   );
 });
+
+test("parseExportCliArgs defaults pptxMode to native", () => {
+  const args = parseExportCliArgs([
+    "examples/hello-world.json",
+    "--format",
+    "pptx",
+  ]);
+  assert.equal(args.pptxMode, "native");
+});
+
+test("parseExportCliArgs accepts --pptx-mode=image", () => {
+  const args = parseExportCliArgs([
+    "examples/hello-world.json",
+    "--format",
+    "pptx",
+    "--pptx-mode=image",
+  ]);
+  assert.equal(args.pptxMode, "image");
+});
+
+test("parseExportCliArgs rejects invalid pptx-mode", () => {
+  assert.throws(
+    () => parseExportCliArgs(["examples/hello-world.json", "--pptx-mode", "bad"]),
+    /Unsupported --pptx-mode/,
+  );
+});
+
+test("parseExportCliArgs rejects unsupported format", () => {
+  assert.throws(
+    () => parseExportCliArgs(["examples/hello-world.json", "--format", "odp"]),
+    /Unsupported export format/,
+  );
+});
+
+test("parseExportCliArgs rejects invalid port", () => {
+  assert.throws(
+    () => parseExportCliArgs(["examples/hello-world.json", "--port", "abc"]),
+    /Invalid port/,
+  );
+});
+
+test("parseExportCliArgs rejects unknown option", () => {
+  assert.throws(
+    () => parseExportCliArgs(["examples/hello-world.json", "--verbose"]),
+    /Unknown option/,
+  );
+});
+
+test("parseExportCliArgs returns help flag", () => {
+  const args = parseExportCliArgs(["--help"]);
+  assert.equal(args.help, true);
+});

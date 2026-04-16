@@ -81,7 +81,7 @@ const isEntrypoint =
 
 if (isEntrypoint) {
   main().catch((error) => {
-    console.error(error.message);
+    console.error(error.stack || error.message);
     process.exit(1);
   });
 }

@@ -102,9 +102,10 @@ export function createLocalPresentationPlugin(presentationJson, assetFiles) {
           res.statusCode = 200;
           res.setHeader("Content-Type", getContentType(assetPath));
           createReadStream(assetPath).pipe(res);
-        } catch {
-          res.statusCode = 404;
-          res.end("Asset not found");
+        } catch (error) {
+          const status = error.code === "ENOENT" ? 404 : 500;
+          res.statusCode = status;
+          res.end(status === 404 ? "Asset not found" : `Asset error: ${error.message}`);
         }
       });
     },

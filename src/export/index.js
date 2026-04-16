@@ -1,6 +1,5 @@
 import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
-import { mkdtemp, mkdir, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, rm } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { JSDOM } from "jsdom";
@@ -184,6 +183,7 @@ async function captureMermaidForSlide({
 
   const element = target.asElement ? target.asElement() : target;
   if (!element) {
+    console.warn(`Mermaid element not found on slide ${slideIndex + 1} (index ${currentIndex})`);
     return null;
   }
 
@@ -193,7 +193,8 @@ async function captureMermaidForSlide({
   );
   try {
     await element.screenshot({ path: outputPath, type: "png", omitBackground: true });
-  } catch {
+  } catch (error) {
+    console.warn(`Mermaid screenshot failed for slide ${slideIndex + 1}: ${error.message}`);
     return null;
   }
   return outputPath;
@@ -203,25 +204,33 @@ async function withBrowserExportRuntime(options, callback) {
   const presentationData = JSON.parse(
     await readFile(options.presentationPath, "utf-8"),
   );
+  if (!presentationData.presentation?.slides) {
+    throw new Error(
+      "Invalid presentation JSON: missing 'presentation.slides' field",
+    );
+  }
   const builtPresentation = {
     dimensions: getAspectRatioDimensions(
       presentationData.presentation?.metadata?.aspectRatio,
     ),
     metadata: presentationData.presentation?.metadata || {},
   };
-  const browser = await puppeteer.launch({
-    args: ["--disable-dev-shm-usage", "--hide-scrollbars"],
-    executablePath: resolveChromeExecutablePath(options.chromePath),
-    headless: true,
-  });
 
-  const runtime = await startLocalPresentationServer({
-    host: options.host,
-    port: options.port,
-    presentationPath: options.presentationPath,
-  });
-
+  let browser;
+  let runtime;
   try {
+    browser = await puppeteer.launch({
+      args: ["--disable-dev-shm-usage", "--hide-scrollbars"],
+      executablePath: resolveChromeExecutablePath(options.chromePath),
+      headless: true,
+    });
+
+    runtime = await startLocalPresentationServer({
+      host: options.host,
+      port: options.port,
+      presentationPath: options.presentationPath,
+    });
+
     const page = await browser.newPage();
     await page.setViewport({
       deviceScaleFactor: 1,
@@ -235,8 +244,8 @@ async function withBrowserExportRuntime(options, callback) {
 
     await callback(runtime);
   } finally {
-    await runtime.server.close();
-    await browser.close();
+    try { await runtime?.server?.close(); } catch (e) { console.warn(`Server cleanup failed: ${e.message}`); }
+    try { await browser?.close(); } catch (e) { console.warn(`Browser cleanup failed: ${e.message}`); }
   }
 }
 
@@ -272,12 +281,19 @@ function buildExportUrl(presentationUrl, format) {
 }
 
 async function waitForExportReady(page, waitMs) {
-  await page.waitForFunction(
-    () => window.__presentationExport?.ready === true,
-    {
-      timeout: 20000,
-    },
-  );
+  try {
+    await page.waitForFunction(
+      () => window.__presentationExport?.ready === true,
+      {
+        timeout: 20000,
+      },
+    );
+  } catch (error) {
+    throw new Error(
+      `Export timed out after 20s. The presentation may have failed to render ` +
+      `(missing assets, mermaid errors, etc.). Original: ${error.message}`,
+    );
+  }
 
   if (waitMs > 0) {
     await delay(waitMs);

@@ -105,8 +105,8 @@ function applyTransition(slide, transitionKey) {
   // pptxgenjs exposes slide.transition in recent versions; ignore if unsupported.
   try {
     slide.transition = { type: mapped, speed: "medium" };
-  } catch {
-    // Not supported in this pptxgenjs version; skip silently.
+  } catch (error) {
+    console.warn(`Slide transition skipped (${transitionKey}): ${error.message}`);
   }
 }
 
@@ -372,16 +372,22 @@ function addImageElement(slide, element, rect, baseDir) {
   const imageH = rect.h - (element.caption ? 0.4 : 0);
 
   if (!isRemoteUrl(imagePath) && !existsSync(imagePath)) {
+    console.warn(`Warning: image not found "${element.src}" (resolved to ${imagePath})`);
     renderMissingImagePlaceholder(slide, element, rect, imageH);
   } else {
-    slide.addImage({
-      path: imagePath,
-      x: rect.x,
-      y: rect.y,
-      w: rect.w,
-      h: imageH,
-      sizing: { type: "contain", w: rect.w, h: imageH },
-    });
+    try {
+      slide.addImage({
+        path: imagePath,
+        x: rect.x,
+        y: rect.y,
+        w: rect.w,
+        h: imageH,
+        sizing: { type: "contain", w: rect.w, h: imageH },
+      });
+    } catch (error) {
+      console.warn(`Warning: failed to add image "${element.src}": ${error.message}`);
+      renderMissingImagePlaceholder(slide, element, rect, imageH);
+    }
   }
 
   if (element.caption) {
@@ -587,8 +593,8 @@ async function addMermaidElement(slide, element, rect, ctx) {
         });
         return;
       }
-    } catch {
-      // Fall through to placeholder.
+    } catch (error) {
+      console.warn(`Mermaid render failed for slide ${ctx.slideIndex + 1}: ${error.message}`);
     }
   }
 
@@ -622,7 +628,7 @@ function markdownToTextRuns(markdown) {
   const runs = [];
   const blockTags = new Set(["p", "h1", "h2", "h3", "h4", "h5", "h6", "div", "blockquote"]);
 
-  const walk = (node, state, isLastChildOfBlock) => {
+  const walk = (node, state) => {
     const children = Array.from(node.childNodes);
     for (let i = 0; i < children.length; i += 1) {
       const child = children[i];
@@ -656,7 +662,7 @@ function markdownToTextRuns(markdown) {
           }
           continue;
         }
-        walk(child, nextState, lastChild);
+        walk(child, nextState);
         if (blockTags.has(tag) && !lastChild) {
           const lastRun = runs[runs.length - 1];
           if (lastRun) {
@@ -667,7 +673,7 @@ function markdownToTextRuns(markdown) {
     }
   };
 
-  walk(root, { bold: false, italic: false, underline: false, code: false }, true);
+  walk(root, { bold: false, italic: false, underline: false, code: false });
   return runs;
 }
 
@@ -708,6 +714,7 @@ function resolveAssetPath(src, baseDir) {
     for (const candidate of candidates) {
       if (existsSync(candidate)) return candidate;
     }
+    console.warn(`Warning: asset "${src}" not found in any candidate location`);
     return candidates[0];
   }
 
