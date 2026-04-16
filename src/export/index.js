@@ -8,6 +8,7 @@ import PptxGenJS from "pptxgenjs";
 import puppeteer from "puppeteer-core";
 import { markdownToHtml } from "../utils/markdown.js";
 import { startLocalPresentationServer } from "../utils/local-presentation-server.js";
+import { exportNativePptx } from "./pptx-native.js";
 
 const DEFAULT_CHROME_PATHS = [
   process.env.PUPPETEER_EXECUTABLE_PATH,
@@ -54,6 +55,59 @@ export async function exportPresentationToPdf(options) {
 }
 
 export async function exportPresentationToPptx(options) {
+  const mode = options.pptxMode || "native";
+  if (mode === "image") {
+    return exportPresentationToPptxImage(options);
+  }
+  return exportPresentationToPptxNative(options);
+}
+
+async function exportPresentationToPptxNative(options) {
+  const presentationData = JSON.parse(
+    await readFile(options.presentationPath, "utf-8"),
+  );
+  const hasMermaid = presentationContainsMermaid(presentationData);
+
+  if (!hasMermaid) {
+    await exportNativePptx({
+      presentationPath: options.presentationPath,
+      outputPath: options.outputPath,
+    });
+    return;
+  }
+
+  return withBrowserExportRuntime(options, async (runtime) => {
+    const exportUrl = buildExportUrl(runtime.presentationUrl, "pptx");
+    const tempDirectory = await mkdtemp(
+      join(tmpdir(), "agentic-pptx-mermaid-"),
+    );
+    try {
+      await runtime.page.goto(exportUrl, { waitUntil: "load" });
+      await waitForExportReady(runtime.page, options.waitMs);
+
+      const mermaidCounters = new Map();
+      const mermaidRenderer = async ({ slideIndex }) => {
+        return captureMermaidForSlide({
+          page: runtime.page,
+          slideIndex,
+          counters: mermaidCounters,
+          tempDirectory,
+          waitMs: options.waitMs,
+        });
+      };
+
+      await exportNativePptx({
+        presentationPath: options.presentationPath,
+        outputPath: options.outputPath,
+        mermaidRenderer,
+      });
+    } finally {
+      await rm(tempDirectory, { force: true, recursive: true });
+    }
+  });
+}
+
+async function exportPresentationToPptxImage(options) {
   return withBrowserExportRuntime(options, async (runtime) => {
     const exportUrl = buildExportUrl(runtime.presentationUrl, "pptx");
     const tempDirectory = await mkdtemp(
@@ -80,6 +134,69 @@ export async function exportPresentationToPptx(options) {
       await rm(tempDirectory, { force: true, recursive: true });
     }
   });
+}
+
+function presentationContainsMermaid(data) {
+  const slides = data?.presentation?.slides || [];
+  return slides.some((slide) =>
+    (slide.elements || []).some((el) => el.type === "mermaid"),
+  );
+}
+
+async function captureMermaidForSlide({
+  page,
+  slideIndex,
+  counters,
+  tempDirectory,
+  waitMs,
+}) {
+  const currentIndex = counters.get(slideIndex) ?? 0;
+  counters.set(slideIndex, currentIndex + 1);
+
+  await page.evaluate((idx) => {
+    window.Reveal.slide(idx);
+  }, slideIndex);
+  await page.waitForFunction(
+    (expectedIndex) => window.Reveal.getIndices().h === expectedIndex,
+    {},
+    slideIndex,
+  );
+  await page.evaluate(
+    () =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      ),
+  );
+  if (waitMs > 0) {
+    await delay(waitMs);
+  }
+
+  const target = await page.evaluateHandle(
+    ({ slide, nth }) => {
+      const section = document.querySelectorAll("section.present")[0]
+        || document.querySelectorAll(".slides > section")[slide];
+      if (!section) return null;
+      const containers = section.querySelectorAll(".mermaid");
+      return containers[nth] || null;
+    },
+    { slide: slideIndex, nth: currentIndex },
+  );
+
+  const element = target.asElement ? target.asElement() : target;
+  if (!element) {
+    return null;
+  }
+
+  const outputPath = join(
+    tempDirectory,
+    `mermaid-${slideIndex + 1}-${currentIndex + 1}.png`,
+  );
+  try {
+    await element.screenshot({ path: outputPath, type: "png", omitBackground: true });
+  } catch {
+    return null;
+  }
+  return outputPath;
 }
 
 async function withBrowserExportRuntime(options, callback) {

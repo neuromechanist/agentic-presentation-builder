@@ -2,6 +2,8 @@ import { basename, dirname, extname, join, resolve } from "node:path";
 
 const SUPPORTED_EXPORT_FORMATS = new Set(["pdf", "pptx"]);
 
+const SUPPORTED_PPTX_MODES = new Set(["native", "image"]);
+
 export function parseExportCliArgs(argv) {
   const options = {
     chromePath: null,
@@ -10,6 +12,7 @@ export function parseExportCliArgs(argv) {
     host: "127.0.0.1",
     outputPath: null,
     port: 4173,
+    pptxMode: "native",
     presentationPath: null,
     waitMs: 400,
   };
@@ -111,6 +114,21 @@ export function parseExportCliArgs(argv) {
       continue;
     }
 
+    if (arg === "--pptx-mode") {
+      const value = argv[index + 1];
+      if (!value) {
+        throw new Error("Missing value for --pptx-mode");
+      }
+      options.pptxMode = parsePptxMode(value);
+      index += 1;
+      continue;
+    }
+
+    if (arg.startsWith("--pptx-mode=")) {
+      options.pptxMode = parsePptxMode(arg.slice("--pptx-mode=".length));
+      continue;
+    }
+
     if (arg.startsWith("-")) {
       throw new Error(`Unknown option: ${arg}`);
     }
@@ -139,11 +157,12 @@ export function parseExportCliArgs(argv) {
 
 export function formatExportCliUsage() {
   return [
-    "Usage: npm run export -- <path-to-json> [--format pdf|pptx] [--output <path>]",
+    "Usage: npm run export -- <path-to-json> [--format pdf|pptx] [--output <path>] [--pptx-mode native|image]",
     "",
     "Examples:",
     "  npm run export -- examples/hello-world.json",
     "  npm run export -- examples/hello-world.json --format pptx",
+    "  npm run export -- examples/hello-world.json --format pptx --pptx-mode image",
     "  npm run export -- examples/hello-world.json --output dist/hello-world.pdf",
     "  npm run export -- examples/hello-world.json --format pdf --chrome-path /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome",
   ].join("\n");
@@ -182,6 +201,16 @@ function parsePort(value) {
   }
 
   return port;
+}
+
+function parsePptxMode(value) {
+  const normalized = value.toLowerCase();
+  if (!SUPPORTED_PPTX_MODES.has(normalized)) {
+    throw new Error(
+      `Unsupported --pptx-mode: ${value} (expected native or image)`,
+    );
+  }
+  return normalized;
 }
 
 function parseWaitMs(value) {
