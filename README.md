@@ -42,14 +42,22 @@ Export a deck directly from the terminal:
 ```bash
 npm run export -- examples/hello-world.json
 npm run export -- examples/hello-world.json --format pptx
+npm run export -- examples/hello-world.json --format pptx --pptx-mode=image
 ```
 
 - `pdf` is the default format and preserves the rendered deck through headless Chrome print export
-- `pptx` creates a presentation-ready PowerPoint deck using one rendered slide image per slide and copies `speakerNotes`
-- pass `--output <path>` to choose the destination file
-- pass `--chrome-path <path>` if Chrome is installed outside the default system locations
+- `pptx` (default mode: **native**) converts each slide to real PowerPoint objects: editable text, bullets with nesting, images, callout shapes, code blocks, tables, and speaker notes. Mermaid diagrams are rendered to PNG via headless Chrome and embedded as images. Font sizes scale proportionally to available space so content does not overflow
+- `--pptx-mode=image` falls back to the legacy screenshot-based export (one rendered PNG per slide)
+- `--output <path>` chooses the destination file
+- `--chrome-path <path>` points to a non-standard Chrome or Edge binary
 
 Native ODP export is not implemented yet. The practical path today is `JSON -> PPTX -> ODP` using LibreOffice or another office suite that imports PowerPoint decks.
+
+**Limitations of native PPTX mode:**
+
+- Reveal.js fragment animations are not yet mapped to PowerPoint entrance effects (planned for a future release)
+- Mermaid diagrams require a Chrome-compatible browser for rendering; without one they appear as source code placeholders
+- Custom theme fonts are not embedded in the PPTX; the viewer machine needs the fonts installed
 
 ## Documentation
 
