@@ -216,25 +216,60 @@ function renderLocalDeckLauncher(errorMessage = "") {
   document.getElementById("loading").innerHTML = `
     <div class="deck-launcher">
       <div class="deck-launcher-card">
-        <p class="deck-launcher-kicker">Local Deck Loader</p>
-        <h1>Open any presentation folder on your computer</h1>
-        <p class="deck-launcher-copy">
-          Choose the folder that contains your JSON deck and any relative assets. The browser will import the deck,
-          rewrite local image and background paths, and render it without copying files into this repo.
-        </p>
-        ${errorMessage ? `<p class="deck-launcher-error">${escapeHtml(errorMessage)}</p>` : ""}
-        <div class="deck-launcher-actions">
-          <button type="button" id="open-local-deck-btn">Choose Deck Folder</button>
-          <a href="?presentation=./examples/hello-world.json" class="deck-launcher-link">Open hello-world example</a>
+        <p class="deck-launcher-kicker">Presentation Viewer</p>
+        <h1>Open or paste a presentation</h1>
+        <div class="deck-launcher-tabs">
+          <button type="button" class="deck-launcher-tab active" data-tab="folder">Folder</button>
+          <button type="button" class="deck-launcher-tab" data-tab="file">JSON File</button>
+          <button type="button" class="deck-launcher-tab" data-tab="paste">Paste JSON</button>
         </div>
-        <p class="deck-launcher-hint">
-          Relative <code>image.src</code> and <code>slide.background</code> paths are resolved against the selected JSON file inside that folder.
-        </p>
-        <input id="local-deck-folder-input" type="file" webkitdirectory directory multiple hidden>
-        <div id="local-deck-selection"></div>
+        ${errorMessage ? `<p class="deck-launcher-error">${escapeHtml(errorMessage)}</p>` : ""}
+        <div class="deck-launcher-panel active" data-panel="folder">
+          <p class="deck-launcher-copy">
+            Choose the folder that contains your JSON deck and any relative assets. The browser will import the deck,
+            rewrite local image and background paths, and render it.
+          </p>
+          <div class="deck-launcher-actions">
+            <button type="button" id="open-local-deck-btn">Choose Deck Folder</button>
+            <a href="?presentation=./examples/hello-world.json" class="deck-launcher-link">Open hello-world example</a>
+          </div>
+          <p class="deck-launcher-hint">
+            Relative <code>image.src</code> and <code>slide.background</code> paths are resolved against the selected JSON file inside that folder.
+          </p>
+          <input id="local-deck-folder-input" type="file" webkitdirectory directory multiple hidden>
+          <div id="local-deck-selection"></div>
+        </div>
+        <div class="deck-launcher-panel" data-panel="file">
+          <p class="deck-launcher-copy">
+            Upload a single <code>.json</code> presentation file. Images with relative paths will not load; use absolute URLs in your JSON for hosted viewing.
+          </p>
+          <div class="deck-launcher-actions">
+            <button type="button" id="upload-json-btn">Upload JSON File</button>
+          </div>
+          <input id="json-file-input" type="file" accept=".json,application/json" hidden>
+        </div>
+        <div class="deck-launcher-panel" data-panel="paste">
+          <p class="deck-launcher-copy">
+            Paste your presentation JSON below. Images with relative paths will not load; use absolute URLs for hosted viewing.
+          </p>
+          <textarea id="json-paste-input" class="deck-launcher-textarea" placeholder='{"presentation":{"metadata":{"title":"My Deck"},"slides":[...]}}'></textarea>
+          <div class="deck-launcher-actions">
+            <button type="button" id="render-pasted-json-btn">Present</button>
+          </div>
+        </div>
       </div>
     </div>
   `;
+
+  document.querySelectorAll(".deck-launcher-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".deck-launcher-tab").forEach((t) => t.classList.remove("active"));
+      document.querySelectorAll(".deck-launcher-panel").forEach((p) => p.classList.remove("active"));
+      tab.classList.add("active");
+      const panel = document.querySelector(`.deck-launcher-panel[data-panel="${tab.dataset.tab}"]`);
+      if (panel) panel.classList.add("active");
+    });
+  });
 
   document
     .getElementById("open-local-deck-btn")
@@ -268,6 +303,53 @@ function renderLocalDeckLauncher(errorMessage = "") {
       }
 
       await handleLocalDeckFiles(files);
+    });
+
+  document
+    .getElementById("upload-json-btn")
+    ?.addEventListener("click", () => {
+      document.getElementById("json-file-input")?.click();
+    });
+
+  document
+    .getElementById("json-file-input")
+    ?.addEventListener("change", async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        presentationPath = `upload:${file.name}`;
+        presentationSourceKind = "paste";
+        await loadAndRenderPresentation(data, {
+          presentationPath,
+          sourceKind: "paste",
+        });
+      } catch (error) {
+        renderLocalDeckLauncher(error.message);
+      }
+    });
+
+  document
+    .getElementById("render-pasted-json-btn")
+    ?.addEventListener("click", async () => {
+      const textarea = document.getElementById("json-paste-input");
+      const text = textarea?.value?.trim();
+      if (!text) {
+        renderLocalDeckLauncher("Paste your presentation JSON first.");
+        return;
+      }
+      try {
+        const data = JSON.parse(text);
+        presentationPath = "paste:inline";
+        presentationSourceKind = "paste";
+        await loadAndRenderPresentation(data, {
+          presentationPath,
+          sourceKind: "paste",
+        });
+      } catch (error) {
+        renderLocalDeckLauncher(error.message);
+      }
     });
 }
 

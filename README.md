@@ -15,7 +15,9 @@ npm run dev
 
 Then open `http://localhost:3000`.
 
-The root page now includes a local deck loader:
+**No install needed?** Try the [hosted online viewer](https://neuromechanist.github.io/agentic-presentation-builder/viewer/) -- paste JSON or upload a file and present directly from your browser.
+
+The root page includes a deck loader:
 
 - choose the folder that contains your presentation JSON and its assets
 - pick the JSON file if the folder has more than one deck
