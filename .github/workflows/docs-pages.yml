@@ -44,6 +44,7 @@ jobs:
         run: |
           npm ci
           npm run build
+          rm -rf site/viewer
           cp -r dist site/viewer
           cp -r examples site/viewer/examples
 

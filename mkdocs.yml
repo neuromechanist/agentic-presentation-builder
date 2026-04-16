@@ -46,7 +46,7 @@ markdown_extensions:
 nav:
   - Overview: index.md
   - Getting Started: getting-started.md
-  - Online Viewer: viewer.md
+  - Online Viewer: hosted-viewer.md
   - Local Deck Loader: local-decks.md
   - JSON Authoring: json-authoring.md
   - Agent Workflow: agent-workflow.md
