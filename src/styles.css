@@ -197,11 +197,11 @@ body.export-mode .presentation-settings {
   border-bottom-color: #2563EB;
 }
 
-.deck-launcher-panel {
+.deck-launcher-panel[hidden] {
   display: none;
 }
 
-.deck-launcher-panel.active {
+.deck-launcher-panel {
   display: block;
 }
 

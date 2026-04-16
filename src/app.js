@@ -40,6 +40,8 @@ let revealInstance = null;
 let presentationSyncChannel = null;
 let presenterSlides = [];
 let localDeckObjectUrls = [];
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+let launcherPreservedState = { activeTab: "folder", pastedText: "" };
 window.__presentationValidation = null;
 window.__presentationAudit = null;
 window.__presentationAgentReport = null;
@@ -181,7 +183,8 @@ async function loadAndRenderPresentation(
     console.error("Error loading presentation:", error);
     if (
       presentationSourceKind === "local" ||
-      presentationSourceKind === "launcher"
+      presentationSourceKind === "launcher" ||
+      presentationSourceKind === "paste"
     ) {
       renderLocalDeckLauncher(error.message);
       return;
@@ -190,9 +193,8 @@ async function loadAndRenderPresentation(
     document.getElementById("loading").innerHTML = `
       <div style="color: #DC2626; text-align: center;">
         <h2>Error Loading Presentation</h2>
-        <p>${error.message}</p>
-        <p><a href="/">Open the local deck picker</a></p>
-        <p><a href="?presentation=./examples/hello-world.json">Try hello-world example</a></p>
+        <p>${escapeHtml(error.message)}</p>
+        <p><a href="./">Open the local deck picker</a></p>
       </div>
     `;
   }
@@ -213,18 +215,22 @@ function renderLocalDeckLauncher(errorMessage = "") {
   document.body.classList.remove("audience-screen");
   document.querySelector(".reveal .slides").innerHTML = "";
   document.getElementById("loading").style.display = "flex";
+  const { activeTab, pastedText } = launcherPreservedState;
+  const tabActive = (key) => (activeTab === key ? " active" : "");
+  const ariaSelected = (key) => (activeTab === key ? "true" : "false");
+  const panelHidden = (key) => (activeTab === key ? "" : " hidden");
   document.getElementById("loading").innerHTML = `
     <div class="deck-launcher">
       <div class="deck-launcher-card">
         <p class="deck-launcher-kicker">Presentation Viewer</p>
         <h1>Open or paste a presentation</h1>
-        <div class="deck-launcher-tabs">
-          <button type="button" class="deck-launcher-tab active" data-tab="folder">Folder</button>
-          <button type="button" class="deck-launcher-tab" data-tab="file">JSON File</button>
-          <button type="button" class="deck-launcher-tab" data-tab="paste">Paste JSON</button>
+        <div class="deck-launcher-tabs" role="tablist" aria-label="Presentation source">
+          <button type="button" class="deck-launcher-tab${tabActive("folder")}" data-tab="folder" role="tab" id="tab-folder" aria-controls="panel-folder" aria-selected="${ariaSelected("folder")}">Folder</button>
+          <button type="button" class="deck-launcher-tab${tabActive("file")}" data-tab="file" role="tab" id="tab-file" aria-controls="panel-file" aria-selected="${ariaSelected("file")}">JSON File</button>
+          <button type="button" class="deck-launcher-tab${tabActive("paste")}" data-tab="paste" role="tab" id="tab-paste" aria-controls="panel-paste" aria-selected="${ariaSelected("paste")}">Paste JSON</button>
         </div>
-        ${errorMessage ? `<p class="deck-launcher-error">${escapeHtml(errorMessage)}</p>` : ""}
-        <div class="deck-launcher-panel active" data-panel="folder">
+        ${errorMessage ? `<p class="deck-launcher-error" role="alert">${escapeHtml(errorMessage)}</p>` : ""}
+        <div class="deck-launcher-panel${tabActive("folder")}" data-panel="folder" role="tabpanel" id="panel-folder" aria-labelledby="tab-folder" tabindex="0"${panelHidden("folder")}>
           <p class="deck-launcher-copy">
             Choose the folder that contains your JSON deck and any relative assets. The browser will import the deck,
             rewrite local image and background paths, and render it.
@@ -239,7 +245,7 @@ function renderLocalDeckLauncher(errorMessage = "") {
           <input id="local-deck-folder-input" type="file" webkitdirectory directory multiple hidden>
           <div id="local-deck-selection"></div>
         </div>
-        <div class="deck-launcher-panel" data-panel="file">
+        <div class="deck-launcher-panel${tabActive("file")}" data-panel="file" role="tabpanel" id="panel-file" aria-labelledby="tab-file" tabindex="0"${panelHidden("file")}>
           <p class="deck-launcher-copy">
             Upload a single <code>.json</code> presentation file. Images with relative paths will not load; use absolute URLs in your JSON for hosted viewing.
           </p>
@@ -248,11 +254,11 @@ function renderLocalDeckLauncher(errorMessage = "") {
           </div>
           <input id="json-file-input" type="file" accept=".json,application/json" hidden>
         </div>
-        <div class="deck-launcher-panel" data-panel="paste">
+        <div class="deck-launcher-panel${tabActive("paste")}" data-panel="paste" role="tabpanel" id="panel-paste" aria-labelledby="tab-paste" tabindex="0"${panelHidden("paste")}>
           <p class="deck-launcher-copy">
             Paste your presentation JSON below. Images with relative paths will not load; use absolute URLs for hosted viewing.
           </p>
-          <textarea id="json-paste-input" class="deck-launcher-textarea" placeholder='{"presentation":{"metadata":{"title":"My Deck"},"slides":[...]}}'></textarea>
+          <textarea id="json-paste-input" class="deck-launcher-textarea" placeholder='{"presentation":{"metadata":{"title":"My Deck"},"slides":[...]}}'>${escapeHtml(pastedText)}</textarea>
           <div class="deck-launcher-actions">
             <button type="button" id="render-pasted-json-btn">Present</button>
           </div>
@@ -261,14 +267,38 @@ function renderLocalDeckLauncher(errorMessage = "") {
     </div>
   `;
 
-  document.querySelectorAll(".deck-launcher-tab").forEach((tab) => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".deck-launcher-tab").forEach((t) => t.classList.remove("active"));
-      document.querySelectorAll(".deck-launcher-panel").forEach((p) => p.classList.remove("active"));
-      tab.classList.add("active");
-      const panel = document.querySelector(`.deck-launcher-panel[data-panel="${tab.dataset.tab}"]`);
-      if (panel) panel.classList.add("active");
+  const tabs = Array.from(document.querySelectorAll(".deck-launcher-tab"));
+  const panels = Array.from(document.querySelectorAll(".deck-launcher-panel"));
+  const activateTab = (tab) => {
+    tabs.forEach((t) => {
+      t.classList.remove("active");
+      t.setAttribute("aria-selected", "false");
     });
+    panels.forEach((p) => {
+      p.classList.remove("active");
+      p.setAttribute("hidden", "");
+    });
+    tab.classList.add("active");
+    tab.setAttribute("aria-selected", "true");
+    tab.focus();
+    const panel = document.querySelector(`.deck-launcher-panel[data-panel="${tab.dataset.tab}"]`);
+    panel?.classList.add("active");
+    panel?.removeAttribute("hidden");
+    launcherPreservedState.activeTab = tab.dataset.tab;
+  };
+  tabs.forEach((tab, idx) => {
+    tab.addEventListener("click", () => activateTab(tab));
+    tab.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") activateTab(tabs[(idx + 1) % tabs.length]);
+      else if (e.key === "ArrowLeft") activateTab(tabs[(idx - 1 + tabs.length) % tabs.length]);
+      else if (e.key === "Home") activateTab(tabs[0]);
+      else if (e.key === "End") activateTab(tabs[tabs.length - 1]);
+    });
+  });
+
+  const pasteTextarea = document.getElementById("json-paste-input");
+  pasteTextarea?.addEventListener("input", () => {
+    launcherPreservedState.pastedText = pasteTextarea.value;
   });
 
   document
@@ -315,42 +345,64 @@ function renderLocalDeckLauncher(errorMessage = "") {
     .getElementById("json-file-input")
     ?.addEventListener("change", async (event) => {
       const file = event.target.files?.[0];
+      event.target.value = "";
       if (!file) return;
-      try {
-        const text = await file.text();
-        const data = JSON.parse(text);
-        presentationPath = `upload:${file.name}`;
-        presentationSourceKind = "paste";
-        await loadAndRenderPresentation(data, {
-          presentationPath,
-          sourceKind: "paste",
-        });
-      } catch (error) {
-        renderLocalDeckLauncher(error.message);
+
+      if (file.size > MAX_UPLOAD_BYTES) {
+        renderLocalDeckLauncher(
+          `File too large: ${(file.size / 1024 / 1024).toFixed(1)} MB (limit is ${MAX_UPLOAD_BYTES / 1024 / 1024} MB).`,
+        );
+        return;
       }
+      if (!/\.json$/i.test(file.name) && file.type && !/json/i.test(file.type)) {
+        renderLocalDeckLauncher(`Expected a .json file; got "${file.name}".`);
+        return;
+      }
+
+      let text;
+      try {
+        text = await file.text();
+      } catch (error) {
+        console.error("File read failed:", error);
+        renderLocalDeckLauncher(`Could not read ${file.name}: ${error.message}`);
+        return;
+      }
+      await presentFromJsonText(text, `upload:${file.name}`, `Invalid JSON in ${file.name}`);
     });
 
   document
     .getElementById("render-pasted-json-btn")
     ?.addEventListener("click", async () => {
-      const textarea = document.getElementById("json-paste-input");
-      const text = textarea?.value?.trim();
+      const text = launcherPreservedState.pastedText.trim();
       if (!text) {
         renderLocalDeckLauncher("Paste your presentation JSON first.");
         return;
       }
-      try {
-        const data = JSON.parse(text);
-        presentationPath = "paste:inline";
-        presentationSourceKind = "paste";
-        await loadAndRenderPresentation(data, {
-          presentationPath,
-          sourceKind: "paste",
-        });
-      } catch (error) {
-        renderLocalDeckLauncher(error.message);
-      }
+      await presentFromJsonText(text, "paste:inline", "Invalid JSON");
     });
+}
+
+async function presentFromJsonText(text, sourcePath, parseErrorPrefix) {
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (error) {
+    console.error("JSON parse failed:", error);
+    renderLocalDeckLauncher(`${parseErrorPrefix}: ${error.message}`);
+    return;
+  }
+  if (!data || typeof data !== "object" || Array.isArray(data) || !data.presentation) {
+    renderLocalDeckLauncher(
+      'JSON must be an object with a "presentation" field (with metadata and slides).',
+    );
+    return;
+  }
+  presentationPath = sourcePath;
+  presentationSourceKind = "paste";
+  await loadAndRenderPresentation(data, {
+    presentationPath: sourcePath,
+    sourceKind: "paste",
+  });
 }
 
 async function handleLocalDeckFiles(files) {

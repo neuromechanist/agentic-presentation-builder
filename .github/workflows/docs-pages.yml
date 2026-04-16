@@ -45,6 +45,7 @@ jobs:
           npm ci
           npm run build
           cp -r dist site/viewer
+          cp -r examples site/viewer/examples
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
