@@ -29,11 +29,23 @@ jobs:
       - name: Set up Pages
         uses: actions/configure-pages@v5
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
       - name: Set up uv
         uses: astral-sh/setup-uv@v4
 
       - name: Build docs site
         run: uvx --python 3.12 --with-requirements docs/requirements.txt mkdocs build --strict
+
+      - name: Build presentation viewer
+        run: |
+          npm ci
+          npm run build
+          cp -r dist site/viewer
+          cp -r examples site/viewer/examples
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
