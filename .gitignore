@@ -52,3 +52,4 @@ examples/output/
 
 # Public directory for testing with presentation assets
 public/
+.claude/
