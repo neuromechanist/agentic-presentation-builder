@@ -22,6 +22,26 @@ body {
   background: var(--theme-background, #FFFFFF);
 }
 
+body.export-mode {
+  overflow: hidden;
+}
+
+body.export-mode .fragment {
+  opacity: 1 !important;
+  visibility: inherit !important;
+  transform: none !important;
+}
+
+body.export-mode .controls,
+body.export-mode .progress,
+body.export-mode .slide-number,
+body.export-mode #shortcuts-btn,
+body.export-mode #shortcuts-overlay,
+body.export-mode .layout-audit-controls,
+body.export-mode .presentation-settings {
+  display: none !important;
+}
+
 /* Loading indicator */
 #loading {
   position: fixed;

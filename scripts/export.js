@@ -2,45 +2,38 @@
 
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { startLocalPresentationServer } from "../src/utils/local-presentation-server.js";
+import { exportPresentation } from "../src/export/index.js";
 import {
-  formatPresentCliUsage,
-  parsePresentCliArgs,
-} from "../src/utils/present-cli.js";
+  formatExportCliUsage,
+  parseExportCliArgs,
+} from "../src/utils/export-cli.js";
 
 async function main() {
   let args;
 
   try {
-    args = parsePresentCliArgs(process.argv.slice(2));
+    args = parseExportCliArgs(process.argv.slice(2));
   } catch (error) {
     console.error(error.message);
     console.error("");
-    console.error(formatPresentCliUsage());
+    console.error(formatExportCliUsage());
     process.exit(1);
   }
 
   if (args.help) {
-    console.log(formatPresentCliUsage());
+    console.log(formatExportCliUsage());
     return;
   }
 
   if (!args.presentationPath) {
     console.error("Missing presentation JSON path.");
     console.error("");
-    console.error(formatPresentCliUsage());
+    console.error(formatExportCliUsage());
     process.exit(1);
   }
 
-  let runtime;
-
   try {
-    runtime = await startLocalPresentationServer({
-      host: args.host,
-      open: args.open,
-      port: args.port,
-      presentationPath: args.presentationPath,
-    });
+    await exportPresentation(args);
   } catch (error) {
     if (error.validationResult) {
       console.error(`${error.message}\n`);
@@ -52,26 +45,7 @@ async function main() {
     throw error;
   }
 
-  const { presentationPath, presentationUrl, server, validationResult } =
-    runtime;
-
-  console.log(`Serving presentation: ${presentationPath}`);
-  console.log(`Presentation URL: ${presentationUrl}`);
-
-  if (validationResult.warnings.length > 0) {
-    console.log("");
-    printWarnings(validationResult.warnings);
-  }
-
-  console.log("\nPress Ctrl+C to stop the server.");
-
-  const shutdown = async () => {
-    await server.close();
-    process.exit(0);
-  };
-
-  process.on("SIGINT", shutdown);
-  process.on("SIGTERM", shutdown);
+  console.log(`Exported ${args.format.toUpperCase()}: ${args.outputPath}`);
 }
 
 function printErrors(errors) {
@@ -86,6 +60,10 @@ function printErrors(errors) {
 }
 
 function printWarnings(warnings) {
+  if (warnings.length === 0) {
+    return;
+  }
+
   console.log(`Warnings (${warnings.length}):\n`);
 
   warnings.forEach((warning, index) => {
@@ -103,7 +81,7 @@ const isEntrypoint =
 
 if (isEntrypoint) {
   main().catch((error) => {
-    console.error(error.message);
+    console.error(error.stack || error.message);
     process.exit(1);
   });
 }

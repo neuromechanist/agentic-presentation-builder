@@ -44,6 +44,22 @@ In audience mode:
 - warnings are hidden
 - presentation mode is forced on
 
+## Exporting
+
+Use the export CLI when you need a file for distribution or a conference handoff:
+
+```bash
+npm run export -- ~/slides/demo.json
+npm run export -- ~/slides/demo.json --format pptx
+```
+
+- `pdf` is the default export and uses the browser renderer, so Mermaid, KaTeX, code highlighting, and theme styling stay aligned with the live deck
+- `pptx` uses the same rendered output to create slide-sized PowerPoint images and copies `speakerNotes` into slide notes
+- `--output <path>` overrides the default destination next to the source JSON file
+- `--chrome-path <path>` points the exporter at a non-standard Chrome or Edge binary
+
+There is no native ODP writer yet. If you need OpenDocument Presentation output, export to `pptx` first and convert that file in LibreOffice.
+
 ## Keyboard shortcuts
 
 - `,`: open settings
