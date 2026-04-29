@@ -795,19 +795,12 @@ hr {
 
 /* Overview mode styles */
 .reveal.overview {
-  overflow-y: auto !important;
-  height: 100vh !important;
-}
-
-.reveal.overview .slides {
-  height: auto !important;
-  padding-bottom: 50px;
+  background: var(--theme-background, #F8FAFC);
 }
 
 .reveal.overview .slides section {
   cursor: pointer;
   overflow: visible !important;
-  margin-bottom: 45px !important;
 }
 
 .reveal.overview .slides section[data-slide-overflow="true"] {
@@ -819,21 +812,21 @@ hr {
   content: attr(data-slide-number);
   display: block !important;
   position: absolute;
-  bottom: -1000px;
+  bottom: -3.25rem;
   left: 50%;
   transform: translateX(-50%) scale(5);
   transform-origin: center top;
-  font-size: 14px;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--theme-text, #1E293B);
   background: rgba(255, 255, 255, 0.95);
-  padding: 6px 12px;
+  padding: 0.35rem 0.7rem;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
   pointer-events: none;
   z-index: 100;
-  max-width: 1000px;
+  max-width: 80%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -1289,11 +1282,13 @@ body.presenter-screen .reveal {
 }
 
 .presenter-notes ul,
-.presenter-notes ol {
+.presenter-notes ol,
+.presenter-next-actions {
   padding-left: 1.2rem;
 }
 
-.presenter-notes li + li {
+.presenter-notes li + li,
+.presenter-next-actions li + li {
   margin-top: 0.35rem;
 }
 
@@ -1316,9 +1311,33 @@ body.presenter-screen .reveal {
   color: #CBD5E1;
 }
 
+.presenter-next-preview-frame {
+  width: 100%;
+  margin-bottom: 0.9rem;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #020617;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.presenter-next-preview-frame iframe {
+  width: 200%;
+  height: 200%;
+  border: 0;
+  display: block;
+  pointer-events: none;
+  transform: scale(0.5);
+  transform-origin: top left;
+}
+
 .presenter-up-next strong {
   color: #F8FAFC;
   font-size: 1rem;
+}
+
+.presenter-next-actions {
+  margin: 0;
+  color: #E2E8F0;
 }
 
 .presenter-empty-notes {

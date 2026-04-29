@@ -39,6 +39,9 @@ let warningsVisible = getInitialWarningsVisibility();
 let revealInstance = null;
 let presentationSyncChannel = null;
 let presenterSlides = [];
+let latestPresenterState = { indexh: 0, indexv: 0, indexf: -1 };
+let latestPresenterNextState = { indexh: 0, indexv: 0, indexf: -1 };
+let presenterLivePreviewPollId = null;
 let localDeckObjectUrls = [];
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 let launcherPreservedState = { activeTab: "folder", pastedText: "" };
@@ -1218,14 +1221,19 @@ function openAudienceScreen() {
   window.open(audienceUrl.toString(), "agentic-audience-screen");
 }
 
-function buildCompanionPresentationURL(role) {
+function buildCompanionPresentationURL(role, options = {}) {
+  const { state = null, sync = true } = options;
   const url = new URL(window.location.href);
   url.searchParams.set("presentation", presentationPath);
   url.searchParams.set("role", role);
   url.searchParams.set("mode", "presentation");
   url.searchParams.set("warnings", "hidden");
 
-  const currentState = revealInstance?.getState?.();
+  if (!sync) {
+    url.searchParams.set("sync", "off");
+  }
+
+  const currentState = state || revealInstance?.getState?.();
   if (currentState && Number.isInteger(currentState.indexh)) {
     const parts = [currentState.indexh, currentState.indexv || 0];
     if (Number.isInteger(currentState.indexf) && currentState.indexf >= 0) {
@@ -1277,13 +1285,32 @@ function renderPresenterView(built, slides) {
         </section>
         <section class="presenter-card">
           <p class="presenter-card-label">Up Next</p>
+          <div class="presenter-next-preview-frame" style="aspect-ratio: ${built.dimensions.width} / ${built.dimensions.height};">
+            <iframe
+              src="${escapeHtml(buildCompanionPresentationURL("audience", { sync: false }).toString())}"
+              title="Next action preview"
+              data-presenter-next-preview
+            ></iframe>
+          </div>
           <div class="presenter-up-next" data-presenter-next></div>
         </section>
       </aside>
     </div>
   `;
 
+  document
+    .querySelector("[data-presenter-preview]")
+    ?.addEventListener("load", () => {
+      syncPresenterViewFromLivePreview();
+      startPresenterLivePreviewPolling();
+    });
+  document
+    .querySelector("[data-presenter-next-preview]")
+    ?.addEventListener("load", () => {
+      syncPresenterNextPreview();
+    });
   updatePresenterView(getPresentationStateFromHash(window.location.hash));
+  startPresenterLivePreviewPolling();
 }
 
 function buildPresenterSlides(presentationData) {
@@ -1292,6 +1319,7 @@ function buildPresenterSlides(presentationData) {
   return slides.map((slide, index) => ({
     number: index + 1,
     title: derivePresenterSlideTitle(slide, index),
+    actions: derivePresenterActions(slide),
     notesHtml: slide.speakerNotes?.trim()
       ? markdownToHtml(slide.speakerNotes)
       : '<p class="presenter-empty-notes">No speaker notes for this slide.</p>',
@@ -1319,6 +1347,106 @@ function stripMarkdown(text) {
     .replace(/\s+/g, " ");
 }
 
+function derivePresenterActions(slide) {
+  const actions = [];
+  let implicitIndex = 0;
+
+  (slide?.elements || []).forEach((element) => {
+    collectElementPresenterActions(element, actions, () => implicitIndex++);
+  });
+
+  const groupedActions = new Map();
+  actions.forEach((action) => {
+    const existing = groupedActions.get(action.index) || [];
+    existing.push(action.label);
+    groupedActions.set(action.index, existing);
+  });
+
+  return Array.from(groupedActions.entries())
+    .sort(([a], [b]) => a - b)
+    .map(([index, labels]) => ({
+      index,
+      labels,
+    }));
+}
+
+function collectElementPresenterActions(element, actions, nextImplicitIndex) {
+  if (!element) {
+    return;
+  }
+
+  if (element.animation?.fragment) {
+    actions.push({
+      index: getPresenterActionIndex(element.animation, nextImplicitIndex),
+      label: describePresenterElementAction(element),
+    });
+  }
+
+  if (element.type === "bullets") {
+    (element.items || []).forEach((item) => {
+      collectBulletPresenterActions(item, actions, nextImplicitIndex);
+    });
+  }
+}
+
+function collectBulletPresenterActions(item, actions, nextImplicitIndex) {
+  const bulletItem =
+    typeof item === "string" ? { text: item, children: [] } : item;
+
+  if (bulletItem.animation?.fragment) {
+    actions.push({
+      index: getPresenterActionIndex(bulletItem.animation, nextImplicitIndex),
+      label: truncatePresenterActionText(stripMarkdown(bulletItem.text || "")),
+    });
+  }
+
+  (bulletItem.children || []).forEach((child) => {
+    collectBulletPresenterActions(child, actions, nextImplicitIndex);
+  });
+}
+
+function getPresenterActionIndex(animation, nextImplicitIndex) {
+  return Number.isFinite(animation.index)
+    ? animation.index
+    : nextImplicitIndex();
+}
+
+function describePresenterElementAction(element) {
+  switch (element.type) {
+    case "text":
+      return truncatePresenterActionText(stripMarkdown(element.content || ""));
+    case "image":
+      return truncatePresenterActionText(
+        element.caption || element.alt || "Image",
+      );
+    case "callout":
+      return truncatePresenterActionText(
+        element.title || stripMarkdown(element.content || "") || "Callout",
+      );
+    case "code":
+      return truncatePresenterActionText(
+        element.caption || `${element.language || "Code"} block`,
+      );
+    case "table":
+      return truncatePresenterActionText(element.caption || "Table");
+    case "mermaid":
+      return "Diagram";
+    case "bullets":
+      return "Bullet list";
+    default:
+      return "Fragment";
+  }
+}
+
+function truncatePresenterActionText(text) {
+  const normalized = `${text || ""}`.replace(/\s+/g, " ").trim();
+  if (!normalized) {
+    return "Fragment";
+  }
+
+  return normalized.length > 96 ? `${normalized.slice(0, 93)}...` : normalized;
+}
+
 function getPresentationStateFromHash(hash) {
   const match = hash.match(/^#\/(\d+)(?:\/(\d+))?(?:\/(\d+))?/);
   if (!match) {
@@ -1337,12 +1465,23 @@ function updatePresenterView(state = { indexh: 0, indexv: 0, indexf: -1 }) {
     return;
   }
 
+  latestPresenterState = normalizePresenterState(state);
   const slideIndex = Math.min(
-    Math.max(state.indexh || 0, 0),
+    Math.max(latestPresenterState.indexh || 0, 0),
     presenterSlides.length - 1,
   );
   const currentSlide = presenterSlides[slideIndex];
   const nextSlide = presenterSlides[slideIndex + 1] || null;
+  const nextAction = getNextPresenterAction(
+    currentSlide,
+    latestPresenterState.indexf,
+  );
+  const nextState = getNextPresenterState(
+    latestPresenterState,
+    nextAction,
+    nextSlide,
+  );
+  latestPresenterNextState = nextState;
   const currentTitle = document.querySelector("[data-presenter-current-title]");
   const notes = document.querySelector("[data-presenter-notes]");
   const next = document.querySelector("[data-presenter-next]");
@@ -1360,9 +1499,7 @@ function updatePresenterView(state = { indexh: 0, indexv: 0, indexf: -1 }) {
   }
 
   if (next) {
-    next.innerHTML = nextSlide
-      ? `<strong>${escapeHtml(nextSlide.title)}</strong><span>Slide ${nextSlide.number}</span>`
-      : '<span class="presenter-empty-notes">End of deck</span>';
+    next.innerHTML = renderPresenterNextAction(nextAction, nextSlide);
   }
 
   if (slideStatus) {
@@ -1370,9 +1507,219 @@ function updatePresenterView(state = { indexh: 0, indexv: 0, indexf: -1 }) {
   }
 
   if (fragmentStatus) {
-    fragmentStatus.textContent =
-      state.indexf >= 0 ? `Fragment ${state.indexf + 1}` : "Fragment 0";
+    const visibleActions = currentSlide.actions.filter(
+      (action) => action.index <= latestPresenterState.indexf,
+    ).length;
+    fragmentStatus.textContent = `Action ${visibleActions} of ${currentSlide.actions.length}`;
   }
+
+  syncPresenterNextPreview(nextState);
+}
+
+function syncPresenterViewFromLivePreview(attempt = 0) {
+  const liveReveal = document.querySelector("[data-presenter-preview]")
+    ?.contentWindow?.Reveal;
+
+  if (!liveReveal || liveReveal.isReady?.() === false) {
+    schedulePresenterLivePreviewSyncRetry(attempt);
+    return;
+  }
+
+  const liveState = liveReveal.getState?.();
+  if (liveState && Number.isInteger(liveState.indexh)) {
+    updatePresenterView(liveState);
+  }
+}
+
+function startPresenterLivePreviewPolling() {
+  if (presenterLivePreviewPollId !== null) {
+    return;
+  }
+
+  presenterLivePreviewPollId = window.setInterval(() => {
+    const liveReveal = document.querySelector("[data-presenter-preview]")
+      ?.contentWindow?.Reveal;
+
+    if (!liveReveal || liveReveal.isReady?.() === false) {
+      return;
+    }
+
+    const liveState = liveReveal.getState?.();
+    if (
+      liveState &&
+      Number.isInteger(liveState.indexh) &&
+      !presenterStatesMatch(liveState, latestPresenterState)
+    ) {
+      updatePresenterView(liveState);
+    }
+  }, 150);
+}
+
+function presenterStatesMatch(a, b) {
+  return (
+    (a?.indexh ?? 0) === (b?.indexh ?? 0) &&
+    (a?.indexv ?? 0) === (b?.indexv ?? 0) &&
+    (a?.indexf ?? -1) === (b?.indexf ?? -1)
+  );
+}
+
+function schedulePresenterLivePreviewSyncRetry(attempt) {
+  if (attempt >= 20) {
+    return;
+  }
+
+  window.setTimeout(() => {
+    syncPresenterViewFromLivePreview(attempt + 1);
+  }, 100);
+}
+
+function getNextPresenterAction(slide, currentFragmentIndex = -1) {
+  const fragmentIndex = Number.isFinite(currentFragmentIndex)
+    ? currentFragmentIndex
+    : -1;
+
+  return slide.actions.find((action) => action.index > fragmentIndex) || null;
+}
+
+function normalizePresenterState(state) {
+  return {
+    indexh: Number.isInteger(state?.indexh) ? state.indexh : 0,
+    indexv: Number.isInteger(state?.indexv) ? state.indexv : 0,
+    indexf: Number.isInteger(state?.indexf) ? state.indexf : -1,
+  };
+}
+
+function getNextPresenterState(currentState, nextAction, nextSlide) {
+  if (nextAction) {
+    return {
+      ...currentState,
+      indexf: nextAction.index,
+    };
+  }
+
+  if (nextSlide) {
+    return {
+      ...currentState,
+      indexh: currentState.indexh + 1,
+      indexv: 0,
+      indexf: -1,
+    };
+  }
+
+  return currentState;
+}
+
+function syncPresenterNextPreview(nextState = latestPresenterNextState, attempt = 0) {
+  const iframe = document.querySelector("[data-presenter-next-preview]");
+  const targetState = nextState || latestPresenterNextState;
+  const previewReveal = iframe?.contentWindow?.Reveal;
+
+  if (!targetState) {
+    return;
+  }
+
+  if (!previewReveal || previewReveal.isReady?.() === false) {
+    schedulePresenterNextPreviewRetry(attempt);
+    return;
+  }
+
+  try {
+    if (typeof previewReveal.slide === "function") {
+      previewReveal.layout?.();
+      previewReveal.slide(targetState.indexh, targetState.indexv);
+      schedulePresenterNextPreviewFragmentSync(targetState, 0);
+      return;
+    }
+
+    previewReveal.setState?.(targetState);
+  } catch {
+    schedulePresenterNextPreviewRetry(attempt);
+  }
+}
+
+function schedulePresenterNextPreviewFragmentSync(targetState, attempt) {
+  window.setTimeout(() => {
+    syncPresenterNextPreviewFragments(targetState, attempt);
+  }, 50);
+}
+
+function syncPresenterNextPreviewFragments(targetState, attempt = 0) {
+  const iframe = document.querySelector("[data-presenter-next-preview]");
+  const previewReveal = iframe?.contentWindow?.Reveal;
+
+  if (!previewReveal || previewReveal.isReady?.() === false) {
+    schedulePresenterNextPreviewRetry(attempt);
+    return;
+  }
+
+  const currentState = previewReveal.getState?.() || {};
+  if (
+    currentState.indexh !== targetState.indexh ||
+    (currentState.indexv || 0) !== targetState.indexv
+  ) {
+    schedulePresenterNextPreviewRetry(attempt);
+    return;
+  }
+
+  applyPresenterPreviewFragmentState(iframe.contentDocument, targetState);
+  previewReveal.layout?.();
+}
+
+function applyPresenterPreviewFragmentState(previewDocument, targetState) {
+  const fragments = Array.from(
+    previewDocument?.querySelectorAll(".present .fragment") || [],
+  );
+
+  fragments.forEach((fragment, index) => {
+    const explicitIndex = Number.parseInt(
+      fragment.getAttribute("data-fragment-index") || "",
+      10,
+    );
+    const fragmentIndex = Number.isInteger(explicitIndex)
+      ? explicitIndex
+      : index;
+    const isVisible = fragmentIndex <= targetState.indexf;
+    const isCurrent = fragmentIndex === targetState.indexf;
+
+    fragment.classList.toggle("visible", isVisible);
+    fragment.classList.toggle("current-fragment", isCurrent);
+    fragment.style.opacity = isVisible ? "1" : "";
+    fragment.style.visibility = isVisible ? "visible" : "";
+    fragment.style.transform = isVisible ? "none" : "";
+  });
+}
+
+function schedulePresenterNextPreviewRetry(attempt) {
+  if (attempt >= 20) {
+    return;
+  }
+
+  window.setTimeout(() => {
+    syncPresenterNextPreview(latestPresenterNextState, attempt + 1);
+  }, 100);
+}
+
+function renderPresenterNextAction(nextAction, nextSlide) {
+  if (nextAction) {
+    const labels = nextAction.labels
+      .map((label) => `<li>${escapeHtml(label)}</li>`)
+      .join("");
+    const detail =
+      nextAction.labels.length === 1
+        ? "Reveal next fragment"
+        : `Reveal ${nextAction.labels.length} fragments`;
+
+    return `
+      <strong>${escapeHtml(detail)}</strong>
+      <ul class="presenter-next-actions">${labels}</ul>
+    `;
+  }
+
+  if (nextSlide) {
+    return `<strong>${escapeHtml(nextSlide.title)}</strong><span>Slide ${nextSlide.number}</span>`;
+  }
+
+  return '<span class="presenter-empty-notes">End of deck</span>';
 }
 
 function setupPresenterSync() {
@@ -2021,7 +2368,11 @@ function publishPresentationState() {
 }
 
 function getInitialPresentationMode() {
-  if (presentationRole === "audience" || presentationRole === "presenter") {
+  if (
+    presentationRole === "audience" ||
+    presentationRole === "presenter" ||
+    presentationRole === "preview"
+  ) {
     return true;
   }
 
@@ -2040,7 +2391,11 @@ function getInitialPresentationMode() {
 }
 
 function getInitialWarningsVisibility() {
-  if (presentationRole === "audience" || presentationRole === "presenter") {
+  if (
+    presentationRole === "audience" ||
+    presentationRole === "presenter" ||
+    presentationRole === "preview"
+  ) {
     return false;
   }
 
@@ -2064,11 +2419,14 @@ function getPresentationRole() {
   if (role === "presenter") {
     return "presenter";
   }
+  if (role === "preview") {
+    return "preview";
+  }
   return "controller";
 }
 
 function setupPresentationSync(reveal) {
-  if (!window.BroadcastChannel) {
+  if (!window.BroadcastChannel || params.get("sync") === "off") {
     return;
   }
 
