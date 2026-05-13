@@ -2,11 +2,14 @@
   <!-- Title -->
   <text x="480" y="22" font-family="sans-serif" font-size="14" fill="#1E293B" font-weight="bold" text-anchor="middle">Grant proposal = 5-stage managed pipeline</text>
 
-  <!-- Boomerang from Self-review (stage 4, x=610) back to Aims (stage 2, x=270) -->
-  <path d="M610 140 C 610 30, 310 30, 280 140" fill="none" stroke="#B45309" stroke-width="2.4" stroke-dasharray="6,5" stroke-linecap="round"/>
-  <polygon points="280,140 290,128 294,140" fill="#B45309"/>
-  <rect x="345" y="38" width="200" height="20" rx="5" fill="#FEF3C7" stroke="#B45309" stroke-width="1.2"/>
-  <text x="445" y="52" font-family="sans-serif" font-size="11" fill="#78350F" font-style="italic" text-anchor="middle">boomerang on review findings</text>
+  <!-- Boomerang from Self-review (stage 4) back to Aims (stage 2). -->
+  <!-- Both circles: centre y=180, r=46. Anchor on each circle's upper-shoulder. -->
+  <!-- Start: upper-left of Self-review (x=580, y=148). End: upper-right of Aims (x=302, y=148). -->
+  <path d="M580 148 C 580 30, 302 30, 302 148" fill="none" stroke="#B45309" stroke-width="2.4" stroke-dasharray="6,5" stroke-linecap="round"/>
+  <!-- Arrowhead at (302,148) pointing straight down into Aims circle (tangent at endpoint is vertical). -->
+  <polygon points="302,158 296,144 308,144" fill="#B45309"/>
+  <rect x="341" y="38" width="200" height="20" rx="5" fill="#FEF3C7" stroke="#B45309" stroke-width="1.2"/>
+  <text x="441" y="52" font-family="sans-serif" font-size="11" fill="#78350F" font-style="italic" text-anchor="middle">boomerang on review findings</text>
 
   <!-- Stage 1: NOFO -->
   <g>
