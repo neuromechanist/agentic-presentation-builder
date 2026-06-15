@@ -10,6 +10,26 @@ This system is designed for iterative JSON authoring by an agent.
 4. Open the deck and inspect rendered audit output.
 5. Use browser automation only after the structured issues are resolved.
 
+## Invoking the engine
+
+Agents have two equivalent ways to run the engine; both expose the same `validate`, `present`,
+and `export` commands:
+
+- **Zero-clone (`apb` via bunx/npx)**, pinned to a release tag, when there is no local checkout:
+
+  ```bash
+  bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 validate deck.json --json
+  ```
+
+- **Cloned repo (`npm run` / `bun run`)** for repeated authoring loops, which avoids re-resolving
+  the git package on every call:
+
+  ```bash
+  npm run validate -- deck.json --json
+  ```
+
+The examples below use the `npm run` form; substitute `apb` when running zero-clone.
+
 ## CLI validation
 
 Human-readable output:

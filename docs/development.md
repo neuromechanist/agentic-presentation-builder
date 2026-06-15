@@ -12,9 +12,19 @@ src/
   index.js      Node-facing entry point
 examples/       sample decks and assets
 schema/         JSON schema contract
-scripts/        CLI validation utilities
+scripts/        validate / present / export entry points (each exports main())
+bin/            apb.js, the bunx/npx CLI dispatcher over scripts/
 docs/           MkDocs Material site
 ```
+
+## CLI entry point
+
+`bin/apb.js` is the `apb` command declared in `package.json`'s `bin` field. It dispatches
+`validate` / `present` / `export` to the `main()` exported from the matching `scripts/*.js`, so
+the `bunx`/`npx` path and the `npm run` scripts share one implementation. `vite` is a runtime
+dependency (not a devDependency) because `present` needs it after a production-only `bunx`
+install. When adding a subcommand, export its `main(argv)` from a script and register it in the
+`bin/apb.js` dispatch table.
 
 ## Core commands
 

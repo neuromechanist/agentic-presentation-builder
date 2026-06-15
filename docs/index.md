@@ -35,6 +35,14 @@ Open:
 http://localhost:3000/?presentation=./examples/hello-world.json
 ```
 
+No clone? Run the `apb` CLI straight from the repo with `bunx`/`npx`:
+
+```bash
+bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 validate deck.json --json
+```
+
+See [Getting Started](getting-started.md#run-as-a-cli-no-clone).
+
 ## Documentation map
 
 - [Getting Started](getting-started.md): install, run, build, and preview a deck

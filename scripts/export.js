@@ -8,11 +8,11 @@ import {
   parseExportCliArgs,
 } from "../src/utils/export-cli.js";
 
-async function main() {
+export async function main(argv = process.argv.slice(2)) {
   let args;
 
   try {
-    args = parseExportCliArgs(process.argv.slice(2));
+    args = parseExportCliArgs(argv);
   } catch (error) {
     console.error(error.message);
     console.error("");

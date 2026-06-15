@@ -6,6 +6,8 @@
 ## Build, Test, and Development Commands
 Run `npm install` once to install dependencies. Use `npm run dev` to start the local Vite server on port `3000`, `npm run build` to create a production bundle in `dist/`, and `npm run preview` to inspect that build locally. Run `npm run validate -- examples/hello-world.json` to check a presentation against the JSON schema before committing changes. `npm test` runs Node's built-in test runner, `npm run lint` checks `src/` with ESLint, and `npm run format` applies Prettier to JS, JSON, CSS, and HTML sources.
 
+The repo also exposes an `apb` CLI (the `bin` entry in `package.json`, dispatcher at `bin/apb.js`) so it can run via `bunx`/`npx github:neuromechanist/agentic-presentation-builder#<tag> <command>` without an npm publish. The subcommands `validate`, `present`, and `export` reuse the same `main()` exported from `scripts/{validate,present,export}.js` as the matching `npm run` scripts, so behaviour stays identical between the two invocation styles. `vite` is a runtime dependency (not a devDependency) because `present` needs it after a production-only `bunx` install.
+
 ## Coding Style & Naming Conventions
 This codebase uses ES modules, 2-space indentation, semicolons, and single quotes in JavaScript. Prefer small, focused modules and preserve the current separation between validation, parsing, and rendering. Use `camelCase` for functions and variables, `kebab-case` for JSON example filenames such as `hello-world.json`, and keep presentation schema fields aligned with existing names like `speakerNotes`, `customTheme`, and `slideNumbers`.
 

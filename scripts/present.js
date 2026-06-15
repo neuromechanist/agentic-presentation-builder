@@ -8,11 +8,11 @@ import {
   parsePresentCliArgs,
 } from "../src/utils/present-cli.js";
 
-async function main() {
+export async function main(argv = process.argv.slice(2)) {
   let args;
 
   try {
-    args = parsePresentCliArgs(process.argv.slice(2));
+    args = parsePresentCliArgs(argv);
   } catch (error) {
     console.error(error.message);
     console.error("");
@@ -103,7 +103,7 @@ const isEntrypoint =
 
 if (isEntrypoint) {
   main().catch((error) => {
-    console.error(error.message);
+    console.error(error.stack || error.message);
     process.exit(1);
   });
 }
