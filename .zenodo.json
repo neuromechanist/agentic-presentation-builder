@@ -1,0 +1,23 @@
+{
+  "title": "Agentic Presentation Builder",
+  "description": "An LLM-friendly, JSON-based presentation engine that renders structured deck definitions into interactive Reveal.js presentations with Mermaid diagrams, LaTeX math, syntax-highlighted code, and animated progressive reveals. Ships an apb command-line interface for validating, serving, and exporting decks.",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "BSD-3-Clause",
+  "creators": [
+    {
+      "name": "Shirazi, Seyed Yahya",
+      "orcid": "0000-0001-5557-259X",
+      "affiliation": "Swartz Center for Computational Neuroscience, University of California San Diego"
+    }
+  ],
+  "keywords": [
+    "presentation",
+    "reveal.js",
+    "json",
+    "llm",
+    "agentic",
+    "mermaid",
+    "katex"
+  ]
+}
