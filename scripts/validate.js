@@ -1,63 +1,64 @@
 #!/usr/bin/env node
 /**
  * Command-line validation script for presentation JSON files
- * Usage: node scripts/validate.js <path-to-json>
+ * Usage: node scripts/validate.js <path-to-json> [--json]
  */
 
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+import { fileURLToPath } from 'node:url';
 import { validatePresentation } from '../src/validator/index.js';
 
-const args = process.argv.slice(2);
-const jsonOutput = args.includes('--json');
-const positionalArgs = args.filter(arg => arg !== '--json');
+export function main(argv = process.argv.slice(2)) {
+  const jsonOutput = argv.includes('--json');
+  const positionalArgs = argv.filter(arg => arg !== '--json');
 
-if (positionalArgs.length === 0) {
-  console.error('Usage: node scripts/validate.js <path-to-json>');
-  console.error('Example: node scripts/validate.js examples/hello-world.json --json');
-  process.exit(1);
-}
-
-const filePath = resolve(positionalArgs[0]);
-
-try {
-  // Load presentation
-  const fileContent = readFileSync(filePath, 'utf-8');
-  const presentation = JSON.parse(fileContent);
-
-  // Validate
-  const result = validatePresentation(presentation);
-  const payload = buildValidationPayload(filePath, result);
-
-  if (jsonOutput) {
-    console.log(JSON.stringify(payload, null, 2));
-    process.exit(result.valid ? 0 : 1);
-  }
-
-  console.log(`Validating: ${filePath}\n`);
-
-  if (result.valid) {
-    console.log('✓ Presentation is valid');
-    printWarnings(result.warnings);
-  } else {
-    console.log(`✗ Presentation has ${result.errors.length} validation error(s):\n`);
-
-    result.errors.forEach((error, index) => {
-      const path = error.path || 'root';
-
-      console.log(`${index + 1}. Path: ${path}`);
-      console.log(`   Code: ${error.code}`);
-      console.log(`   Error: ${error.message}\n`);
-      console.log(`   Suggestion: ${error.suggestion}\n`);
-    });
-
-    printWarnings(result.warnings);
+  if (positionalArgs.length === 0) {
+    console.error('Usage: node scripts/validate.js <path-to-json> [--json]');
+    console.error('Example: node scripts/validate.js examples/hello-world.json --json');
     process.exit(1);
   }
 
-} catch (error) {
-  console.error('Error:', error.message);
-  process.exit(1);
+  const filePath = resolve(positionalArgs[0]);
+
+  try {
+    // Load presentation
+    const fileContent = readFileSync(filePath, 'utf-8');
+    const presentation = JSON.parse(fileContent);
+
+    // Validate
+    const result = validatePresentation(presentation);
+    const payload = buildValidationPayload(filePath, result);
+
+    if (jsonOutput) {
+      console.log(JSON.stringify(payload, null, 2));
+      process.exit(result.valid ? 0 : 1);
+    }
+
+    console.log(`Validating: ${filePath}\n`);
+
+    if (result.valid) {
+      console.log('✓ Presentation is valid');
+      printWarnings(result.warnings);
+    } else {
+      console.log(`✗ Presentation has ${result.errors.length} validation error(s):\n`);
+
+      result.errors.forEach((error, index) => {
+        const path = error.path || 'root';
+
+        console.log(`${index + 1}. Path: ${path}`);
+        console.log(`   Code: ${error.code}`);
+        console.log(`   Error: ${error.message}\n`);
+        console.log(`   Suggestion: ${error.suggestion}\n`);
+      });
+
+      printWarnings(result.warnings);
+      process.exit(1);
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+    process.exit(1);
+  }
 }
 
 function printWarnings(warnings) {
@@ -87,4 +88,12 @@ function buildValidationPayload(filePath, result) {
     errors: result.errors || [],
     warnings: result.warnings
   };
+}
+
+const isEntrypoint =
+  process.argv[1] &&
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isEntrypoint) {
+  main();
 }

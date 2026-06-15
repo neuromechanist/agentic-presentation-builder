@@ -1,9 +1,12 @@
 {
   "name": "agentic-presentation-builder",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "LLM-friendly JSON-based presentation engine that renders to interactive JS presentations",
   "main": "src/index.js",
   "type": "module",
+  "bin": {
+    "apb": "bin/apb.js"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -42,11 +45,11 @@
     "pptxgenjs": "^4.0.1",
     "prismjs": "^1.30.0",
     "puppeteer-core": "^24.41.0",
-    "reveal.js": "^5.0.4"
+    "reveal.js": "^5.0.4",
+    "vite": "^5.0.0"
   },
   "devDependencies": {
     "eslint": "^8.55.0",
-    "prettier": "^3.1.1",
-    "vite": "^5.0.0"
+    "prettier": "^3.1.1"
   }
 }

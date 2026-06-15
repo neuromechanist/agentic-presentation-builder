@@ -37,6 +37,28 @@ npm run present -- ~/slides/demo.json
 
 That prints a browser URL and keeps companion presenter/audience windows available.
 
+### Run as a CLI (no clone, no npm publish)
+
+The engine ships an `apb` command (see the `bin` field in `package.json`), so it can be run
+straight from this repository with `bunx`/`npx`, pinned to a release tag for reproducibility:
+
+```bash
+# Validate a deck against the JSON schema
+bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 validate deck.json --json
+
+# Serve the deck on a local presentation server
+bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 present deck.json --open
+
+# Export the deck (pdf default; pptx/native available)
+bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 export deck.json --format pdf
+```
+
+`npx github:neuromechanist/agentic-presentation-builder#v0.1.6 <command>` works the same way.
+The three subcommands (`validate`, `present`, `export`) are the same code paths as the
+`bun run <name>` scripts; `apb <command> --help` prints each command's full option list. For
+repeated authoring, clone once and run `bun run validate|present|export` to avoid re-resolving
+the git package on every call.
+
 ## Exporting
 
 Export a deck directly from the terminal:
