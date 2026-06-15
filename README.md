@@ -1,5 +1,7 @@
 # Agentic Presentation Builder
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20696485.svg)](https://doi.org/10.5281/zenodo.20696485)
+
 LLM-friendly JSON-based presentation engine that renders beautiful, interactive presentations using Reveal.js.
 
 ## Vision
