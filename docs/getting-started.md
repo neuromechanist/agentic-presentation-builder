@@ -3,7 +3,7 @@
 ## Requirements
 
 - Node.js 20+
-- npm
+- npm, or Bun (`bunx`) for the zero-clone CLI below
 - `uv` for docs work
 
 ## Install and run
@@ -14,6 +14,24 @@ npm run dev
 ```
 
 The Vite app runs on `http://localhost:3000`.
+
+## Run as a CLI (no clone)
+
+The engine exposes an `apb` command, so you can validate, present, and export decks straight
+from the repository with `bunx`/`npx`, without cloning or an npm publish. Pin to a release tag
+for reproducibility:
+
+```bash
+bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 validate deck.json --json
+bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 present deck.json --open
+bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 export deck.json --format pdf
+```
+
+`npx github:neuromechanist/agentic-presentation-builder#v0.1.6 <command>` works the same way,
+and `apb <command> --help` prints each command's options. The `validate`, `present`, and
+`export` subcommands are the same code paths as the `npm run` / `bun run` scripts below. For
+repeated authoring, clone once (`npm install` or `bun install`) and use the scripts directly to
+avoid re-resolving the git package on each call.
 
 ## Open a deck from your computer
 

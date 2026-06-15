@@ -60,6 +60,10 @@ npm run export -- ~/slides/demo.json --format pptx --pptx-mode=image
 - `--output <path>` overrides the default destination next to the source JSON file
 - `--chrome-path <path>` points the exporter at a non-standard Chrome or Edge binary
 
+The same export, plus `present`, is available zero-clone through the `apb` CLI, for example
+`bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 export ~/slides/demo.json --format pptx`.
+See [Getting Started](getting-started.md#run-as-a-cli-no-clone).
+
 Native PPTX limitations:
 
 - Fragment animations are not yet mapped to PowerPoint entrance effects

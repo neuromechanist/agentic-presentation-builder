@@ -564,7 +564,14 @@ npm run dev        # Start dev server (http://localhost:3000)
 npm run build      # Build for production
 npm test           # Run tests
 npm run validate   # Validate presentation file
+npm run present    # Serve a deck on a local presentation server
+npm run export     # Export a deck (pdf/pptx)
 ```
+
+The same `validate` / `present` / `export` commands are exposed as the `apb` CLI for
+`bunx`/`npx` use without a clone (see [Quick Start](#run-as-a-cli-no-clone-no-npm-publish)).
+`bin/apb.js` dispatches to the `main()` exported from `scripts/{validate,present,export}.js`,
+so both invocation styles share one code path.
 
 ## Project Structure
 
