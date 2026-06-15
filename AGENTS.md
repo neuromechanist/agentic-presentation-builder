@@ -16,3 +16,6 @@ There is no dedicated `test/` directory yet, but `npm test` is already wired up.
 
 ## Commit & Pull Request Guidelines
 Recent history favors short, imperative commit subjects such as `Add speaker notes plugin and keyboard shortcuts help`; occasional typed prefixes like `fix:` are also acceptable. Keep commits focused and easy to scan. Pull requests should explain the user-visible change, note any schema updates, link related issues, and include screenshots or a sample presentation path for UI or rendering changes.
+
+## Releases & Citation
+The repository is archived to Zenodo on every GitHub release, which mints a versioned DOI under a stable concept DOI. When you bump the version in `package.json` for a release, also bump `version` (and `date-released`) in `CITATION.cff` and keep `.zenodo.json` metadata in sync, then create the matching `vX.Y.Z` tag and GitHub release. The concept DOI, once minted by the first Zenodo deposit, lives in `CITATION.cff` (`doi:`) and the README badge and does not change across versions.
