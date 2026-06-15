@@ -19,7 +19,7 @@ const USAGE = [
   "Commands:",
   "  validate <deck.json> [--json]              Check a deck against the JSON schema",
   "  present  <deck.json> [--open] [--port N]   Serve the deck on a local presentation server",
-  "  export   <deck.json> [--format ...] [...]  Export the deck (html/pdf/pptx)",
+  "  export   <deck.json> [--format ...] [...]  Export the deck (pdf/pptx)",
   "",
   "Run a command with --help for its full option list.",
 ].join("\n");
