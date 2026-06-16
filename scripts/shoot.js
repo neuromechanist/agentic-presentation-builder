@@ -4,29 +4,21 @@
  *
  * `apb validate` passes decks that still render a blank mermaid or clipped code;
  * the only reliable QC is to look at every slide. This serves the deck (reusing
- * the present server) and drives headless Chrome through it, writing one PNG per
- * slide. Transitions and fragments are disabled during capture so an unsettled
- * slide-transform never fakes a right-edge clip and every animated element shows.
+ * the present server) and drives headless Chrome through it, writing one image
+ * per slide. Transitions and fragments are disabled during capture so an
+ * unsettled slide-transform never fakes a right-edge clip and every animated
+ * element shows.
  *
  *   apb shoot deck.json --out ./qc
  *   apb shoot deck.json --out ./qc --width 1920 --height 1080
  */
 
-import { existsSync, mkdirSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import puppeteer from "puppeteer-core";
 import { startLocalPresentationServer } from "../src/utils/local-presentation-server.js";
-
-const DEFAULT_CHROME_PATHS = [
-  process.env.PUPPETEER_EXECUTABLE_PATH,
-  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-  "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
-  "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-  "/usr/bin/google-chrome",
-  "/usr/bin/chromium-browser",
-  "/usr/bin/chromium",
-].filter(Boolean);
+import { resolveChromeExecutablePath } from "../src/utils/chrome.js";
 
 const USAGE = [
   "Usage: apb shoot <deck.json> [options]",
@@ -45,21 +37,6 @@ const USAGE = [
 ].join("\n");
 
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
-
-function resolveChromeExecutablePath(explicitPath) {
-  if (explicitPath) {
-    if (!existsSync(explicitPath)) {
-      throw new Error(`Chrome executable not found at ${explicitPath}`);
-    }
-    return explicitPath;
-  }
-  for (const candidate of DEFAULT_CHROME_PATHS) {
-    if (candidate && existsSync(candidate)) return candidate;
-  }
-  throw new Error(
-    "Could not find a Chrome-compatible browser. Pass --chrome-path to a local Chrome or Edge executable.",
-  );
-}
 
 function parseArgs(argv) {
   const args = {
@@ -95,12 +72,22 @@ function parseArgs(argv) {
   return args;
 }
 
+function printWarnings(warnings) {
+  console.log(`Warnings (${warnings.length}):\n`);
+  warnings.forEach((warning, index) => {
+    console.log(`${index + 1}. Slide: ${warning.slideTitle}`);
+    console.log(`   Code: ${warning.code}`);
+    console.log(`   Warning: ${warning.message}\n`);
+  });
+}
+
 export async function main(argv = process.argv.slice(2)) {
   let args;
   try {
     args = parseArgs(argv);
   } catch (error) {
-    console.error(`${error.message}\n`);
+    console.error(error.message);
+    console.error("");
     console.error(USAGE);
     process.exit(1);
   }
@@ -110,7 +97,8 @@ export async function main(argv = process.argv.slice(2)) {
     return;
   }
   if (!args.presentationPath) {
-    console.error("Missing presentation JSON path.\n");
+    console.error("Missing presentation JSON path.");
+    console.error("");
     console.error(USAGE);
     process.exit(1);
   }
@@ -134,18 +122,25 @@ export async function main(argv = process.argv.slice(2)) {
     throw error;
   }
 
-  const { presentationUrl, presentationPath, server } = runtime;
+  const { presentationUrl, presentationPath, server, validationResult } = runtime;
   const outDir = resolve(args.out);
   mkdirSync(outDir, { recursive: true });
   console.log(`Shooting: ${presentationPath}`);
   console.log(`Output:   ${outDir}  (${args.width}x${args.height})`);
+  if (validationResult?.warnings?.length > 0) {
+    console.log("");
+    printWarnings(validationResult.warnings);
+  }
 
   let browser;
   try {
     browser = await puppeteer.launch({
       executablePath: resolveChromeExecutablePath(args.chromePath),
       headless: true,
-      args: ["--no-sandbox", "--force-device-scale-factor=1"],
+      // --no-sandbox so this runs in CI/containers where Chrome's sandbox is
+      // unavailable; --hide-scrollbars keeps captures clean; scale factor is
+      // pinned so screenshots are exactly width x height.
+      args: ["--no-sandbox", "--disable-dev-shm-usage", "--hide-scrollbars", "--force-device-scale-factor=1"],
     });
     const page = await browser.newPage();
     await page.setViewport({ width: args.width, height: args.height, deviceScaleFactor: 1 });
@@ -159,9 +154,25 @@ export async function main(argv = process.argv.slice(2)) {
     await page.evaluate(() => window.Reveal.configure({ fragments: false, transition: "none" }));
     await delay(600);
 
-    const total = await page.evaluate(() => window.Reveal.getTotalSlides());
+    // Enumerate every <section> (including vertical stacks) and navigate by its
+    // (h, v) indices so no slide is skipped or shot twice.
+    const total = await page.evaluate(() => window.Reveal.getSlides().length);
     for (let i = 0; i < total; i += 1) {
-      await page.evaluate((n) => window.Reveal.slide(n), i);
+      await page.evaluate((idx) => {
+        const pos = window.Reveal.getIndices(window.Reveal.getSlides()[idx]);
+        window.Reveal.slide(pos.h, pos.v);
+      }, i);
+      await page
+        .waitForFunction(
+          (idx) => {
+            const want = window.Reveal.getIndices(window.Reveal.getSlides()[idx]);
+            const cur = window.Reveal.getIndices();
+            return cur.h === want.h && (cur.v || 0) === (want.v || 0);
+          },
+          {},
+          i,
+        )
+        .catch(() => {});
       await delay(args.wait);
       // mermaid renders asynchronously -- wait for its SVG before shooting
       await page
@@ -183,15 +194,16 @@ export async function main(argv = process.argv.slice(2)) {
     }
     console.log(`\nWrote ${total} screenshots to ${outDir}`);
   } finally {
-    try {
-      await browser?.close();
-    } catch (e) {
-      console.warn(`Browser cleanup failed: ${e.message}`);
-    }
+    // Close the server first, then the browser, matching export/index.js.
     try {
       await server?.close();
     } catch (e) {
       console.warn(`Server cleanup failed: ${e.message}`);
+    }
+    try {
+      await browser?.close();
+    } catch (e) {
+      console.warn(`Browser cleanup failed: ${e.message}`);
     }
   }
 }

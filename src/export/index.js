@@ -1,4 +1,3 @@
-import { existsSync } from "node:fs";
 import { mkdtemp, mkdir, readFile, rm } from "node:fs/promises";
 import { basename, dirname, join } from "node:path";
 import { tmpdir } from "node:os";
@@ -7,17 +6,8 @@ import PptxGenJS from "pptxgenjs";
 import puppeteer from "puppeteer-core";
 import { markdownToHtml } from "../utils/markdown.js";
 import { startLocalPresentationServer } from "../utils/local-presentation-server.js";
+import { resolveChromeExecutablePath } from "../utils/chrome.js";
 import { exportNativePptx } from "./pptx-native.js";
-
-const DEFAULT_CHROME_PATHS = [
-  process.env.PUPPETEER_EXECUTABLE_PATH,
-  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-  "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
-  "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-  "/usr/bin/google-chrome",
-  "/usr/bin/chromium-browser",
-  "/usr/bin/chromium",
-].filter(Boolean);
 
 export async function exportPresentation(options) {
   switch (options.format) {
@@ -247,26 +237,6 @@ async function withBrowserExportRuntime(options, callback) {
     try { await runtime?.server?.close(); } catch (e) { console.warn(`Server cleanup failed: ${e.message}`); }
     try { await browser?.close(); } catch (e) { console.warn(`Browser cleanup failed: ${e.message}`); }
   }
-}
-
-function resolveChromeExecutablePath(explicitPath) {
-  if (explicitPath) {
-    if (!existsSync(explicitPath)) {
-      throw new Error(`Chrome executable not found at ${explicitPath}`);
-    }
-
-    return explicitPath;
-  }
-
-  for (const candidate of DEFAULT_CHROME_PATHS) {
-    if (candidate && existsSync(candidate)) {
-      return candidate;
-    }
-  }
-
-  throw new Error(
-    "Could not find a Chrome-compatible browser. Pass --chrome-path to a local Chrome or Edge executable.",
-  );
 }
 
 function buildExportUrl(presentationUrl, format) {
