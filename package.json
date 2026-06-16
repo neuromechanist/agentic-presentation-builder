@@ -1,6 +1,6 @@
 {
   "name": "agentic-presentation-builder",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "LLM-friendly JSON-based presentation engine that renders to interactive JS presentations",
   "main": "src/index.js",
   "type": "module",
@@ -13,6 +13,7 @@
     "preview": "vite preview",
     "present": "node scripts/present.js",
     "export": "node scripts/export.js",
+    "shoot": "node scripts/shoot.js",
     "docs:serve": "uvx --with-requirements docs/requirements.txt mkdocs serve",
     "docs:build": "uvx --with-requirements docs/requirements.txt mkdocs build --strict",
     "test": "node --test",

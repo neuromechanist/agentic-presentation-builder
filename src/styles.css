@@ -293,6 +293,13 @@ body.export-mode .presentation-settings {
   margin-top: auto;
 }
 
+/* House rule: a branding logo placed in the footer sits bottom-LEFT, not centered.
+   .image-element hardcodes align-items:center; override it for footer images only. */
+.slide-footer .image-element {
+  align-items: flex-start;
+  text-align: left;
+}
+
 /* Two-column layout */
 .two-column-layout {
   flex: 1 1 auto;
