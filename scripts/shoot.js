@@ -34,7 +34,7 @@ const USAGE = [
   "Screenshot every slide at full resolution for visual QC.",
   "",
   "Options:",
-  "  --out <dir>         Output directory for PNGs (default: ./apb-screenshots)",
+  "  --out <dir>         Output directory for the slide images (default: ./apb-screenshots)",
   "  --width <px>        Viewport width (default: 1920)",
   "  --height <px>       Viewport height (default: 1080)",
   "  --wait <ms>         Settle delay per slide before capture (default: 800)",
