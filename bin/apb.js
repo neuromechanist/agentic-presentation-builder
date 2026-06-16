@@ -20,6 +20,7 @@ const USAGE = [
   "  validate <deck.json> [--json]              Check a deck against the JSON schema",
   "  present  <deck.json> [--open] [--port N]   Serve the deck on a local presentation server",
   "  export   <deck.json> [--format ...] [...]  Export the deck (pdf/pptx)",
+  "  shoot    <deck.json> [--out dir] [...]     Screenshot every slide at full HD for QC",
   "",
   "Run a command with --help for its full option list.",
 ].join("\n");
@@ -38,6 +39,10 @@ async function dispatch() {
     }
     case "export": {
       const { main } = await import("../scripts/export.js");
+      return main(rest);
+    }
+    case "shoot": {
+      const { main } = await import("../scripts/shoot.js");
       return main(rest);
     }
     case "--help":
