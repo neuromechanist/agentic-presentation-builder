@@ -55,9 +55,7 @@ export async function exportNativePptx({
   const presentation = data.presentation;
   const meta = presentation.metadata || {};
   const is4x3 = meta.aspectRatio === "4:3";
-  const slideDims = is4x3
-    ? { w: 10, h: 7.5 }
-    : { w: 13.333, h: 7.5 };
+  const slideDims = is4x3 ? { w: 10, h: 7.5 } : { w: 13.333, h: 7.5 };
 
   const pptx = new PptxGenJS();
   pptx.layout = is4x3 ? "LAYOUT_4x3" : "LAYOUT_WIDE";
@@ -68,8 +66,13 @@ export async function exportNativePptx({
 
   const baseDir = dirname(resolvePath(presentationPath));
   const ctx = { baseDir, mermaidRenderer, dims: slideDims };
+  const branding = meta.branding?.logo || null;
 
-  for (let slideIndex = 0; slideIndex < presentation.slides.length; slideIndex += 1) {
+  for (
+    let slideIndex = 0;
+    slideIndex < presentation.slides.length;
+    slideIndex += 1
+  ) {
     const slide = presentation.slides[slideIndex];
     const pptxSlide = pptx.addSlide();
 
@@ -77,8 +80,11 @@ export async function exportNativePptx({
     applyTransition(pptxSlide, slide.transition);
 
     await renderSlideElements(pptxSlide, slide, slideIndex, ctx);
+    addBrandingImage(pptxSlide, branding, slide, ctx);
 
-    const notes = slide.speakerNotes ? extractSpeakerNotesText(slide.speakerNotes) : "";
+    const notes = slide.speakerNotes
+      ? extractSpeakerNotesText(slide.speakerNotes)
+      : "";
     if (notes) {
       pptxSlide.addNotes(notes);
     }
@@ -86,6 +92,70 @@ export async function exportNativePptx({
 
   await mkdir(dirname(outputPath), { recursive: true });
   await pptx.writeFile({ fileName: outputPath });
+}
+
+function brandingExcluded(slideData, branding) {
+  const exclude = branding.exclude || [];
+  return exclude.includes(slideData.id) || exclude.includes(slideData.layout);
+}
+
+/**
+ * Parse a CSS-ish length ("7%", "48px", "0.5in") into inches.
+ * Percentages are relative to `totalIn`; px are converted at 96 px/in.
+ */
+function lengthToInches(value, totalIn, fallbackIn) {
+  if (typeof value !== "string") return fallbackIn;
+  const trimmed = value.trim();
+  const num = parseFloat(trimmed);
+  if (!Number.isFinite(num)) return fallbackIn;
+  if (trimmed.endsWith("%")) return (num / 100) * totalIn;
+  if (trimmed.endsWith("px")) return num / 96;
+  if (trimmed.endsWith("in")) return num;
+  if (trimmed.endsWith("rem")) return (num * 16) / 96;
+  return num / 96;
+}
+
+/**
+ * Add the persistent branding logo to a slide as a corner image.
+ * Mirrors the HTML overlay (metadata.branding.logo) so PPTX export matches
+ * the live/PDF rendering. Best-effort: a missing file or unsupported image
+ * type is warned and skipped rather than failing the export.
+ */
+function addBrandingImage(slide, branding, slideData, ctx) {
+  if (!branding || !branding.src) return;
+  if (brandingExcluded(slideData, branding)) return;
+
+  const abs = resolvePath(ctx.baseDir, branding.src);
+  if (!existsSync(abs)) {
+    console.warn(`Branding logo not found, skipping: ${abs}`);
+    return;
+  }
+
+  const { w: slideW, h: slideH } = ctx.dims;
+  const sizeIn = lengthToInches(branding.size, slideW, 0.07 * slideW);
+  const marginIn = lengthToInches(branding.margin, slideW, 0.02 * slideW);
+  const position = branding.position || "bottom-left";
+  const box = sizeIn;
+
+  const x = position.endsWith("right") ? slideW - marginIn - box : marginIn;
+  const y = position.startsWith("top") ? marginIn : slideH - marginIn - box;
+
+  const opts = {
+    path: abs,
+    x,
+    y,
+    w: box,
+    h: box,
+    sizing: { type: "contain", w: box, h: box },
+  };
+  const opacity = branding.opacity == null ? 1 : branding.opacity;
+  if (opacity < 1) opts.transparency = Math.round((1 - opacity) * 100);
+
+  try {
+    slide.addImage(opts);
+  } catch (error) {
+    console.warn(`Branding image skipped: ${error.message}`);
+  }
 }
 
 function applyBackground(slide, background) {
@@ -106,7 +176,9 @@ function applyTransition(slide, transitionKey) {
   try {
     slide.transition = { type: mapped, speed: "medium" };
   } catch (error) {
-    console.warn(`Slide transition skipped (${transitionKey}): ${error.message}`);
+    console.warn(
+      `Slide transition skipped (${transitionKey}): ${error.message}`,
+    );
   }
 }
 
@@ -312,11 +384,16 @@ function addBulletsElement(slide, element, rect) {
   const lineCount = countBulletLines(element.items || []);
   const fontSize = fitFontSize(idealSize, rect.h, lineCount);
   const color = normalizeHex(style.color) || DEFAULT_TEXT_COLOR;
-  const bulletStyle = element.bulletStyle === "number"
-    ? { type: "number" }
-    : true;
+  const bulletStyle =
+    element.bulletStyle === "number" ? { type: "number" } : true;
 
-  const paragraphs = flattenBullets(element.items || [], 0, bulletStyle, fontSize, color);
+  const paragraphs = flattenBullets(
+    element.items || [],
+    0,
+    bulletStyle,
+    fontSize,
+    color,
+  );
   if (paragraphs.length === 0) return;
 
   const paraSpace = Math.max(2, Math.min(6, Math.round(fontSize * 0.3)));
@@ -336,9 +413,7 @@ function addBulletsElement(slide, element, rect) {
 function flattenBullets(items, indentLevel, bulletStyle, fontSize, color) {
   const paragraphs = [];
   for (const raw of items) {
-    const item = typeof raw === "string"
-      ? { text: raw, children: [] }
-      : raw;
+    const item = typeof raw === "string" ? { text: raw, children: [] } : raw;
     const runs = markdownToTextRuns(item.text || "");
     if (runs.length === 0) {
       runs.push({ text: "", options: {} });
@@ -359,7 +434,13 @@ function flattenBullets(items, indentLevel, bulletStyle, fontSize, color) {
     const children = item.children || [];
     if (children.length > 0) {
       paragraphs.push(
-        ...flattenBullets(children, indentLevel + 1, bulletStyle, fontSize, color),
+        ...flattenBullets(
+          children,
+          indentLevel + 1,
+          bulletStyle,
+          fontSize,
+          color,
+        ),
       );
     }
   }
@@ -372,7 +453,9 @@ function addImageElement(slide, element, rect, baseDir) {
   const imageH = rect.h - (element.caption ? 0.4 : 0);
 
   if (!isRemoteUrl(imagePath) && !existsSync(imagePath)) {
-    console.warn(`Warning: image not found "${element.src}" (resolved to ${imagePath})`);
+    console.warn(
+      `Warning: image not found "${element.src}" (resolved to ${imagePath})`,
+    );
     renderMissingImagePlaceholder(slide, element, rect, imageH);
   } else {
     try {
@@ -385,14 +468,20 @@ function addImageElement(slide, element, rect, baseDir) {
         sizing: { type: "contain", w: rect.w, h: imageH },
       });
     } catch (error) {
-      console.warn(`Warning: failed to add image "${element.src}": ${error.message}`);
+      console.warn(
+        `Warning: failed to add image "${element.src}": ${error.message}`,
+      );
       renderMissingImagePlaceholder(slide, element, rect, imageH);
     }
   }
 
   if (element.caption) {
     const captionRuns = markdownToTextRuns(element.caption);
-    applyBaseOptions(captionRuns, { fontSize: 14, italic: true, color: "64748B" });
+    applyBaseOptions(captionRuns, {
+      fontSize: 14,
+      italic: true,
+      color: "64748B",
+    });
     slide.addText(captionRuns, {
       x: rect.x,
       y: rect.y + rect.h - 0.4,
@@ -594,7 +683,9 @@ async function addMermaidElement(slide, element, rect, ctx) {
         return;
       }
     } catch (error) {
-      console.warn(`Mermaid render failed for slide ${ctx.slideIndex + 1}: ${error.message}`);
+      console.warn(
+        `Mermaid render failed for slide ${ctx.slideIndex + 1}: ${error.message}`,
+      );
     }
   }
 
@@ -626,7 +717,17 @@ function markdownToTextRuns(markdown) {
   const dom = new JSDOM(`<div id="root">${html}</div>`);
   const root = dom.window.document.getElementById("root");
   const runs = [];
-  const blockTags = new Set(["p", "h1", "h2", "h3", "h4", "h5", "h6", "div", "blockquote"]);
+  const blockTags = new Set([
+    "p",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "div",
+    "blockquote",
+  ]);
 
   const walk = (node, state) => {
     const children = Array.from(node.childNodes);
@@ -732,7 +833,11 @@ function normalizeHex(color) {
   if (trimmed.startsWith("#")) {
     const hex = trimmed.slice(1);
     if (hex.length === 3) {
-      return hex.split("").map((c) => c + c).join("").toUpperCase();
+      return hex
+        .split("")
+        .map((c) => c + c)
+        .join("")
+        .toUpperCase();
     }
     if (hex.length === 6 || hex.length === 8) {
       return hex.slice(0, 6).toUpperCase();

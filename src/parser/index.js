@@ -12,7 +12,7 @@ export function parsePresentation(presentationData) {
 
   return {
     metadata: parseMetadata(metadata),
-    slides: slides.map((slide, index) => parseSlide(slide, index))
+    slides: slides.map((slide, index) => parseSlide(slide, index)),
   };
 }
 
@@ -24,16 +24,17 @@ export function parsePresentation(presentationData) {
 function parseMetadata(metadata) {
   return {
     title: metadata.title,
-    author: metadata.author || '',
-    description: metadata.description || '',
-    theme: metadata.theme || 'default',
-    aspectRatio: metadata.aspectRatio || '16:9',
+    author: metadata.author || "",
+    description: metadata.description || "",
+    theme: metadata.theme || "default",
+    aspectRatio: metadata.aspectRatio || "16:9",
     controls: metadata.controls || {
       slideNumbers: false,
       progress: true,
-      showNotes: false
+      showNotes: false,
     },
-    customTheme: metadata.customTheme || null
+    customTheme: metadata.customTheme || null,
+    branding: metadata.branding || null,
   };
 }
 
@@ -47,13 +48,13 @@ function parseSlide(slide, index) {
   return {
     id: slide.id || `slide-${index}`,
     title: slide.title || null,
-    layout: slide.layout || 'single-column',
+    layout: slide.layout || "single-column",
     background: slide.background || null,
-    transition: slide.transition || 'slide',
+    transition: slide.transition || "slide",
     speakerNotes: slide.speakerNotes || null,
     elements: slide.elements.map((element, elemIndex) =>
-      parseElement(element, elemIndex)
-    )
+      parseElement(element, elemIndex),
+    ),
   };
 }
 
@@ -68,65 +69,65 @@ function parseElement(element, index) {
     type: element.type,
     position: parsePosition(element.position),
     animation: parseAnimation(element.animation),
-    id: `element-${index}`
+    id: `element-${index}`,
   };
 
   switch (element.type) {
-    case 'text':
+    case "text":
       return {
         ...baseElement,
         content: element.content,
-        style: parseTextStyle(element.style)
+        style: parseTextStyle(element.style),
       };
 
-    case 'bullets':
+    case "bullets":
       return {
         ...baseElement,
         items: parseBulletItems(element.items),
-        bulletStyle: element.bulletStyle || 'disc',
-        style: parseTextStyle(element.style)
+        bulletStyle: element.bulletStyle || "disc",
+        style: parseTextStyle(element.style),
       };
 
-    case 'image':
+    case "image":
       return {
         ...baseElement,
         src: element.src,
-        alt: element.alt || '',
-        width: element.width || 'auto',
-        height: element.height || 'auto',
-        caption: element.caption || null
+        alt: element.alt || "",
+        width: element.width || "auto",
+        height: element.height || "auto",
+        caption: element.caption || null,
       };
 
-    case 'mermaid':
+    case "mermaid":
       return {
         ...baseElement,
         diagram: element.diagram,
-        theme: element.theme || 'default'
+        theme: element.theme || "default",
       };
 
-    case 'callout':
+    case "callout":
       return {
         ...baseElement,
-        calloutType: element.calloutType || 'info',
+        calloutType: element.calloutType || "info",
         content: element.content,
-        title: element.title || null
+        title: element.title || null,
       };
 
-    case 'code':
+    case "code":
       return {
         ...baseElement,
         code: element.code,
-        language: element.language || 'javascript',
+        language: element.language || "javascript",
         caption: element.caption || null,
-        lineNumbers: element.lineNumbers !== false
+        lineNumbers: element.lineNumbers !== false,
       };
 
-    case 'table':
+    case "table":
       return {
         ...baseElement,
         headers: element.headers,
         rows: element.rows,
-        caption: element.caption || null
+        caption: element.caption || null,
       };
 
     default:
@@ -141,10 +142,10 @@ function parseElement(element, index) {
  */
 function parseTextStyle(style = {}) {
   return {
-    fontSize: style.fontSize || 'medium',
-    alignment: style.alignment || 'left',
+    fontSize: style.fontSize || "medium",
+    alignment: style.alignment || "left",
     color: style.color || null,
-    fontWeight: style.fontWeight || 'normal'
+    fontWeight: style.fontWeight || "normal",
   };
 }
 
@@ -155,8 +156,8 @@ function parseTextStyle(style = {}) {
  */
 function parsePosition(position = {}) {
   return {
-    area: position.area || 'content',
-    order: position.order || 0
+    area: position.area || "content",
+    order: position.order || 0,
   };
 }
 
@@ -169,21 +170,21 @@ function parseBulletItems(items = []) {
 }
 
 function parseBulletItem(item) {
-  if (typeof item === 'string') {
+  if (typeof item === "string") {
     return {
       text: item,
       children: [],
-      animation: null
+      animation: null,
     };
   }
 
   return {
     text: item.text,
     children: parseBulletItems(item.children || []),
-    animation: parseAnimation(item.animation)
+    animation: parseAnimation(item.animation),
   };
 }
 
 export default {
-  parsePresentation
+  parsePresentation,
 };
