@@ -29,7 +29,9 @@
             "description": {
               "type": "string",
               "description": "Brief description of the presentation",
-              "examples": ["A comprehensive overview of quantum computing principles for beginners"]
+              "examples": [
+                "A comprehensive overview of quantum computing principles for beginners"
+              ]
             },
             "theme": {
               "type": "string",
@@ -62,6 +64,65 @@
                   "type": "boolean",
                   "description": "Enable speaker notes view (press 's' during presentation)",
                   "default": false
+                }
+              }
+            },
+            "branding": {
+              "type": "object",
+              "description": "Persistent branding logo rendered as a fixed corner overlay on every slide. It sits outside the content flow, so it never pushes slide content and is exempt from media-density lint heuristics.",
+              "additionalProperties": false,
+              "properties": {
+                "logo": {
+                  "type": "object",
+                  "description": "Corner logo applied to all slides (except those listed in exclude)",
+                  "required": ["src"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "src": {
+                      "type": "string",
+                      "description": "Logo image path, relative to the deck JSON (e.g. ./assets/logos/sccn.svg)",
+                      "minLength": 1
+                    },
+                    "alt": {
+                      "type": "string",
+                      "description": "Accessible alt text for the logo",
+                      "default": ""
+                    },
+                    "position": {
+                      "type": "string",
+                      "description": "Which corner the logo sits in",
+                      "enum": [
+                        "top-left",
+                        "top-right",
+                        "bottom-left",
+                        "bottom-right"
+                      ],
+                      "default": "bottom-left"
+                    },
+                    "margin": {
+                      "type": "string",
+                      "description": "Inset from the two nearest edges (%, px, or rem)",
+                      "default": "2%"
+                    },
+                    "size": {
+                      "type": "string",
+                      "description": "Logo width (%, px, or rem)",
+                      "default": "7%"
+                    },
+                    "opacity": {
+                      "type": "number",
+                      "description": "Logo opacity (0-1)",
+                      "minimum": 0,
+                      "maximum": 1,
+                      "default": 1
+                    },
+                    "exclude": {
+                      "type": "array",
+                      "description": "Slide ids or layouts to skip (e.g. [\"title\"])",
+                      "items": { "type": "string" },
+                      "default": []
+                    }
+                  }
                 }
               }
             },
@@ -158,7 +219,10 @@
         "speakerNotes": {
           "type": "string",
           "description": "Speaker notes for this slide (visible in presenter mode)",
-          "examples": ["Remember to emphasize the key points", "Pause here for questions"]
+          "examples": [
+            "Remember to emphasize the key points",
+            "Pause here for questions"
+          ]
         },
         "elements": {
           "type": "array",
@@ -363,7 +427,9 @@
           "type": "string",
           "description": "Callout content (supports markdown)",
           "minLength": 1,
-          "examples": ["**Pro Tip:** Always commit your changes before switching branches"]
+          "examples": [
+            "**Pro Tip:** Always commit your changes before switching branches"
+          ]
         },
         "title": {
           "type": "string",
@@ -396,7 +462,17 @@
         "language": {
           "type": "string",
           "description": "Programming language for syntax highlighting",
-          "examples": ["javascript", "python", "java", "go", "rust", "typescript", "html", "css", "json"],
+          "examples": [
+            "javascript",
+            "python",
+            "java",
+            "go",
+            "rust",
+            "typescript",
+            "html",
+            "css",
+            "json"
+          ],
           "default": "javascript"
         },
         "caption": {
@@ -445,7 +521,12 @@
               "type": "string"
             }
           },
-          "examples": [[["Alice", "30", "NYC"], ["Bob", "25", "LA"]]]
+          "examples": [
+            [
+              ["Alice", "30", "NYC"],
+              ["Bob", "25", "LA"]
+            ]
+          ]
         },
         "caption": {
           "type": "string",

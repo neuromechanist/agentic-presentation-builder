@@ -12,11 +12,61 @@ export function createPresentationRenderer(markdownToHtml) {
    */
   function renderPresentation(presentation) {
     const total = presentation.slides.length;
+    const branding = presentation.metadata?.branding?.logo || null;
     const slides = presentation.slides
-      .map((slide, index) => renderSlide(slide, index, total))
+      .map((slide, index) => renderSlide(slide, index, total, branding))
       .join("\n");
 
     return slides;
+  }
+
+  const BRANDING_POSITIONS = new Set([
+    "top-left",
+    "top-right",
+    "bottom-left",
+    "bottom-right",
+  ]);
+
+  /**
+   * Whether the branding logo should be hidden on this slide.
+   * Matches an `exclude` entry against the slide id or its layout.
+   */
+  function isBrandingExcluded(slide, branding) {
+    const exclude = branding.exclude || [];
+    return exclude.includes(slide.id) || exclude.includes(slide.layout);
+  }
+
+  /**
+   * Build the branding context for a slide.
+   * Returns null when there is no branding or the slide is excluded; otherwise
+   * `{ sectionAttrs, overlayHtml }`. The branding sizing vars and the resolved
+   * edge/side live on the `<section>` so the overlay (a sibling of
+   * `.slide-shell`) can float in the corner while the adjacent header/footer
+   * insets on the logo's side -- keeping footer/header content beside the logo
+   * instead of pushed up off it.
+   */
+  function buildBranding(slide, branding) {
+    if (!branding || !branding.src) return null;
+    if (isBrandingExcluded(slide, branding)) return null;
+
+    const position = BRANDING_POSITIONS.has(branding.position)
+      ? branding.position
+      : "bottom-left";
+    const [edge, side] = position.split("-");
+    const size = branding.size || "7%";
+    const margin = branding.margin || "2%";
+    const opacity = branding.opacity == null ? 1 : branding.opacity;
+    const alt = escapeHtml(branding.alt || "");
+    const src = escapeHtml(branding.src);
+    const style =
+      `--brand-size:${escapeHtml(size)};` +
+      `--brand-margin:${escapeHtml(margin)};` +
+      `--brand-opacity:${opacity};`;
+
+    return {
+      sectionAttrs: ` data-brand-edge="${edge}" data-brand-side="${side}" style="${style}"`,
+      overlayHtml: `\n<div class="slide-brand" data-pos="${position}" aria-hidden="true"><img src="${src}" alt="${alt}" loading="lazy" decoding="async"></div>`,
+    };
   }
 
   /**
@@ -26,7 +76,7 @@ export function createPresentationRenderer(markdownToHtml) {
    * @param {number} total - Total number of slides
    * @returns {string} HTML string
    */
-  function renderSlide(slide, index, total) {
+  function renderSlide(slide, index, total, branding = null) {
     const bgAttr = slide.background
       ? ` data-background="${escapeHtml(slide.background)}"`
       : "";
@@ -68,7 +118,11 @@ export function createPresentationRenderer(markdownToHtml) {
       slideContent += `\n<aside class="notes">${markdownToHtml(slide.speakerNotes)}</aside>`;
     }
 
-    return `<section id="${slide.id}"${bgAttr}${transitionAttr}${layoutAttr}${slideNumberAttr}${slideTitleAttr}>\n<div class="slide-shell">\n${slideContent}\n</div>\n</section>`;
+    const brand = buildBranding(slide, branding);
+    const brandAttrs = brand ? brand.sectionAttrs : "";
+    const brandHtml = brand ? brand.overlayHtml : "";
+
+    return `<section id="${slide.id}"${bgAttr}${transitionAttr}${layoutAttr}${slideNumberAttr}${slideTitleAttr}${brandAttrs}>\n<div class="slide-shell">\n${slideContent}\n</div>${brandHtml}\n</section>`;
   }
 
   /**

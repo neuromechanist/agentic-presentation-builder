@@ -67,6 +67,35 @@ Every presentation must have a `presentation` object containing:
 - 16:9 aspect ratio: 1920x1080 (Full HD)
 - 4:3 aspect ratio: 1024x768 (Classic)
 
+#### Branding logo
+
+`metadata.branding.logo` renders a persistent institutional logo in a fixed
+slide corner on **every** slide, without adding an `image` element to each one.
+It is a floating overlay, so it does not push slide content vertically and is
+exempt from the `dense-media` / `fixed-image-sizing` lint heuristics. Honored in
+`present`, PDF, and PPTX export.
+
+```json
+"metadata": {
+  "branding": {
+    "logo": {
+      "src": "./assets/logos/sccn.svg",       // required; relative to the deck JSON
+      "alt": "Swartz Center",                  // optional
+      "position": "bottom-left",               // top-left | top-right | bottom-left | bottom-right (default bottom-left)
+      "margin": "3%",                          // inset from the two nearest edges; %, px, or rem (default 2%)
+      "size": "7%",                            // logo width; %, px, or rem (default 7%)
+      "opacity": 1,                            // optional, 0-1 (default 1)
+      "exclude": ["title"]                     // optional: slide ids or layouts to skip
+    }
+  }
+}
+```
+
+- `exclude` matches a slide's `id` **or** its `layout`, so `["title"]` drops the
+  logo from the title slide and any section-divider that uses `layout: "title"`.
+- The header/footer on the logo's side is automatically inset so a footer
+  callout (or header) sits **beside** the logo rather than under it.
+
 ### Slides
 
 Each slide requires an `elements` array. Optional properties:

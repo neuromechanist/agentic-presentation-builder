@@ -3,7 +3,8 @@ export function createImportedDeckFileCatalog(files) {
 
   for (const fileEntry of files) {
     const file = fileEntry.file || fileEntry;
-    const relativePath = fileEntry.relativePath || file.webkitRelativePath || file.name;
+    const relativePath =
+      fileEntry.relativePath || file.webkitRelativePath || file.name;
     const normalizedPath = normalizeImportedFilePath(relativePath);
 
     if (!normalizedPath) {
@@ -14,23 +15,37 @@ export function createImportedDeckFileCatalog(files) {
   }
 
   const jsonFiles = Array.from(filesByPath.keys())
-    .filter(path => path.toLowerCase().endsWith('.json'))
+    .filter((path) => path.toLowerCase().endsWith(".json"))
     .sort((left, right) => left.localeCompare(right));
 
   return {
     filesByPath,
-    jsonFiles
+    jsonFiles,
   };
 }
 
 export function rewriteImportedPresentationAssetPaths(
   presentationData,
-  { createObjectUrl, filesByPath, jsonRelativePath }
+  { createObjectUrl, filesByPath, jsonRelativePath },
 ) {
   const clonedPresentation = structuredClone(presentationData);
   const objectUrls = [];
   const objectUrlByPath = new Map();
   const unresolvedAssets = [];
+
+  const brandingLogo =
+    clonedPresentation.presentation?.metadata?.branding?.logo;
+  if (brandingLogo?.src) {
+    brandingLogo.src = resolveImportedAssetReference(
+      brandingLogo.src,
+      jsonRelativePath,
+      filesByPath,
+      createObjectUrl,
+      objectUrlByPath,
+      objectUrls,
+      unresolvedAssets,
+    );
+  }
 
   for (const slide of clonedPresentation.presentation?.slides || []) {
     slide.background = resolveImportedAssetReference(
@@ -40,11 +55,11 @@ export function rewriteImportedPresentationAssetPaths(
       createObjectUrl,
       objectUrlByPath,
       objectUrls,
-      unresolvedAssets
+      unresolvedAssets,
     );
 
     for (const element of slide.elements || []) {
-      if (element.type === 'image') {
+      if (element.type === "image") {
         element.src = resolveImportedAssetReference(
           element.src,
           jsonRelativePath,
@@ -52,7 +67,7 @@ export function rewriteImportedPresentationAssetPaths(
           createObjectUrl,
           objectUrlByPath,
           objectUrls,
-          unresolvedAssets
+          unresolvedAssets,
         );
       }
     }
@@ -61,7 +76,7 @@ export function rewriteImportedPresentationAssetPaths(
   return {
     objectUrls,
     presentationData: clonedPresentation,
-    unresolvedAssets
+    unresolvedAssets,
   };
 }
 
@@ -72,7 +87,7 @@ function resolveImportedAssetReference(
   createObjectUrl,
   objectUrlByPath,
   objectUrls,
-  unresolvedAssets
+  unresolvedAssets,
 ) {
   const resolvedPath = resolveImportedAssetPath(assetPath, jsonRelativePath);
 
@@ -84,7 +99,7 @@ function resolveImportedAssetReference(
   if (!file) {
     unresolvedAssets.push({
       assetPath,
-      resolvedPath
+      resolvedPath,
     });
     return assetPath;
   }
@@ -100,11 +115,11 @@ function resolveImportedAssetReference(
 }
 
 function resolveImportedAssetPath(assetPath, jsonRelativePath) {
-  if (typeof assetPath !== 'string' || assetPath.length === 0) {
+  if (typeof assetPath !== "string" || assetPath.length === 0) {
     return null;
   }
 
-  if (assetPath.startsWith('#') || assetPath.startsWith('//')) {
+  if (assetPath.startsWith("#") || assetPath.startsWith("//")) {
     return null;
   }
 
@@ -112,7 +127,7 @@ function resolveImportedAssetPath(assetPath, jsonRelativePath) {
     return null;
   }
 
-  if (assetPath.startsWith('/')) {
+  if (assetPath.startsWith("/")) {
     return normalizePath(assetPath.slice(1));
   }
 
@@ -121,19 +136,19 @@ function resolveImportedAssetPath(assetPath, jsonRelativePath) {
 }
 
 function normalizeImportedFilePath(path) {
-  if (typeof path !== 'string' || path.length === 0) {
-    return '';
+  if (typeof path !== "string" || path.length === 0) {
+    return "";
   }
 
-  const normalized = path.replaceAll('\\', '/').replace(/^\/+/, '');
-  const segments = normalized.split('/').filter(Boolean);
+  const normalized = path.replaceAll("\\", "/").replace(/^\/+/, "");
+  const segments = normalized.split("/").filter(Boolean);
 
   if (segments.length === 0) {
-    return '';
+    return "";
   }
 
-  if (normalized.includes('/')) {
-    return normalizePath(segments.slice(1).join('/'));
+  if (normalized.includes("/")) {
+    return normalizePath(segments.slice(1).join("/"));
   }
 
   return normalizePath(segments[0]);
@@ -141,10 +156,10 @@ function normalizeImportedFilePath(path) {
 
 function dirname(path) {
   const normalized = normalizePath(path);
-  const lastSlashIndex = normalized.lastIndexOf('/');
+  const lastSlashIndex = normalized.lastIndexOf("/");
 
   if (lastSlashIndex === -1) {
-    return '';
+    return "";
   }
 
   return normalized.slice(0, lastSlashIndex);
@@ -159,15 +174,15 @@ function joinRelativePath(baseDirectory, relativePath) {
 }
 
 function normalizePath(path) {
-  const segments = path.replaceAll('\\', '/').split('/');
+  const segments = path.replaceAll("\\", "/").split("/");
   const normalizedSegments = [];
 
   for (const segment of segments) {
-    if (!segment || segment === '.') {
+    if (!segment || segment === ".") {
       continue;
     }
 
-    if (segment === '..') {
+    if (segment === "..") {
       normalizedSegments.pop();
       continue;
     }
@@ -175,7 +190,7 @@ function normalizePath(path) {
     normalizedSegments.push(segment);
   }
 
-  return normalizedSegments.join('/');
+  return normalizedSegments.join("/");
 }
 
 function hasRemoteProtocol(value) {
