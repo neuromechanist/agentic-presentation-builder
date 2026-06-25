@@ -89,6 +89,17 @@ export function rewritePresentationAssetPaths(presentationData, deckPath) {
   const assetFiles = new Map();
   const clonedPresentation = structuredClone(presentationData);
 
+  const brandingLogo =
+    clonedPresentation.presentation?.metadata?.branding?.logo;
+  if (brandingLogo?.src) {
+    brandingLogo.src = registerAsset(
+      brandingLogo.src,
+      deckDirectory,
+      assetIdsByPath,
+      assetFiles,
+    );
+  }
+
   for (const slide of clonedPresentation.presentation?.slides || []) {
     slide.background = registerAsset(
       slide.background,
