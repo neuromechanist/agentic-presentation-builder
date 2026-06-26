@@ -1,7 +1,14 @@
 import { createReadStream, readFileSync } from "node:fs";
 import { stat } from "node:fs/promises";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
+
+// The package root (where index.html and vite.config.js live). Pin Vite to it
+// so the app is served correctly even when the CLI is invoked from another
+// directory (e.g. `bunx github:.../present <deck>` run from a deck repo, where
+// process.cwd() has no index.html and Vite would otherwise 404 at "/").
+const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 import { validatePresentation } from "../validator/index.js";
 import {
   DEFAULT_ASSET_ROUTE,
@@ -38,6 +45,8 @@ export async function startLocalPresentationServer(options) {
   const presentationJson = JSON.stringify(rewrittenPresentation, null, 2);
 
   const server = await createServer({
+    root: PACKAGE_ROOT,
+    configFile: resolve(PACKAGE_ROOT, "vite.config.js"),
     plugins: [createLocalPresentationPlugin(presentationJson, assetFiles)],
     server: {
       host,
@@ -105,7 +114,11 @@ export function createLocalPresentationPlugin(presentationJson, assetFiles) {
         } catch (error) {
           const status = error.code === "ENOENT" ? 404 : 500;
           res.statusCode = status;
-          res.end(status === 404 ? "Asset not found" : `Asset error: ${error.message}`);
+          res.end(
+            status === 404
+              ? "Asset not found"
+              : `Asset error: ${error.message}`,
+          );
         }
       });
     },

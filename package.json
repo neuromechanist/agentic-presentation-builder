@@ -1,6 +1,6 @@
 {
   "name": "agentic-presentation-builder",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "LLM-friendly JSON-based presentation engine that renders to interactive JS presentations",
   "main": "src/index.js",
   "type": "module",
