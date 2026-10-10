@@ -13,8 +13,8 @@ The local deck loader fixes that by importing a folder from your machine directl
 1. Run the app:
 
    ```bash
-   npm install
-   npm run dev
+   bun install
+   bun run dev
    ```
 
 2. Open `http://localhost:3000`
@@ -50,5 +50,5 @@ If `demo.json` references `./images/cover.png` or `./assets/logo.svg`, the impor
 If you want a shareable URL or presenter/audience companion windows, use the CLI:
 
 ```bash
-npm run present -- ~/slides/demo.json
+bun run present -- ~/slides/demo.json
 ```

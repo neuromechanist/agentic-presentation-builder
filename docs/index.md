@@ -24,9 +24,9 @@ Agentic Presentation Builder is a JSON-first presentation system that renders in
 ## Fast start
 
 ```bash
-npm install
-npm run dev
-npm run validate -- examples/hello-world.json --json
+bun install
+bun run dev
+bun run validate -- examples/hello-world.json --json
 ```
 
 Open:
@@ -35,7 +35,7 @@ Open:
 http://localhost:3000/?presentation=./examples/hello-world.json
 ```
 
-No clone? Run the `apb` CLI straight from the repo with `bunx`/`npx`:
+No clone? Run the `apb` CLI straight from the repo with `bunx`:
 
 ```bash
 bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 validate deck.json --json

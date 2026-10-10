@@ -74,12 +74,12 @@ export function parsePresentCliArgs(argv) {
 
 export function formatPresentCliUsage() {
   return [
-    "Usage: npm run present -- <path-to-json> [--port 3000] [--host localhost] [--open]",
+    "Usage: bun run present -- <path-to-json> [--port 3000] [--host localhost] [--open]",
     "",
     "Examples:",
-    "  npm run present -- examples/hello-world.json",
-    "  npm run present -- ~/slides/q2-review.json --open",
-    "  npm run present -- /Users/name/slides/demo.json --port 4173",
+    "  bun run present -- examples/hello-world.json",
+    "  bun run present -- ~/slides/q2-review.json --open",
+    "  bun run present -- /Users/name/slides/demo.json --port 4173",
   ].join("\n");
 }
 

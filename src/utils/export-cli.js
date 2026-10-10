@@ -157,14 +157,14 @@ export function parseExportCliArgs(argv) {
 
 export function formatExportCliUsage() {
   return [
-    "Usage: npm run export -- <path-to-json> [--format pdf|pptx] [--output <path>] [--pptx-mode native|image]",
+    "Usage: bun run export -- <path-to-json> [--format pdf|pptx] [--output <path>] [--pptx-mode native|image]",
     "",
     "Examples:",
-    "  npm run export -- examples/hello-world.json",
-    "  npm run export -- examples/hello-world.json --format pptx",
-    "  npm run export -- examples/hello-world.json --format pptx --pptx-mode image",
-    "  npm run export -- examples/hello-world.json --output dist/hello-world.pdf",
-    "  npm run export -- examples/hello-world.json --format pdf --chrome-path /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome",
+    "  bun run export -- examples/hello-world.json",
+    "  bun run export -- examples/hello-world.json --format pptx",
+    "  bun run export -- examples/hello-world.json --format pptx --pptx-mode image",
+    "  bun run export -- examples/hello-world.json --output dist/hello-world.pdf",
+    "  bun run export -- examples/hello-world.json --format pdf --chrome-path /Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome",
   ].join("\n");
 }
 

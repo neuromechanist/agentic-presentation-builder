@@ -15,33 +15,33 @@ This system is designed for iterative JSON authoring by an agent.
 Agents have two equivalent ways to run the engine; both expose the same `validate`, `present`,
 and `export` commands:
 
-- **Zero-clone (`apb` via bunx/npx)**, pinned to a release tag, when there is no local checkout:
+- **Zero-clone (`apb` via bunx)**, pinned to a release tag, when there is no local checkout:
 
   ```bash
   bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 validate deck.json --json
   ```
 
-- **Cloned repo (`npm run` / `bun run`)** for repeated authoring loops, which avoids re-resolving
+- **Cloned repo (`bun run`)** for repeated authoring loops, which avoids re-resolving
   the git package on every call:
 
   ```bash
-  npm run validate -- deck.json --json
+  bun run validate -- deck.json --json
   ```
 
-The examples below use the `npm run` form; substitute `apb` when running zero-clone.
+The examples below use the `bun run` form; substitute `apb` when running zero-clone.
 
 ## CLI validation
 
 Human-readable output:
 
 ```bash
-npm run validate -- examples/image-demo.json
+bun run validate -- examples/image-demo.json
 ```
 
 Machine-readable output:
 
 ```bash
-npm run validate -- examples/image-demo.json --json
+bun run validate -- examples/image-demo.json --json
 ```
 
 The payload includes:
