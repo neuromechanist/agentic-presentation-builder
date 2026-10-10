@@ -532,7 +532,7 @@
           },
           {
             "type": "code",
-            "code": "git checkout -b feature/issue-9-fragment-support\nnpm test",
+            "code": "git checkout -b feature/issue-9-fragment-support\nbun run test",
             "language": "bash",
             "caption": "Code blocks can fragment too",
             "animation": {

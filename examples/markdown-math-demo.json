@@ -55,7 +55,7 @@
           },
           {
             "type": "text",
-            "content": "Use inline code like `npm run build`, GitHub alerts, and math such as $E=mc^2$ directly inside markdown.\n\n> [!TIP]\n> Prefer percentage widths for presentation images when you want layouts to stay responsive.",
+            "content": "Use inline code like `bun run build`, GitHub alerts, and math such as $E=mc^2$ directly inside markdown.\n\n> [!TIP]\n> Prefer percentage widths for presentation images when you want layouts to stay responsive.",
             "style": {
               "fontSize": "medium"
             },

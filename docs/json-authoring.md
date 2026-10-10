@@ -74,7 +74,7 @@ Each slide can define:
     },
     {
       "type": "code",
-      "code": "npm test",
+      "code": "bun run test",
       "language": "bash",
       "animation": { "fragment": true, "type": "zoom", "index": 2 }
     },

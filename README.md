@@ -11,8 +11,8 @@ Enable AI agents and LLMs to create professional presentations by generating sim
 ## Quick Start
 
 ```bash
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 Then open `http://localhost:3000`.
@@ -34,15 +34,15 @@ http://localhost:3000/?presentation=./examples/hello-world.json
 If you want a URL-backed launch flow from the terminal, use the CLI:
 
 ```bash
-npm run present -- ~/slides/demo.json
+bun run present -- ~/slides/demo.json
 ```
 
 That prints a browser URL and keeps companion presenter/audience windows available.
 
-### Run as a CLI (no clone, no npm publish)
+### Run as a CLI (no clone, no registry publish)
 
 The engine ships an `apb` command (see the `bin` field in `package.json`), so it can be run
-straight from this repository with `bunx`/`npx`, pinned to a release tag for reproducibility:
+straight from this repository with `bunx`, pinned to a release tag for reproducibility:
 
 ```bash
 # Validate a deck against the JSON schema
@@ -55,7 +55,6 @@ bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 present deck.json
 bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 export deck.json --format pdf
 ```
 
-`npx github:neuromechanist/agentic-presentation-builder#v0.1.6 <command>` works the same way.
 The three subcommands (`validate`, `present`, `export`) are the same code paths as the
 `bun run <name>` scripts; `apb <command> --help` prints each command's full option list. For
 repeated authoring, clone once and run `bun run validate|present|export` to avoid re-resolving
@@ -66,9 +65,9 @@ the git package on every call.
 Export a deck directly from the terminal:
 
 ```bash
-npm run export -- examples/hello-world.json
-npm run export -- examples/hello-world.json --format pptx
-npm run export -- examples/hello-world.json --format pptx --pptx-mode=image
+bun run export -- examples/hello-world.json
+bun run export -- examples/hello-world.json --format pptx
+bun run export -- examples/hello-world.json --format pptx --pptx-mode=image
 ```
 
 - `pdf` is the default format and preserves the rendered deck through headless Chrome print export
@@ -91,10 +90,10 @@ This repository now ships a full MkDocs Material documentation site under [`docs
 
 ```bash
 # Preview the docs locally with uv
-npm run docs:serve
+bun run docs:serve
 
 # Build the docs site
-npm run docs:build
+bun run docs:build
 ```
 
 Key pages:
@@ -112,7 +111,7 @@ Key pages:
 Use the repository in two passes when an agent is iterating on a deck:
 
 ```bash
-npm run validate -- examples/image-demo.json --json
+bun run validate -- examples/image-demo.json --json
 ```
 
 This returns machine-readable schema errors and author warnings with `code`, `path`, `message`, and `suggestion`.
@@ -464,8 +463,8 @@ View it in one of two ways:
 # Validate a specific file
 node scripts/validate.js examples/your-presentation.json
 
-# Or use npm command
-npm run validate examples/your-presentation.json
+# Or use Bun command
+bun run validate examples/your-presentation.json
 ```
 
 ## Common Validation Errors
@@ -561,17 +560,17 @@ console.log(getValidationReport(presentation));
 ## Commands
 
 ```bash
-npm install        # Install dependencies
-npm run dev        # Start dev server (http://localhost:3000)
-npm run build      # Build for production
-npm test           # Run tests
-npm run validate   # Validate presentation file
-npm run present    # Serve a deck on a local presentation server
-npm run export     # Export a deck (pdf/pptx)
+bun install        # Install dependencies
+bun run dev        # Start dev server (http://localhost:3000)
+bun run build      # Build for production
+bun run test      # Run tests
+bun run validate   # Validate presentation file
+bun run present    # Serve a deck on a local presentation server
+bun run export     # Export a deck (pdf/pptx)
 ```
 
 The same `validate` / `present` / `export` commands are exposed as the `apb` CLI for
-`bunx`/`npx` use without a clone (see [Quick Start](#run-as-a-cli-no-clone-no-npm-publish)).
+`bunx` use without a clone (see [Quick Start](#run-as-a-cli-no-clone-no-registry-publish)).
 `bin/apb.js` dispatches to the `main()` exported from `scripts/{validate,present,export}.js`,
 so both invocation styles share one code path.
 

@@ -49,9 +49,9 @@ In audience mode:
 Use the export CLI when you need a file for distribution or a conference handoff:
 
 ```bash
-npm run export -- ~/slides/demo.json
-npm run export -- ~/slides/demo.json --format pptx
-npm run export -- ~/slides/demo.json --format pptx --pptx-mode=image
+bun run export -- ~/slides/demo.json
+bun run export -- ~/slides/demo.json --format pptx
+bun run export -- ~/slides/demo.json --format pptx --pptx-mode=image
 ```
 
 - `pdf` is the default export and uses the browser renderer, so Mermaid, KaTeX, code highlighting, and theme styling stay aligned with the live deck

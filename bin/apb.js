@@ -3,7 +3,7 @@
  * apb -- Agentic Presentation Builder command-line entry point.
  *
  * Dispatches to the validate / present / export subcommands so the engine can be
- * run via `bunx`/`npx` pointing at this repo, without an npm publish:
+ * run via `bunx` pointing at this repo, without publishing to a package registry:
  *
  *   bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 validate deck.json
  *   bunx github:neuromechanist/agentic-presentation-builder#v0.1.6 present deck.json --open
