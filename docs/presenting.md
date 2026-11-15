@@ -98,3 +98,10 @@ Videos never autoplay. MP4 with H.264 is recommended for browser compatibility.
 Keep native controls enabled for keyboard and touch access. Local-folder imports
 resolve video and poster assets just like images. Caption text describes the clip;
 spoken instructional videos should also provide an accessible transcript.
+
+The auto-rotation settings sit at the bottom right, above navigation. The panel
+collapses after 10 seconds of inactivity; its small hamburger remains available.
+Hover over it, tap/click it, or Tab to the settings button and press Enter to reopen.
+The panel never disappears while a control has keyboard focus or the pointer is
+inside it. Escape closes the panel and returns focus to its settings button.
+Collapsing settings does not start, stop, or otherwise change playback.

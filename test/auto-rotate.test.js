@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
-import { createAutoRotate, installAutoRotate } from '../src/utils/auto-rotate.js';
+import { createAutoRotate, installAutoRotate, installControlVisibility } from '../src/utils/auto-rotate.js';
 import { validatePresentation } from '../src/validator/index.js';
 import { parsePresentation } from '../src/parser/index.js';
 import { renderPresentation } from '../src/renderer/index.js';
@@ -59,4 +59,24 @@ test('navigation pauses departed video and toolbar arrows remain available', () 
   assert.equal(keys,1);
   doc.querySelector('button').dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:' ',bubbles:true}));
   assert.equal(keys,1); dispose();
+});
+
+
+test('settings collapse after ten seconds, reopen on hover/tap, protect keyboard focus', () => {
+  const dom = new JSDOM('<div class="auto-rotate-controls"><div class="auto-rotate-panel"><button>Start</button></div><button class="auto-rotate-menu">Settings</button></div>');
+  const doc = dom.window.document, toolbar = doc.querySelector('div');
+  const panel = toolbar.querySelector('.auto-rotate-panel'), menu = toolbar.querySelector('.auto-rotate-menu');
+  const c = clock(); const dispose = installControlVisibility(toolbar, c);
+  assert.equal([...c.pending.values()][0].delay,10000);
+  c.tick(); assert.equal(panel.hidden,true);
+  // Touch activation focuses the hamburger before click, without closing again.
+  menu.focus(); menu.click(); assert.equal(panel.hidden,false);
+  panel.querySelector('button').focus(); c.tick(); assert.equal(panel.hidden,false);
+  panel.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+  assert.equal(panel.hidden,true); assert.equal(doc.activeElement,menu);
+  menu.blur(); toolbar.dispatchEvent(new dom.window.Event('pointerenter'));
+  assert.equal(panel.hidden,false); c.tick(); assert.equal(panel.hidden,false);
+  toolbar.dispatchEvent(new dom.window.Event('pointerleave')); c.tick(); assert.equal(panel.hidden,true);
+  menu.click(); assert.equal(panel.hidden,false);
+  dispose(); assert.equal(c.pending.size,0);
 });

@@ -1427,7 +1427,10 @@ body.presenter-screen .reveal {
 /* Opt-in showcase playback; native video interaction is never captured. */
 .video-element { margin: 0; width:100%; text-align:center; }
 .video-element video { max-width:100%; max-height:76vh; object-fit:contain; background:#000; }
-.auto-rotate-controls { position:fixed; z-index:50; bottom:10px; left:50%; transform:translateX(-50%); display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; padding:7px 12px; border:1px solid #94a3b8; border-radius:10px; background:#fff; color:#172033; font:14px system-ui,sans-serif; max-width:calc(100vw - 140px); box-shadow:0 2px 8px #0002; }
+.auto-rotate-controls { position:fixed; z-index:50; bottom:110px; right:12px; display:flex; align-items:flex-end; gap:8px; font:14px system-ui,sans-serif; }
+.auto-rotate-panel { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; padding:10px; border:1px solid #94a3b8; border-radius:10px; background:#fff; color:#172033; max-width:calc(100vw - 100px); box-shadow:0 2px 8px #0002; }
+.auto-rotate-panel[hidden] { display:none; }
 .auto-rotate-controls button,.auto-rotate-controls select { font:inherit; padding:6px; color:#172033; background:#fff; border:1px solid #64748b; border-radius:4px; }
+.auto-rotate-controls .auto-rotate-menu { width:44px; height:44px; font-size:22px; border-radius:8px; box-shadow:0 2px 8px #0002; }
 .auto-rotate-controls button:focus-visible,.auto-rotate-controls select:focus-visible { outline:3px solid #2563eb; outline-offset:2px; }
 @media print { .auto-rotate-controls { display:none!important; } }
