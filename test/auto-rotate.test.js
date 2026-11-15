@@ -97,10 +97,16 @@ test('existing Settings hosts rotation with no duplicate menu; idle hide protect
   panel.classList.add('visible'); await Promise.resolve();
   assert.equal([...c.pending.values()][0].delay,10000); c.tick();
   assert.equal(panel.classList.contains('visible'),false);
-  button.dispatchEvent(new dom.window.Event('pointerenter')); await Promise.resolve();
+  const hoverEvent = new dom.window.Event('pointerenter'); Object.defineProperty(hoverEvent,'pointerType',{value:'mouse'});
+  button.dispatchEvent(hoverEvent); await Promise.resolve();
+  button.addEventListener('click',()=>panel.classList.toggle('visible'));
+  button.click(); assert.equal(panel.classList.contains('visible'),true);
   assert.equal(panel.classList.contains('visible'),true);
   panel.querySelector('button').focus(); c.tick(); assert.equal(panel.classList.contains('visible'),true);
   panel.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
   assert.equal(panel.classList.contains('visible'),false); assert.equal(doc.activeElement,button);
+  const touchEvent = new dom.window.Event('pointerenter'); Object.defineProperty(touchEvent,'pointerType',{value:'touch'});
+  button.dispatchEvent(touchEvent); assert.equal(panel.classList.contains('visible'),false);
+  button.click(); assert.equal(panel.classList.contains('visible'),true);
   cleanup(); assert.equal(c.pending.size,0);
 });

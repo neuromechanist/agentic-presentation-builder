@@ -75,7 +75,7 @@ export function installControlVisibility(toolbar, { setTimer = setTimeout, clear
 }
 
 export function installSettingsAutoHide(panel, button, { setTimer = setTimeout, clearTimer = clearTimeout } = {}) {
-  let timer = null, hovered = false;
+  let timer = null, hovered = false, openedByHover = false;
   const cancel = () => { if (timer !== null) clearTimer(timer); timer = null; };
   const sync = () => {
     button.setAttribute('aria-expanded', String(panel.classList.contains('visible')));
@@ -93,8 +93,17 @@ export function installSettingsAutoHide(panel, button, { setTimer = setTimeout, 
   const enter = () => { hovered = true; cancel(); };
   const leave = () => { hovered = false; sync(); };
   const show = event => {
-    if (event.pointerType === 'touch') return;
+    if (event.pointerType !== 'mouse') return;
+    openedByHover = !panel.classList.contains('visible');
     panel.classList.add('visible'); button.classList.add('active'); sync();
+  };
+  // The pointer may reveal the panel just before its activation click arrives.
+  // Do not let that same click immediately toggle it closed.
+  const activate = event => {
+    if (!openedByHover || !panel.classList.contains('visible')) return;
+    openedByHover = false;
+    event.stopImmediatePropagation();
+    sync();
   };
   const escape = event => {
     if (event.key === 'Escape') { button.focus(); panel.classList.remove('visible'); button.classList.remove('active'); sync(); }
@@ -107,6 +116,7 @@ export function installSettingsAutoHide(panel, button, { setTimer = setTimeout, 
   panel.addEventListener('focusout', sync);
   panel.addEventListener('keydown', escape);
   button.addEventListener('pointerenter', show);
+  button.addEventListener('click', activate, true);
   button.setAttribute('aria-controls', panel.id);
   sync();
   return () => {
@@ -114,6 +124,7 @@ export function installSettingsAutoHide(panel, button, { setTimer = setTimeout, 
     panel.removeEventListener('pointerenter', enter); panel.removeEventListener('pointerleave', leave);
     panel.removeEventListener('focusout', sync); panel.removeEventListener('keydown', escape);
     button.removeEventListener('pointerenter', show);
+    button.removeEventListener('click', activate, true);
   };
 }
 
