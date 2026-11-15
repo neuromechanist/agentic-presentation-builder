@@ -198,6 +198,8 @@ function renderElement(element) {
       return renderBulletsElement(element);
     case 'image':
       return renderImageElement(element);
+    case 'video':
+      return renderVideoElement(element);
     case 'mermaid':
       return renderMermaidElement(element);
     case 'callout':
@@ -480,3 +482,10 @@ function escapeHtml(text) {
 export default {
   renderPresentation
 };
+
+function renderVideoElement(element) {
+  const size = value => /^(auto|[0-9.]+(?:px|%|vh|vw))$/.test(value) ? value : 'auto';
+  const flags = `${element.controls ? ' controls' : ''}${element.loop ? ' loop' : ''}${element.muted ? ' muted' : ''}`;
+  const poster = element.poster ? ` poster="${escapeHtml(element.poster)}"` : '';
+  return `<figure class="video-element"><video data-ignore playsinline preload="metadata"${flags}${poster} src="${escapeHtml(element.src)}" aria-label="${escapeHtml(element.alt)}" style="width:${size(element.width)};height:${size(element.height)}">Your browser cannot play this video.</video>${element.caption ? `<figcaption class="image-caption">${markdownToHtml(element.caption)}</figcaption>` : ''}</figure>`;
+}

@@ -58,6 +58,8 @@
                   "description": "Show progress bar",
                   "default": true
                 },
+                "autoRotate": {"type": "boolean", "default": false, "description": "Show opt-in rotation controls; never starts automatically."},
+                "autoRotateInterval": {"type": "integer", "minimum": 5, "maximum": 120, "default": 15, "description": "Seconds per slide after rotation is started."},
                 "showNotes": {
                   "type": "boolean",
                   "description": "Enable speaker notes view (press 's' during presentation)",
@@ -172,7 +174,8 @@
               { "$ref": "#/definitions/mermaidElement" },
               { "$ref": "#/definitions/calloutElement" },
               { "$ref": "#/definitions/codeElement" },
-              { "$ref": "#/definitions/tableElement" }
+              { "$ref": "#/definitions/tableElement" },
+              { "$ref": "#/definitions/videoElement" }
             ]
           }
         }
@@ -312,6 +315,84 @@
         },
         "animation": {
           "$ref": "#/definitions/animation"
+        }
+      }
+    },
+    "videoElement": {
+      "type": "object",
+      "description": "Click-to-play video with native controls; never autoplays.",
+      "required": [
+        "type",
+        "src"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "video"
+        },
+        "src": {
+          "type": "string",
+          "description": "Browser-compatible video URL; MP4/H.264 recommended.",
+          "minLength": 1,
+          "examples": [
+            "./images/diagram.png",
+            "https://example.com/image.jpg"
+          ]
+        },
+        "alt": {
+          "type": "string",
+          "description": "Alternative text for accessibility",
+          "examples": [
+            "System architecture diagram"
+          ]
+        },
+        "width": {
+          "type": "string",
+          "description": "Image width (percentage, pixels, or auto)",
+          "examples": [
+            "50%",
+            "400px",
+            "auto"
+          ],
+          "default": "auto"
+        },
+        "height": {
+          "type": "string",
+          "description": "Image height (percentage, pixels, or auto)",
+          "examples": [
+            "50%",
+            "300px",
+            "auto"
+          ],
+          "default": "auto"
+        },
+        "caption": {
+          "type": "string",
+          "description": "Image caption (supports markdown)",
+          "examples": [
+            "Figure 1: System Architecture"
+          ]
+        },
+        "position": {
+          "$ref": "#/definitions/position"
+        },
+        "animation": {
+          "$ref": "#/definitions/animation"
+        },
+        "poster": {
+          "type": "string"
+        },
+        "controls": {
+          "type": "boolean",
+          "default": true
+        },
+        "loop": {
+          "type": "boolean",
+          "default": false
+        },
+        "muted": {
+          "type": "boolean",
+          "default": false
         }
       }
     },

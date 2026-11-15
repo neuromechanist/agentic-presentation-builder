@@ -97,6 +97,14 @@ function parseElement(element, index) {
         caption: element.caption || null
       };
 
+    case 'video':
+      return {
+        ...baseElement, src: element.src, poster: element.poster || '',
+        alt: element.alt || 'Video walkthrough', width: element.width || '100%',
+        height: element.height || 'auto', caption: element.caption || null,
+        controls: element.controls !== false, loop: element.loop === true, muted: element.muted === true
+      };
+
     case 'mermaid':
       return {
         ...baseElement,

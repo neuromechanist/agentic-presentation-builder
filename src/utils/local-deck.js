@@ -44,7 +44,10 @@ export function rewriteImportedPresentationAssetPaths(
     );
 
     for (const element of slide.elements || []) {
-      if (element.type === 'image') {
+      if (element.type === 'video' && element.poster) {
+        element.poster = resolveImportedAssetReference(element.poster, jsonRelativePath, filesByPath, createObjectUrl, objectUrlByPath, objectUrls, unresolvedAssets);
+      }
+      if (element.type === 'image' || element.type === 'video') {
         element.src = resolveImportedAssetReference(
           element.src,
           jsonRelativePath,

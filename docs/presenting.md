@@ -62,3 +62,39 @@ Useful runtime query parameters:
 - `mode=presentation` or `mode=authoring`
 - `role=audience` or `role=presenter`
 - `warnings=visible` or `warnings=hidden`
+
+## Showcase auto-rotation and video
+
+Set `metadata.controls.autoRotate` to `true` to expose the **Start auto-rotate**
+button. Playback is always off at load. `autoRotateInterval` optionally sets the
+initial dwell time (5–120 seconds, default 15); the toolbar can change it during
+presentation. At the final slide, playback loops to the first slide. Manual
+slide or fragment navigation restarts a full interval. Pause stops the timer.
+
+Rotation waits while a video on the current slide is playing, the page is hidden,
+the deck is in overview/blackout, or the interval menu is focused. Resuming waits
+a full interval; leaving a slide pauses its videos. A looping video holds the deck
+until you pause it or navigate away. The controls are not shown on the synced
+audience screen. Reduced-motion preference disables slide transitions.
+
+Use a native video element for a click-to-play demonstration:
+
+```json
+{
+  "type": "video",
+  "src": "assets/walkthrough.mp4",
+  "poster": "assets/walkthrough.jpg",
+  "alt": "NEMAR dataset walkthrough",
+  "controls": true,
+  "loop": true,
+  "muted": false,
+  "width": "90%",
+  "height": "650px",
+  "caption": "Press play to watch the walkthrough."
+}
+```
+
+Videos never autoplay. MP4 with H.264 is recommended for browser compatibility.
+Keep native controls enabled for keyboard and touch access. Local-folder imports
+resolve video and poster assets just like images. Caption text describes the clip;
+spoken instructional videos should also provide an accessible transcript.

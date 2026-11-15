@@ -4,6 +4,7 @@
  */
 
 import Reveal from 'reveal.js';
+import { installAutoRotate } from './utils/auto-rotate.js';
 import { buildPresentation } from './index-browser.js';
 import { validatePresentation } from './validator/index.js';
 import {
@@ -35,6 +36,7 @@ let latestPresentationAudit = null;
 let presentationModeEnabled = getInitialPresentationMode();
 let warningsVisible = getInitialWarningsVisibility();
 let revealInstance = null;
+let disposeAutoRotate = null;
 let presentationSyncChannel = null;
 let presenterSlides = [];
 let localDeckObjectUrls = [];
@@ -118,6 +120,9 @@ async function loadAndRenderPresentation(presentationData = null, options = {}) 
       overview: true
     });
     revealInstance = Reveal;
+    disposeAutoRotate?.();
+    disposeAutoRotate = installAutoRotate(Reveal, { showControls: controls.autoRotate === true && presentationRole !== 'audience', interval: controls.autoRotateInterval || 15 });
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) Reveal.configure({ transition: 'none' });
 
     await initializeMermaidIfNeeded(slidesContainer);
     await renderMathContent(slidesContainer);
