@@ -122,7 +122,13 @@ async function loadAndRenderPresentation(presentationData = null, options = {}) 
     revealInstance = Reveal;
     disposeAutoRotate?.();
     disposeAutoRotate = installAutoRotate(Reveal, { showControls: controls.autoRotate === true && presentationRole !== 'audience', interval: controls.autoRotateInterval || 15 });
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) Reveal.configure({ transition: 'none' });
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      Reveal.configure({ transition: 'none', backgroundTransition: 'none' });
+      slidesContainer.querySelectorAll('section').forEach(slide => {
+        slide.setAttribute('data-transition', 'none');
+        slide.setAttribute('data-background-transition', 'none');
+      });
+    }
 
     await initializeMermaidIfNeeded(slidesContainer);
     await renderMathContent(slidesContainer);
