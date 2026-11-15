@@ -74,11 +74,57 @@ export function installControlVisibility(toolbar, { setTimer = setTimeout, clear
   };
 }
 
+export function installSettingsAutoHide(panel, button, { setTimer = setTimeout, clearTimer = clearTimeout } = {}) {
+  let timer = null, hovered = false;
+  const cancel = () => { if (timer !== null) clearTimer(timer); timer = null; };
+  const sync = () => {
+    button.setAttribute('aria-expanded', String(panel.classList.contains('visible')));
+    cancel();
+    if (!panel.classList.contains('visible')) return;
+    timer = setTimer(() => {
+      timer = null;
+      if (!hovered && !panel.contains(panel.ownerDocument.activeElement)) {
+        panel.classList.remove('visible');
+        button.classList.remove('active');
+        button.setAttribute('aria-expanded', 'false');
+      }
+    }, 10000);
+  };
+  const enter = () => { hovered = true; cancel(); };
+  const leave = () => { hovered = false; sync(); };
+  const show = event => {
+    if (event.pointerType === 'touch') return;
+    panel.classList.add('visible'); button.classList.add('active'); sync();
+  };
+  const escape = event => {
+    if (event.key === 'Escape') { button.focus(); panel.classList.remove('visible'); button.classList.remove('active'); sync(); }
+  };
+  const Observer = panel.ownerDocument.defaultView.MutationObserver;
+  const observer = new Observer(sync);
+  observer.observe(panel, { attributes:true, attributeFilter:['class'] });
+  panel.addEventListener('pointerenter', enter);
+  panel.addEventListener('pointerleave', leave);
+  panel.addEventListener('focusout', sync);
+  panel.addEventListener('keydown', escape);
+  button.addEventListener('pointerenter', show);
+  button.setAttribute('aria-controls', panel.id);
+  sync();
+  return () => {
+    cancel(); observer.disconnect();
+    panel.removeEventListener('pointerenter', enter); panel.removeEventListener('pointerleave', leave);
+    panel.removeEventListener('focusout', sync); panel.removeEventListener('keydown', escape);
+    button.removeEventListener('pointerenter', show);
+  };
+}
+
 export function installAutoRotate(reveal, { showControls = false, interval = 15, document: doc = document } = {}) {
   const win = doc.defaultView;
   const root = doc.querySelector('.reveal');
   let overview = false;
   const playing = () => Array.from(reveal.getCurrentSlide()?.querySelectorAll('video,audio') || []).some(media => !media.paused && !media.ended);
+  const settingsPanel = doc.querySelector('#settings-panel');
+  const settingsButton = doc.querySelector('#settings-btn');
+  const settingsCard = settingsPanel?.querySelector('.settings-panel-card');
   const toolbar = showControls ? doc.createElement('div') : null;
   let button, select, status, disposeVisibility;
   if (toolbar) {
@@ -89,8 +135,15 @@ export function installAutoRotate(reveal, { showControls = false, interval = 15,
     [button, select, status] = [toolbar.querySelector('button'), toolbar.querySelector('select'), toolbar.querySelector('span')];
     if (!Array.from(select.options).some(option => +option.value === interval)) select.add(new win.Option(`${interval} seconds`, interval));
     select.value = String(interval);
-    doc.body.appendChild(toolbar);
-    disposeVisibility = installControlVisibility(toolbar);
+    if (settingsCard && settingsButton) {
+      toolbar.classList.add('auto-rotate-embedded');
+      toolbar.querySelector('.auto-rotate-menu').remove();
+      settingsCard.appendChild(toolbar);
+      disposeVisibility = installSettingsAutoHide(settingsPanel, settingsButton);
+    } else {
+      doc.body.appendChild(toolbar);
+      disposeVisibility = installControlVisibility(toolbar);
+    }
   }
   const controller = createAutoRotate({
     interval,

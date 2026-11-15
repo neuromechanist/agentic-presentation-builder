@@ -121,7 +121,6 @@ async function loadAndRenderPresentation(presentationData = null, options = {}) 
     });
     revealInstance = Reveal;
     disposeAutoRotate?.();
-    disposeAutoRotate = installAutoRotate(Reveal, { showControls: controls.autoRotate === true && presentationRole !== 'audience', interval: controls.autoRotateInterval || 15 });
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       Reveal.configure({ transition: 'none', backgroundTransition: 'none' });
       slidesContainer.querySelectorAll('section').forEach(slide => {
@@ -137,6 +136,7 @@ async function loadAndRenderPresentation(presentationData = null, options = {}) 
 
     const auditControls = createLayoutAuditControls();
     createSettingsControls(auditControls);
+    disposeAutoRotate = installAutoRotate(Reveal, { showControls: controls.autoRotate === true && presentationRole !== 'audience', interval: controls.autoRotateInterval || 15 });
     applyPresentationMode(presentationModeEnabled, auditControls, { persist: false });
     applyWarningsVisibility(warningsVisible, auditControls, { persist: false });
     const scheduleLayoutAudit = createLayoutAuditScheduler(Reveal, auditControls);

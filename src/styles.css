@@ -1434,3 +1434,6 @@ body.presenter-screen .reveal {
 .auto-rotate-controls .auto-rotate-menu { width:44px; height:44px; font-size:22px; border-radius:8px; box-shadow:0 2px 8px #0002; }
 .auto-rotate-controls button:focus-visible,.auto-rotate-controls select:focus-visible { outline:3px solid #2563eb; outline-offset:2px; }
 @media print { .auto-rotate-controls { display:none!important; } }
+
+.auto-rotate-controls.auto-rotate-embedded { position:static; display:block; margin-top:12px; }
+.auto-rotate-embedded .auto-rotate-panel { max-width:none; box-shadow:none; justify-content:flex-start; }

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
-import { createAutoRotate, installAutoRotate, installControlVisibility } from '../src/utils/auto-rotate.js';
+import { createAutoRotate, installAutoRotate, installControlVisibility, installSettingsAutoHide } from '../src/utils/auto-rotate.js';
 import { validatePresentation } from '../src/validator/index.js';
 import { parsePresentation } from '../src/parser/index.js';
 import { renderPresentation } from '../src/renderer/index.js';
@@ -79,4 +79,28 @@ test('settings collapse after ten seconds, reopen on hover/tap, protect keyboard
   toolbar.dispatchEvent(new dom.window.Event('pointerleave')); c.tick(); assert.equal(panel.hidden,true);
   menu.click(); assert.equal(panel.hidden,false);
   dispose(); assert.equal(c.pending.size,0);
+});
+
+
+test('existing Settings hosts rotation with no duplicate menu; idle hide protects focus', async () => {
+  const dom = new JSDOM('<button id="settings-btn">Settings</button><div id="settings-panel"><div class="settings-panel-card"></div></div><div class="reveal"><section></section></div>');
+  const doc = dom.window.document;
+  const reveal = { getCurrentSlide:()=>doc.querySelector('section'), on:()=>{}, off:()=>{}, isLastSlide:()=>false, next:()=>{} };
+  const dispose = installAutoRotate(reveal,{showControls:true,document:doc});
+  assert.ok(doc.querySelector('#settings-panel .auto-rotate-embedded'));
+  assert.equal(doc.querySelector('.auto-rotate-menu'),null);
+  assert.equal(doc.querySelector('[aria-pressed]').getAttribute('aria-pressed'),'false');
+  dispose();
+  const panel = doc.querySelector('#settings-panel'), button = doc.querySelector('#settings-btn');
+  panel.innerHTML = '<button>Playback</button>';
+  const c = clock(), cleanup = installSettingsAutoHide(panel,button,c);
+  panel.classList.add('visible'); await Promise.resolve();
+  assert.equal([...c.pending.values()][0].delay,10000); c.tick();
+  assert.equal(panel.classList.contains('visible'),false);
+  button.dispatchEvent(new dom.window.Event('pointerenter')); await Promise.resolve();
+  assert.equal(panel.classList.contains('visible'),true);
+  panel.querySelector('button').focus(); c.tick(); assert.equal(panel.classList.contains('visible'),true);
+  panel.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+  assert.equal(panel.classList.contains('visible'),false); assert.equal(doc.activeElement,button);
+  cleanup(); assert.equal(c.pending.size,0);
 });
